@@ -1,0 +1,63 @@
+//var React = require('react');
+
+import React from "react"
+import { render } from "react-dom"
+import { Router, browserHistory, hashHistory } from "react-router"
+
+//var routes = require('./routes.jsx');
+import routes from "./routes.jsx"
+
+render(<Router history={hashHistory} routes={routes} />,
+       document.getElementById('app'));
+
+/*module.exports = {
+    handleSignUpSubmit: function(event) {
+        event.preventDefault();
+        var requestPayload = {"user/email": $("#email").val(),
+                              "user/name": $("#fullname").val(),
+                              "user/password": $("#password").val()};
+        $.ajax({type: "POST",
+                beforeSend: function(request) {},
+                url: $(this).attr('action'),
+                processData: false,
+                headers: {"Content-Type": "application/vnd.fp.user-v0.0.1+json;charset=UTF-8",
+                          "Accept-Language": "en-US",
+                          "Accept": "application/vnd.fp.user-v0.0.1+json",
+                          "r-establish-session": true},
+                data: JSON.stringify(requestPayload)})
+            .done(function(data) {
+                console.log("inside done()");
+            })
+            .fail(function() {
+                console.log("inside fail");
+            })
+            .always(function() {
+                console.log("inside always()");
+            });
+    },
+
+    handleLoginSubmit: function(event) {
+        event.preventDefault();
+        var requestPayload = {"user/username-or-email": $("#username_or_email").val(),
+                              "user/password": $("#password").val()};
+
+        $.ajax({type: "POST",
+                beforeSend: function(request) {},
+                url: $(this).attr('action'),
+                processData: false,
+                headers: {"Content-Type": "application/vnd.fp.user-v0.0.1+json;charset=UTF-8",
+                          "Accept-Language": "en-US",
+                          "Accept": "application/vnd.fp.user-v0.0.1+json"},
+                data: JSON.stringify(requestPayload)})
+            .done(function(data) {
+                document.title = "Gas Jot - Welcome Back!";
+
+            })
+            .fail(function() {
+
+            })
+            .always(function() {
+
+            });
+    }
+}*/
