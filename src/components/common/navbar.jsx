@@ -1,5 +1,6 @@
 import React, { createClass } from "react"
 import { Link } from "react-router"
+import NavLink from "./navlink.jsx"
 
 export default createClass({
     render() {
@@ -12,14 +13,14 @@ export default createClass({
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <a className="navbar-brand" href="index.html">Gas Jot</a>
+                        <NavLink className="navbar-brand" to="/">Home</NavLink>
                     </div>
                     <div id="navbar" className="navbar-collapse collapse">
                         <ul className="nav navbar-nav navbar-right">
-                            <li role="presentation" className="active"><a href="index.html">Home</a></li>
+                            <li role="presentation"><NavLink to="/" onlyActiveOnIndex={true}>Home</NavLink></li>
                             <li role="presentation"><a href="#">FAQ</a></li>
-                            <li role="presentation"><a href="signup.html">Sign up</a></li>
-                            <li role="presentation"><Link to="/login">Log in</Link></li>
+                            <li role="presentation"><NavLink to="/signup">Sign up</NavLink></li>
+                            <li role="presentation"><NavLink to="/login">Log in</NavLink></li>
                         </ul>
                     </div>
                 </div>

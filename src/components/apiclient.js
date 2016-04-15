@@ -1,15 +1,3 @@
-//var React = require('react');
-
-import React from "react"
-import { render } from "react-dom"
-import { Router, browserHistory, hashHistory } from "react-router"
-
-//var routes = require('./routes.jsx');
-import routes from "./routes.jsx"
-
-render(<Router history={hashHistory} routes={routes} />,
-       document.getElementById('app'));
-
 /*module.exports = {
     handleSignUpSubmit: function(event) {
         event.preventDefault();
