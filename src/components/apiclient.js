@@ -1,4 +1,9 @@
-/*module.exports = {
+/*
+
+  //action="http://www.jotyourself.com/gasjot/d/login"
+  //action=http://www.jotyourself.com/gasjot/d/users
+
+module.exports = {
     handleSignUpSubmit: function(event) {
         event.preventDefault();
         var requestPayload = {"user/email": $("#email").val(),

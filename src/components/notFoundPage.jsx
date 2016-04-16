@@ -1,11 +1,16 @@
 import React, { createClass } from "react"
+import GasJotHelmet from "./common/gasjot-helmet.jsx";
+import { Col } from "react-bootstrap";
 
-export default createClass({
+export default class NotFoundPage extends React.Component {
     render() {
         return (
-            <div className="container col-md-6 col-md-offset-3">
-                <p>Page not found.</p>
+            <div>
+                <GasJotHelmet title="Not Found" />
+                <Col md={6} mdOffset={3}>
+                    <p>Page not found.</p>
+                </Col>
             </div>
         );
     }
-});
+}

@@ -1,30 +1,44 @@
 import React, { createClass } from "react"
+import ReactDOM from "react-dom"
 import { Link } from "react-router"
+import { LinkContainer } from "react-router-bootstrap";
 import NavLink from "./navlink.jsx"
+import { Navbar, Nav, NavItem } from "react-bootstrap";
 
-export default createClass({
+export default class GasJotNavbar extends React.Component {
+
+    // https://github.com/react-bootstrap/react-router-bootstrap/issues/112#issuecomment-142599003
+    componentDidMount() {
+        const navBar = ReactDOM.findDOMNode(this);
+        const collapsibleNav = navBar.querySelector('div.navbar-collapse');
+        const btnToggle = navBar.querySelector('button.navbar-toggle');
+        navBar.addEventListener('click', (evt) => {
+            if (evt.target.tagName !== 'A' || evt.target.classList.contains('dropdown-toggle') || ! collapsibleNav.classList.contains('in')) {
+                return;
+            }
+
+            btnToggle.click();
+        }, false);
+    }
+
     render() {
         return (
-            <div className="navbar navbar-default">
-                <div className="container-fluid">
-                    <div className="navbar-header">
-                        <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                        </button>
-                        <NavLink className="navbar-brand" to="/">Home</NavLink>
-                    </div>
-                    <div id="navbar" className="navbar-collapse collapse">
-                        <ul className="nav navbar-nav navbar-right">
-                            <li role="presentation"><NavLink to="/" onlyActiveOnIndex={true}>Home</NavLink></li>
-                            <li role="presentation"><a href="#">FAQ</a></li>
-                            <li role="presentation"><NavLink to="/signup">Sign up</NavLink></li>
-                            <li role="presentation"><NavLink to="/login">Log in</NavLink></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <Navbar bsStyle="default" fluid>
+                <Navbar.Header>
+                    <Navbar.Brand>
+                        <Link to="/">Gas Jot</Link>
+                    </Navbar.Brand>
+                    <Navbar.Toggle />
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Nav pullRight>
+                        <LinkContainer to={{ pathname: '/' }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
+                        <NavItem eventKey={2} role="presentation">FAQ</NavItem>
+                        <LinkContainer to={{ pathname: '/signup' }}><NavItem eventKey={3} role="presentation">Sign up</NavItem></LinkContainer>
+                        <LinkContainer to={{ pathname: '/login' }}><NavItem eventKey={4}role="presentation">Log in</NavItem></LinkContainer>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
         );
     }
-});
+}
