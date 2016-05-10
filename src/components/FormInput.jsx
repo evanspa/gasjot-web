@@ -1,7 +1,6 @@
 import React, { createClass } from "react"
 import { Input } from "react-bootstrap";
 
-
 export default class GasJotInput extends React.Component {
     render() {
         if (this.props.error != null && this.props.error.length > 0) {

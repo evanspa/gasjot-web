@@ -1,10 +1,13 @@
 import React, { createClass } from "react"
 import { Router, Link } from "react-router"
-import GasJotHelmet from "./common/gasjot-helmet.jsx";
+import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Col, Panel } from "react-bootstrap";
-import LoginForm from "./common/loginForm.jsx";
+import LoginForm from "../components/LoginForm.jsx";
+import { connect } from 'react-redux'
+import { attemptLogin } from "../actions/actionCreators"
+import GasJotNavbar from "../components/NavBar.jsx"
 
-export default class LogInPage extends React.Component {
+class LogInPage extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -15,7 +18,7 @@ export default class LogInPage extends React.Component {
         };
         this.setUsernameOrEmail = this.setUsernameOrEmail.bind(this);
         this.setPassword = this.setPassword.bind(this);
-        this.login = this.login.bind(this);
+        this.makeLoginClickHandler = this.makeLoginClickHandler.bind(this);
         this.validateForm = this.validateForm.bind(this);
     }
 
@@ -34,14 +37,13 @@ export default class LogInPage extends React.Component {
         return isValid;
     }
 
-    login(event) {
-        if (!this.validateForm()) {
-            return;
+    makeLoginClickHandler(doLoginFn) {
+        return (event) => {
+            if (!this.validateForm()) {
+                return;
+            }
+            doLoginFn(this.state.usernameOrEmail, this.state.password);
         }
-
-
-
-        this.context.router.push('/signup');
     }
 
     setUsernameOrEmail(event) {
@@ -53,9 +55,11 @@ export default class LogInPage extends React.Component {
     }
 
     render() {
+        const { onLoginClick } = this.props
         return (
             <div>
                 <GasJotHelmet title="Log In" />
+                <div class="container"><GasJotNavbar /></div>
                 <Col md={6} mdOffset={3}>
                     <Panel>
                         <Col md={8} mdOffset={2}>
@@ -65,7 +69,7 @@ export default class LogInPage extends React.Component {
                                 passwordVal={this.state.password}
                                 usernameOrEmailOnChange={this.setUsernameOrEmail}
                                 passwordOnChange={this.setPassword}
-                                onLogin={this.login}
+                                onLoginClick={this.makeLoginClickHandler(onLoginClick)}
                                 errors={this.state.errors} />
                             <hr />
                             <p style={{paddingBottom: 10}}>Don't have an account?  <Link to="/signup">Sign up.</Link></p>
@@ -82,3 +86,18 @@ export default class LogInPage extends React.Component {
 LogInPage.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
+
+const mapStateToProps = (state) => {
+    console.log("state from mapStateToProps: " + JSON.stringify(state))
+    return state;
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLoginClick: (usernameOrEmail, password) => {
+            dispatch(attemptLogin(usernameOrEmail, password))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogInPage)

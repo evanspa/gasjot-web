@@ -11,7 +11,8 @@ export default class LogInForm extends React.Component {
                     type="text"
                     error={this.props.errors.usernameOrEmail}
                     value={this.props.usernameOrEmailVal}
-                    onChange={this.props.usernameOrEmailOnChange} />
+                    onChange={this.props.usernameOrEmailOnChange}
+                    autoFocus />
                 <GasJotInput
                     label="Password"
                     type="password"
@@ -19,7 +20,7 @@ export default class LogInForm extends React.Component {
                     value={this.props.passwordVal}
                     onChange={this.props.passwordOnChange} />
                 <Input ref="rememberMe" type="checkbox" label="Remember me" />
-                <Button bsStyle="primary" bsSize="large" block onClick={this.props.onLogin}>Log in</Button>
+                <Button bsStyle="primary" bsSize="large" block onClick={this.props.onLoginClick}>Log in</Button>
             </form>
         );
     }

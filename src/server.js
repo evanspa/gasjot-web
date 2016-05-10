@@ -3,11 +3,9 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { match, RouterContext } from "react-router";
 import Helmet from "react-helmet";
-import routes from "./routes.jsx";
+import routes from "./Routes.jsx";
 
 const app = express();
-
-//app.use(express.static("/Users/PEVANS/Documents/GitHub-repos/gasjot-web/dist/server"));
 
 app.set("views", "./dist/server");
 app.set("view engine", "ejs");

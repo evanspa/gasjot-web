@@ -1,13 +1,15 @@
 import React, { createClass } from "react"
 import { Link } from "react-router"
-import GasJotHelmet from "./common/gasjot-helmet.jsx";
+import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Col, Input, Panel, Button } from "react-bootstrap";
+import GasJotNavbar from "../components/NavBar.jsx"
 
 export default class SignUpPage extends React.Component {
     render() {
         return (
             <div>
                 <GasJotHelmet title="Sign Up" />
+                <div class="container"><GasJotNavbar /></div>
                 <Col md={6} mdOffset={3}>
                     <Panel>
                         <Col md={8} mdOffset={2}>

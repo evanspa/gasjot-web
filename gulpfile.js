@@ -26,7 +26,7 @@ var config = {
         ],
         images:         "./src/images/*",
         favicon:        "./src/favicon.ico",
-        clientRenderJs: "./src/client-render.js",
+        clientRenderJs: "./src/client-render.jsx",
         serverJs:       "./src/server.js",
         clientRenderDist: "./dist/client",
         serverRenderDist: "./dist/server"
@@ -43,7 +43,7 @@ gulp.task("ejs", function() {
 
 gulp.task("js", function() {
     browserify(config.paths.clientRenderJs)
-        .transform(babelify, {presets: ["es2015", "react"]})
+        .transform("babelify", {presets: ["es2015", "react", "stage-2"]})
         .bundle()
         .on("error", console.error.bind(console))
         .pipe(source("bundle.js"))
@@ -52,7 +52,7 @@ gulp.task("js", function() {
     // there doesn't seem to be a way to invoke the browserify task with the
     // 'node' option, so, need to revert to invoking browserify on the command-line
     exec("mkdir -p dist/server");
-    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ babelify --presets [ es2015 react ] ]");
+    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ babelify --presets [ es2015 react stage-2 ] ]");
 });
 
 gulp.task("css", function() {
