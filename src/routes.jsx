@@ -23,6 +23,7 @@ export default function createRoutes(store) {
         }
         return true;
     }
+
     return (
         <Route path="/" component={App}>
             <IndexRoute component={HomePage} />

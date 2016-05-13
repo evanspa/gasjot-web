@@ -15,6 +15,7 @@ class LogInPage extends React.Component {
         this.state = {
             usernameOrEmail: "",
             password: "",
+            rememberMe: false,
             errors: {}
         };
         this.setUsernameOrEmail = this.setUsernameOrEmail.bind(this);
@@ -58,6 +59,11 @@ class LogInPage extends React.Component {
 
     setPassword(event) {
         this.setState({ password: event.target.value });
+    }
+
+    setRememberMe(event) {
+        console.log("inside setRememberMe, event.target.value: [" + event.target.value + "]")
+        this.setState({ rememberMe: event.target.value })
     }
 
     render() {

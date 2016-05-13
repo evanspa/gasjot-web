@@ -1,10 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { LOCATION_CHANGE, routerReducer, routerMiddleware } from 'react-router-redux'
-//import {persistStore, autoRehydrate} from 'redux-persist'
-
 import * as storage from 'redux-storage'
 import createEngine from 'redux-storage-engine-localstorage';
-
 import thunk from 'redux-thunk'
 import userInterface from "../reducers/userInterfaceReducer"
 import { SERVER_SNAPSHOT_RECEIVED } from "../actions/actionTypes"
@@ -12,7 +9,6 @@ import { AUTH_TOKEN_RECEIVED } from "../actions/actionTypes"
 import { USER_URI_RECEIVED } from "../actions/actionTypes"
 import { LOGOUT_REQUEST_SUCCESSFUL } from "../actions/actionTypes"
 import { RESPONSE_STATUS_RECEIVED } from "../actions/actionTypes"
-import * as acs from "../actions/actionCreators"
 
 const initialServerSnapshotState = {
     _links: {},
@@ -25,8 +21,10 @@ const initialServerSnapshotState = {
 }
 
 const initialState = {
-    api: {},
     userInterface: {},
+    authToken: null,
+    userUri: null,
+    api: {},
     serverSnapshot: initialServerSnapshotState
 }
 
@@ -41,7 +39,6 @@ const apiReducer = (state = {}, action) => {
 }
 
 const serverSnapshotReducer = (state = {}, action) => {
-    console.log("inside serverSnapshotReducer, action.type: [" + action.type + "]")
     switch (action.type) {
         case SERVER_SNAPSHOT_RECEIVED:
             return action.serverSnapshot;
@@ -80,20 +77,6 @@ const rootReducer = combineReducers({
     routing: routerReducer
 })
 
-/*export default function configureStore(history) {
-    const engine = createEngine('gasjot');
-    const storageMiddleware = storage.createMiddleware(engine, [ LOCATION_CHANGE ]);
-    const store = compose(
-        applyMiddleware(thunk, routerMiddleware(history), storageMiddleware)
-    )(createStore)(
-        rootReducer,
-        initialState
-    )
-    const load = storage.createLoader(engine);
-    load(store);
-    return store
-}*/
-
 export default function configureStore(history) {
     const engine = createEngine('gasjot');
     const storageMiddleware = storage.createMiddleware(engine, [ LOCATION_CHANGE ]);
@@ -104,11 +87,5 @@ export default function configureStore(history) {
         initialState
     )
     const load = storage.createLoader(engine)
-    load(store)
-        .then((loadedState) => {
-            store.dispatch(acs.receiveAuthenticationToken(loadedState.authToken))
-            store.dispatch(acs.receiveUserUri(loadedState.userUri))
-            store.dispatch(acs.receiveServerSnapshot(loadedState.serverSnapshot))
-        })
-    return store
+    return [store, load]
 }

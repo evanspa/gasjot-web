@@ -4,12 +4,18 @@ import { browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import configureStore from "./store/configureStore"
 import Root from './containers/Root'
+import * as acs from "./actions/actionCreators"
 
-const store = configureStore(hashHistory)
-//const history = syncHistoryWithStore(browserHistory, store)
-const history = syncHistoryWithStore(hashHistory, store)
+const [store, load] = configureStore(hashHistory)
 
-render(
-    <Root store={store} history={history} />,
-    document.getElementById("app")
-)
+load(store)
+    .then((loadedState) => {
+        store.dispatch(acs.receiveAuthenticationToken(loadedState.authToken))
+        store.dispatch(acs.receiveUserUri(loadedState.userUri))
+        store.dispatch(acs.receiveServerSnapshot(loadedState.serverSnapshot))
+        const history = syncHistoryWithStore(hashHistory, store)
+        render(
+            <Root store={store} history={history} />,
+            document.getElementById("app")
+        )
+    })
