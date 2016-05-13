@@ -1,7 +1,7 @@
 import React from "react"
 import { Route, IndexRoute } from "react-router"
 import App from "./containers/App.jsx"
-import AuthHomePage from "./containers/AuthenticatedHomePage.jsx"
+import HomePage from "./containers/HomePage.jsx"
 import UnauthHomePage from "./containers/UnauthenticatedHomePage.jsx"
 import LoggedOutPage from "./containers/LoggedOutPage.jsx"
 import DashboardPage from "./containers/DashboardPage.jsx"
@@ -14,6 +14,7 @@ export default function createRoutes(store) {
 
     function requiresAuthentication(nextState, replace) {
         const state = store.getState()
+        console.log("inside Routes.requiresAuthentication, state.authToken: " + JSON.stringify(state.authToken))
         if (_.isEmpty(state.authToken)) {
             replace({
                 pathname: "/login",
@@ -22,12 +23,9 @@ export default function createRoutes(store) {
         }
         return true;
     }
-
-    const state = store.getState();
-
     return (
         <Route path="/" component={App}>
-            <IndexRoute component={ _.isEmpty(state.authToken) ? UnauthHomePage : AuthHomePage } />
+            <IndexRoute component={HomePage} />
             <Route path="/dashboard" component={DashboardPage} onEnter={requiresAuthentication} />
             <Route path="/welcome" component={UnauthHomePage} />
             <Route path="/signup" component={SignUpPage} />

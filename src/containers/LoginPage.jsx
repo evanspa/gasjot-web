@@ -1,11 +1,12 @@
 import React, { createClass } from "react"
 import { Router, Link } from "react-router"
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import { Col, Panel } from "react-bootstrap";
+import { Col, Panel, Label } from "react-bootstrap";
 import LoginForm from "../components/LoginForm.jsx";
 import { connect } from 'react-redux'
 import { attemptLogin } from "../actions/actionCreators"
 import GasJotNavbar from "../components/NavBar.jsx"
+import _ from "lodash"
 
 class LogInPage extends React.Component {
 
@@ -38,11 +39,16 @@ class LogInPage extends React.Component {
     }
 
     makeLoginClickHandler(doLoginFn) {
+        var nextSuccessPathname = "/";
+        const { location } = this.props
+        if (location.state && location.state.nextPathname) {
+            nextSuccessPathname = location.state.nextPathname
+        }
         return (event) => {
             if (!this.validateForm()) {
                 return;
             }
-            doLoginFn(this.state.usernameOrEmail, this.state.password);
+            doLoginFn(this.state.usernameOrEmail, this.state.password, nextSuccessPathname);
         }
     }
 
@@ -55,7 +61,11 @@ class LogInPage extends React.Component {
     }
 
     render() {
-        const { onLoginClick } = this.props
+        const { onLoginClick, responseStatus } = this.props
+        var serverErrorMessage = null
+        if (!_.isNull(responseStatus) && responseStatus === 401) {
+            serverErrorMessage = <h4><Label bsStyle="danger">Login failed.  Try again.</Label></h4>
+        }
         return (
             <div>
                 <GasJotHelmet title="Log In" />
@@ -64,6 +74,7 @@ class LogInPage extends React.Component {
                     <Panel>
                         <Col md={8} mdOffset={2}>
                             <h1 className="text-center" style={{marginBottom: 20}}>Log in to your Gas Jot account</h1>
+                            { (!_.isNull(serverErrorMessage)) ? serverErrorMessage : "" }
                             <LoginForm
                                 usernameOrEmailVal={this.state.usernameOrEmail}
                                 passwordVal={this.state.password}
@@ -88,14 +99,13 @@ LogInPage.contextTypes = {
 };
 
 const mapStateToProps = (state) => {
-    console.log("state from mapStateToProps: " + JSON.stringify(state))
-    return state;
+    return state.api;
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLoginClick: (usernameOrEmail, password) => {
-            dispatch(attemptLogin(usernameOrEmail, password))
+        onLoginClick: (usernameOrEmail, password, nextSuccessPathname) => {
+            dispatch(attemptLogin(usernameOrEmail, password, nextSuccessPathname))
         }
     }
 }

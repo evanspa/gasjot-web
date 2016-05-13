@@ -1,10 +1,12 @@
 import { LOGIN_REQUEST_INITIATED } from "./actionTypes"
+import { LOGIN_REQUEST_FAILED } from "./actionTypes"
 import { LOGOUT_REQUEST_INITIATED } from "./actionTypes"
 import { LOGOUT_REQUEST_SUCCESSFUL } from "./actionTypes"
 import { LOGOUT_REQUEST_FAILED } from "./actionTypes"
 import { SERVER_SNAPSHOT_RECEIVED } from "./actionTypes"
 import { AUTH_TOKEN_RECEIVED } from "./actionTypes"
 import { USER_URI_RECEIVED } from "./actionTypes"
+import { RESPONSE_STATUS_RECEIVED } from "./actionTypes"
 import { push } from 'react-router-redux'
 import fetch from 'isomorphic-fetch'
 
@@ -13,24 +15,23 @@ export function initiateLoginRequest() {
 }
 
 export function receiveServerSnapshot(serverSnapshot) {
-    return {
-        type: SERVER_SNAPSHOT_RECEIVED,
-        serverSnapshot
-    }
+    return { type: SERVER_SNAPSHOT_RECEIVED, serverSnapshot }
 }
 
 export function receiveAuthenticationToken(authToken) {
-    return {
-        type: AUTH_TOKEN_RECEIVED,
-        authToken
-    }
+    return { type: AUTH_TOKEN_RECEIVED, authToken }
 }
 
 export function receiveUserUri(userUri) {
-    return {
-        type: USER_URI_RECEIVED,
-        userUri
-    }
+    return { type: USER_URI_RECEIVED, userUri }
+}
+
+export function receiveResponseStatus(responseStatus) {
+    return { type: RESPONSE_STATUS_RECEIVED, responseStatus}
+}
+
+export function loginRequestFailed(error) {
+    return { type: LOGIN_REQUEST_INITIATED, error }
 }
 
 export function initiateLogoutRequest() {
@@ -62,7 +63,7 @@ export function logout(logoutUri, authToken) {
     }
 }
 
-export function attemptLogin(usernameOrEmail, password) {
+export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
     return (dispatch) => {
         dispatch(initiateLoginRequest())
         const headers = new Headers()
@@ -82,11 +83,15 @@ export function attemptLogin(usernameOrEmail, password) {
             .then(response => {
                 dispatch(receiveAuthenticationToken(response.headers.get("fp-auth-token")))
                 dispatch(receiveUserUri(response.headers.get("Location")))
+                dispatch(receiveResponseStatus(response.status))
                 return response.json()
             })
             .then(json => {
                 dispatch(receiveServerSnapshot(json))
-                dispatch(push("/"))
+                dispatch(push(nextSuccessPathname))
+            })
+            .catch(error => {
+                dispatch(loginRequestFailed(error))
             })
     }
 }
