@@ -2,8 +2,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { connect } from 'react-redux'
 import { Link } from "react-router"
-import { LinkContainer } from "react-router-bootstrap";
-import { Navbar, Nav, NavItem } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap"
+import { Navbar, Nav, NavItem } from "react-bootstrap"
 import { logout } from "../actions/actionCreators"
 import _ from "lodash"
 
@@ -18,7 +18,6 @@ class GasJotNavbar extends React.Component {
             if (evt.target.tagName !== 'A' || evt.target.classList.contains('dropdown-toggle') || ! collapsibleNav.classList.contains('in')) {
                 return;
             }
-
             btnToggle.click();
         }, false);
     }
@@ -38,9 +37,7 @@ class GasJotNavbar extends React.Component {
         } else {
             nav = (<Nav pullRight>
                 <LinkContainer to={{ pathname: '/' }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
-                <LinkContainer to={{ pathname: '/logout' }} >
-                    <NavItem role="presentation" onClick={() => onLogoutClick(logoutUri, authToken)}>Logout</NavItem>
-                </LinkContainer>
+                <NavItem role="presentation" onClick={() => onLogoutClick(logoutUri, authToken)}>Logout</NavItem>
             </Nav>)
         }
         return (

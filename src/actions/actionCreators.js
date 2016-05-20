@@ -1,50 +1,45 @@
-import { LOGIN_REQUEST_INITIATED } from "./actionTypes"
-import { LOGIN_REQUEST_FAILED } from "./actionTypes"
-import { LOGOUT_REQUEST_INITIATED } from "./actionTypes"
-import { LOGOUT_REQUEST_SUCCESSFUL } from "./actionTypes"
-import { LOGOUT_REQUEST_FAILED } from "./actionTypes"
-import { SERVER_SNAPSHOT_RECEIVED } from "./actionTypes"
-import { AUTH_TOKEN_RECEIVED } from "./actionTypes"
-import { USER_URI_RECEIVED } from "./actionTypes"
-import { RESPONSE_STATUS_RECEIVED } from "./actionTypes"
+import React from "react"
 import { push } from 'react-router-redux'
 import fetch from 'isomorphic-fetch'
+import * as actionTypes from "./actionTypes"
+import {toastr} from 'react-redux-toastr'
+import {actions as toastrActions} from 'react-redux-toastr'
 
 export function initiateLoginRequest() {
-    return { type: LOGIN_REQUEST_INITIATED }
+    return { type: actionTypes.LOGIN_REQUEST_INITIATED }
 }
 
 export function receiveServerSnapshot(serverSnapshot) {
-    return { type: SERVER_SNAPSHOT_RECEIVED, serverSnapshot }
+    return { type: actionTypes.SERVER_SNAPSHOT_RECEIVED, serverSnapshot }
 }
 
 export function receiveAuthenticationToken(authToken) {
-    return { type: AUTH_TOKEN_RECEIVED, authToken }
+    return { type: actionTypes.AUTH_TOKEN_RECEIVED, authToken }
 }
 
 export function receiveUserUri(userUri) {
-    return { type: USER_URI_RECEIVED, userUri }
+    return { type: actionTypes.USER_URI_RECEIVED, userUri }
 }
 
 export function receiveResponseStatus(responseStatus) {
-    return { type: RESPONSE_STATUS_RECEIVED, responseStatus}
+    return { type: actionTypes.RESPONSE_STATUS_RECEIVED, responseStatus}
 }
 
 export function loginRequestFailed(error) {
-    return { type: LOGIN_REQUEST_INITIATED, error }
+    return { type: actionTypes.LOGIN_REQUEST_INITIATED, error }
 }
 
-export function initiateLogoutRequest() {
-    return { type: LOGOUT_REQUEST_INITIATED }
+export function logoutRequestInitiated() {
+    return { type: actionTypes.LOGOUT_REQUEST_INITIATED }
 }
 
-export function logoutRequestSuccessful() {
-    return { type: LOGOUT_REQUEST_SUCCESSFUL }
+export function logoutRequestDone() {
+    return { type: actionTypes.LOGOUT_REQUEST_DONE }
 }
 
 export function logout(logoutUri, authToken) {
     return (dispatch) => {
-        dispatch(initiateLogoutRequest())
+        toastr.info('Processing logout...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
         const headers = new Headers()
         headers.append("Accept-Language", "en-US")
         headers.append("Accept", "application/vnd.fp.user-v0.0.1+json")
@@ -57,19 +52,30 @@ export function logout(logoutUri, authToken) {
         }
         return fetch(logoutUri, init)
             .then(response => {
-                dispatch(logoutRequestSuccessful())
-                dispatch(push("/logout"))
+                dispatch(logoutRequestDone())
+                dispatch(push("/loggedOut"))
+                toastr.clean()
+            })
+            .catch(error => {
+                // because we're not going to 'gracefully' handle this from a user-perspective...because the user can't
+                // really do anything about it, and, because we'll still be deleting from localStorage the authentication
+                // token, we're pretty much good
+                dispatch(logoutRequestDone())
+                dispatch(push("/loggedOut"))
+                toastr.clean()
             })
     }
 }
 
 export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
     return (dispatch) => {
+        toastr.info('Logging you in...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
         dispatch(initiateLoginRequest())
         const headers = new Headers()
         headers.append("Content-Type", "application/vnd.fp.user-v0.0.1+json;charset=UTF-8")
         headers.append("Accept-Language", "en-US")
         headers.append("Accept", "application/vnd.fp.user-v0.0.1+json")
+        headers.append("fp-desired-embedded-format", "id-keyed")
         const requestPayload = {
             "user/username-or-email": usernameOrEmail,
             "user/password": password
@@ -89,8 +95,11 @@ export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
             .then(json => {
                 dispatch(receiveServerSnapshot(json))
                 dispatch(push(nextSuccessPathname))
+                dispatch(toastrActions.clean())
+                toastr.success("Welcome Back", "You are now logged in.", { icon: "icon-check-1", timeOut: 4000 })
             })
             .catch(error => {
+                toastr.clean()
                 dispatch(loginRequestFailed(error))
             })
     }

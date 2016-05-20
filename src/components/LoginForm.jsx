@@ -19,7 +19,6 @@ export default class LogInForm extends React.Component {
                     error={this.props.errors.password}
                     value={this.props.passwordVal}
                     onChange={this.props.passwordOnChange} />
-                <Input ref="rememberMe" type="checkbox" label="Remember me" />
                 <Button bsStyle="primary" bsSize="large" block onClick={this.props.onLoginClick}>Log in</Button>
             </form>
         );

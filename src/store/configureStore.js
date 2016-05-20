@@ -4,11 +4,8 @@ import * as storage from 'redux-storage'
 import createEngine from 'redux-storage-engine-localstorage';
 import thunk from 'redux-thunk'
 import userInterface from "../reducers/userInterfaceReducer"
-import { SERVER_SNAPSHOT_RECEIVED } from "../actions/actionTypes"
-import { AUTH_TOKEN_RECEIVED } from "../actions/actionTypes"
-import { USER_URI_RECEIVED } from "../actions/actionTypes"
-import { LOGOUT_REQUEST_SUCCESSFUL } from "../actions/actionTypes"
-import { RESPONSE_STATUS_RECEIVED } from "../actions/actionTypes"
+import * as actionTypes from "../actions/actionTypes"
+import {reducer as toastrReducer} from 'react-redux-toastr'
 
 const initialServerSnapshotState = {
     _links: {},
@@ -30,19 +27,30 @@ const initialState = {
 
 const apiReducer = (state = {}, action) => {
     switch (action.type) {
-        case RESPONSE_STATUS_RECEIVED:
-            return Object.assign({}, state, { responseStatus: action.responseStatus})
-        case LOGOUT_REQUEST_SUCCESSFUL:
+        case actionTypes.RESPONSE_STATUS_RECEIVED:
+            return Object.assign({}, state, {
+                responseStatus: action.responseStatus,
+                requestInProgressMessage: null
+            })
+        case actionTypes.LOGOUT_REQUEST_DONE:
             return {}
+        case actionTypes.LOGOUT_REQUEST_INITIATED:
+            return Object.assign({}, state, {
+                requestInProgressMessage: "Logging you out..."
+            })
+        case actionTypes.LOGIN_REQUEST_INITIATED:
+            return Object.assign({}, state, {
+                requestInProgressMessage: "Logging you in..."
+            })
     }
     return state
 }
 
 const serverSnapshotReducer = (state = {}, action) => {
     switch (action.type) {
-        case SERVER_SNAPSHOT_RECEIVED:
+        case actionTypes.SERVER_SNAPSHOT_RECEIVED:
             return action.serverSnapshot;
-        case LOGOUT_REQUEST_SUCCESSFUL:
+        case actionTypes.LOGOUT_REQUEST_DONE:
             return initialServerSnapshotState
     }
     return state;
@@ -50,9 +58,9 @@ const serverSnapshotReducer = (state = {}, action) => {
 
 const authTokenReducer = (state = {}, action) => {
     switch (action.type) {
-        case AUTH_TOKEN_RECEIVED:
+        case actionTypes.AUTH_TOKEN_RECEIVED:
             return action.authToken
-        case LOGOUT_REQUEST_SUCCESSFUL:
+        case actionTypes.LOGOUT_REQUEST_DONE:
             return null
     }
     return state;
@@ -60,15 +68,16 @@ const authTokenReducer = (state = {}, action) => {
 
 const userUri = (state = {}, action) => {
     switch (action.type) {
-        case USER_URI_RECEIVED:
+        case actionTypes.USER_URI_RECEIVED:
             return action.userUri
-        case LOGOUT_REQUEST_SUCCESSFUL:
+        case actionTypes.LOGOUT_REQUEST_DONE:
             return null
     }
     return state;
 }
 
 const rootReducer = combineReducers({
+    toastr: toastrReducer,
     userInterface,
     authToken: authTokenReducer,
     userUri,

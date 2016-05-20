@@ -1,11 +1,13 @@
 "use strict";
 
 var gulp = require("gulp");
+var path = require("path")
 var rename = require("gulp-rename");
 var open = require("gulp-open"); //Open a URL in a web browser
 var browserify = require("browserify"); // Bundles JS
 var babelify = require("babelify");
 var source = require("vinyl-source-stream"); // Use conventional text streams with Gulp
+var less = require("gulp-less");
 var concat = require("gulp-concat"); //Concatenates files
 var lint = require("gulp-eslint"); //Lint JS files, including JSX
 var exec = require('child_process').exec;
@@ -18,6 +20,12 @@ var config = {
         js:   [
             "./src/**/*.js",
             "./src/**/*.jsx"
+        ],
+        fonts: [
+            "./src/fonts/*"
+        ],
+        less: [
+            "./src/less/**/*.less"
         ],
         css: [
             "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -66,6 +74,20 @@ gulp.task("images", function() {
         .pipe(gulp.dest(config.paths.clientRenderDist + "/images"));
 });
 
+gulp.task('less', function () {
+    return gulp.src(config.paths.less)
+        .pipe(less({
+            paths: [ path.join(__dirname, 'less', 'includes') ]
+        }))
+        .pipe(gulp.dest(config.paths.clientRenderDist + "/css"));
+});
+
+
+gulp.task("fonts", function() {
+    gulp.src(config.paths.fonts)
+        .pipe(gulp.dest(config.paths.clientRenderDist + "/fonts"));
+});
+
 gulp.task("lint", function() {
     return gulp.src(config.paths.js)
         .pipe(lint({config: "eslint.config.json"}))
@@ -78,4 +100,4 @@ gulp.task("watch", function() {
     gulp.watch(config.paths.js, ["js", "lint"]);
 });
 
-gulp.task("default", ["ejs", "js", "css", "lint", "watch"]);
+gulp.task("default", ["ejs", "js", "fonts", "css", "less", "images", "lint", "watch"]);

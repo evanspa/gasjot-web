@@ -15,7 +15,6 @@ class LogInPage extends React.Component {
         this.state = {
             usernameOrEmail: "",
             password: "",
-            rememberMe: false,
             errors: {}
         };
         this.setUsernameOrEmail = this.setUsernameOrEmail.bind(this);
@@ -61,9 +60,11 @@ class LogInPage extends React.Component {
         this.setState({ password: event.target.value });
     }
 
-    setRememberMe(event) {
-        console.log("inside setRememberMe, event.target.value: [" + event.target.value + "]")
-        this.setState({ rememberMe: event.target.value })
+    componentWillReceiveProps(nextProps) {
+        const { responseStatus } = nextProps
+        if (!_.isNull(responseStatus) && responseStatus === 401) {
+            this.setState({ password: "" })
+        }
     }
 
     render() {

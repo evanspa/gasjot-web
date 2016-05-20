@@ -1,6 +1,6 @@
 body {
-  padding-top: 20px;
-  padding-bottom: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .navbar {
@@ -8,8 +8,8 @@ body {
 }
 
 .navbar-default {
-  background-color: #275d90;
-  border-color: #71a0ec;
+    background-color: #275d90;
+    border-color: #71a0ec;
 }
 
 .navbar .container-fluid {
@@ -21,25 +21,25 @@ body {
 }
 
 .navbar-header {
-  background-color: #275d90;
+    background-color: #275d90;
 }
 
 .navbar-default .navbar-brand {
-  color: #ecf0f1;
+    color: #ecf0f1;
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-  color: #d1d5e3;
+    color: #d1d5e3;
 }
 .navbar-default .navbar-text {
-  color: #ecf0f1;
+    color: #ecf0f1;
 }
 .navbar-default .navbar-nav > li > a {
-  color: #ecf0f1;
+    color: #ecf0f1;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-  color: #d1d5e3;
+    color: #d1d5e3;
 }
 
 /* https://github.com/reactjs/react-router/issues/666#issuecomment-158369519 */
@@ -49,51 +49,56 @@ body {
 .navbar-default  .navbar-nav > li > a.active,
 .navbar-default  .navbar-nav > li > a:hover.active,
 .navbar-default  .navbar-nav > li > a:focus.active {
-  color: #d1d5e3;
-  background-color: #71a0ec;
-  background-image: none;
+    color: #d1d5e3;
+    background-color: #71a0ec;
+    background-image: none;
 }
 
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
-  color: #d1d5e3;
-  background-color: #71a0ec;
-  background-image: none;
+    color: #d1d5e3;
+    background-color: #71a0ec;
+    background-image: none;
 }
 .navbar-default .navbar-toggle {
-  border-color: #71a0ec;
+    border-color: #71a0ec;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
-  background-color: #71a0ec;
+    background-color: #71a0ec;
 }
 .navbar-default .navbar-toggle .icon-bar {
-  background-color: #ecf0f1;
+    background-color: #ecf0f1;
 }
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
-  border-color: #ecf0f1;
+    border-color: #ecf0f1;
 }
 .navbar-default .navbar-link {
-  color: #ecf0f1;
+    color: #ecf0f1;
 }
 .navbar-default .navbar-link:hover {
-  color: #d1d5e3;
+    color: #d1d5e3;
 }
 
 @media (max-width: 767px) {
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-    color: #d1d5e3;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #d1d5e3;
-    background-color: #71a0ec;
-  }
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: #ecf0f1;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #d1d5e3;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #d1d5e3;
+        background-color: #71a0ec;
+    }
+}
+
+.entityFieldName {
+    background-color: #B0C4DE;
+    text-align: right;
 }
