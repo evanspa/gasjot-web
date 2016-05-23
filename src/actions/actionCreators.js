@@ -6,7 +6,7 @@ import {toastr} from 'react-redux-toastr'
 import {actions as toastrActions} from 'react-redux-toastr'
 
 export function initiateLoginRequest() {
-    return { type: actionTypes.LOGIN_REQUEST_INITIATED }
+    return { type: actionTypes.REQUEST_LOGIN_INITIATED }
 }
 
 export function receiveServerSnapshot(serverSnapshot) {
@@ -35,6 +35,10 @@ export function logoutRequestInitiated() {
 
 export function logoutRequestDone() {
     return { type: actionTypes.LOGOUT_REQUEST_DONE }
+}
+
+export function markVehicleForEdit(vehicleId) {
+    return { type: actionTypes.MARK_VEHICLE_FOR_EDIT, vehicleId }
 }
 
 export function logout(logoutUri, authToken) {
@@ -104,7 +108,3 @@ export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
             })
     }
 }
-
-
-
-

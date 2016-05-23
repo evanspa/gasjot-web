@@ -1,81 +1,83 @@
 import React from "react"
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import { Button, Table, Col } from "react-bootstrap";
+import FormattedBoolean from "../components/FormattedBoolean.jsx"
+import { push } from 'react-router-redux'
+import { Grid, Label, Button, Table, Row, Col } from "react-bootstrap";
+import { Panel, FormattedMessage, FormattedRelative, FormattedDate } from 'react-intl';
 import { Link } from "react-router"
 import GasJotNavbar from "../components/NavBar.jsx"
 import { connect } from 'react-redux'
-import moment from "moment"
+import { markVehicleForEdit } from "../actions/actionCreators"
+import SmallModal from "../components/SmallModal.jsx"
+import * as strs from "../strings"
+import {FieldRow} from "../Components/Field.jsx"
 
 class VehicleDetailPage extends React.Component {
+
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            showModal: false,
+            modalTitle: null,
+            modalContent: null
+        };
+    }
+
     render() {
         const vehiclePayload = this.props.vehicle.payload
-        const createdAt = moment(vehiclePayload['fpvehicle/created-at'])
-        const updatedAt = moment(vehiclePayload['fpvehicle/updated-at'])
+        const { markVehicleForEdit } = this.props
+        let modalClose = () => this.setState({ showModal: false })
         return (
             <div>
                 <GasJotHelmet title="Vehicle Detail Page" />
                 <div class="container"><GasJotNavbar /></div>
-                <Col md={8} mdOffset={2}>
-                    <Link to="/">back to vehicles</Link>
-                    <h3>Vehicle Details</h3>
-                    <Button style={{marginBottom: 10}} bsStyle="primary">Edit</Button>
-                    <Table bordered>
-                        <colgroup>
-                            <col width="40%"/>
-                            <col width="60%" />
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                <th className="entityFieldName">Name</th>
-                                <td>{vehiclePayload['fpvehicle/name']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Plate #</th>
-                                <td>{vehiclePayload['fpvehicle/plate']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">VIN</th>
-                                <td>{vehiclePayload['fpvehicle/vin']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Fuel capacity</th>
-                                <td>{vehiclePayload['fpvehicle/fuel-capacity']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Default octane</th>
-                                <td>{vehiclePayload['fpvehicle/default-octane']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Takes diesel?</th>
-                                <td>{vehiclePayload['fpvehicle/is-diesel']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Has MPG readout?</th>
-                                <td>{vehiclePayload['fpvehicle/has-mpg-readout']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Has MPH readout?</th>
-                                <td>{vehiclePayload['fpvehicle/has-mph-readout']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Has range (DTE) readout?</th>
-                                <td>{vehiclePayload['fpvehicle/has-dte-readout']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Has outside temp readout?</th>
-                                <td>{vehiclePayload['fpvehicle/has-outside-temp-readout']}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Created at</th>
-                                <td>{createdAt.format("MM/DD/YYYY h:mm:ss a")}</td>
-                            </tr>
-                            <tr>
-                                <th className="entityFieldName">Updated at</th>
-                                <td>{updatedAt.format("MM/DD/YYYY h:mm:ss a")}</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-                </Col>
+                <Grid>
+                    <Row>
+                        <Col xs={12}>
+                            <Link to="/">back to vehicles</Link>
+                            <h3>Vehicle Details</h3>
+                            <Button style={{marginBottom: 10}} bsStyle="primary" onClick={() => markVehicleForEdit(vehiclePayload['fpvehicle/id'])}>Edit</Button>
+                            <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+                        </Col>
+                    </Row>
+                    <Row><Col xs={12}><hr /></Col></Row>
+                    <FieldRow
+                        fieldName="Name"
+                        fieldValue={vehiclePayload['fpvehicle/name']} />
+                    <FieldRow
+                        fieldName="Plate #"
+                        fieldValue={vehiclePayload['fpvehicle/plate']} />
+                    <FieldRow
+                        fieldName="VIN"
+                        fieldValue={vehiclePayload['fpvehicle/vin']} />
+                    <FieldRow
+                        fieldName="Fuel capacity"
+                        fieldValue={vehiclePayload['fpvehicle/fuel-capacity']} />
+                    <FieldRow
+                        fieldName="Default octane"
+                        fieldValue={vehiclePayload['fpvehicle/default-octane']} />
+                    <FieldRow
+                        fieldName="Takes diesel?"
+                        fieldValue={<FormattedBoolean value={vehiclePayload['fpvehicle/is-diesel']} />} />
+                    <FieldRow
+                        fieldName={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_mpg_readout_lbl, modalContent: strs.has_mpg_readout_explanation})}>{strs.has_mpg_readout_lbl}</a>}
+                        fieldValue={<FormattedBoolean value={vehiclePayload['fpvehicle/has-mpg-readout']} />} />
+                    <FieldRow
+                        fieldName={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_mph_readout_lbl, modalContent: strs.has_mph_readout_explanation})}>{strs.has_mph_readout_lbl}</a>}
+                        fieldValue={<FormattedBoolean value={vehiclePayload['fpvehicle/has-mph-readout']} />} />
+                    <FieldRow
+                        fieldName={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_dte_readout_lbl, modalContent: strs.has_dte_readout_explanation})}>{strs.has_dte_readout_lbl}</a>}
+                        fieldValue={<FormattedBoolean value={vehiclePayload['fpvehicle/has-dte-readout']} />} />
+                    <FieldRow
+                        fieldName={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_outside_temp_readout_lbl, modalContent: strs.has_outside_temp_readout_explanation})}>{strs.has_outside_temp_readout_lbl}</a>}
+                        fieldValue={<FormattedBoolean value={vehiclePayload['fpvehicle/has-outside-temp-readout']} />} />
+                    <FieldRow
+                        fieldName="Created at"
+                        fieldValue={<span><FormattedRelative value={vehiclePayload['fpvehicle/created-at']} /> &middot; <Label><FormattedDate value={vehiclePayload['fpvehicle/created-at']} /></Label></span>} />
+                    <FieldRow
+                        fieldName="Updated at"
+                        fieldValue={<span><FormattedRelative value={vehiclePayload['fpvehicle/updated-at']} /> &middot; <Label><FormattedDate value={vehiclePayload['fpvehicle/updated-at']} /></Label></span>} />
+                </Grid>
             </div>
         )
     }
@@ -89,8 +91,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLoginClick: (usernameOrEmail, password, nextSuccessPathname) => {
-            dispatch(attemptLogin(usernameOrEmail, password, nextSuccessPathname))
+        markVehicleForEdit: (vehicleId) => {
+            dispatch(markVehicleForEdit(vehicleId))
+            dispatch(push("/vehicles/" + vehicleId + "/edit"))
         }
     }
 }
