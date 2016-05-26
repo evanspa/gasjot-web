@@ -6,7 +6,7 @@ import {toastr} from 'react-redux-toastr'
 import {actions as toastrActions} from 'react-redux-toastr'
 
 export function initiateLoginRequest() {
-    return { type: actionTypes.REQUEST_LOGIN_INITIATED }
+    return { type: actionTypes.LOGIN_REQUEST_INITIATED }
 }
 
 export function receiveServerSnapshot(serverSnapshot) {

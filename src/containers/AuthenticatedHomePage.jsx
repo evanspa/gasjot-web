@@ -53,6 +53,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         vehicleRowOnClick: (vehicleId) => {
+            console.log("i'm here - 0")
             dispatch(push("/vehicles/" + vehicleId))
         }
     }

@@ -3,7 +3,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import FormattedBoolean from "../components/FormattedBoolean.jsx"
 import { push } from 'react-router-redux'
 import { Grid, Label, Button, Table, Row, Col } from "react-bootstrap";
-import { Panel, FormattedMessage, FormattedRelative, FormattedDate } from 'react-intl';
+import { Panel, FormattedRelative, FormattedDate } from 'react-intl';
 import { Link } from "react-router"
 import GasJotNavbar from "../components/NavBar.jsx"
 import { connect } from 'react-redux'
