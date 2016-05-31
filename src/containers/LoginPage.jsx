@@ -1,5 +1,6 @@
 import React, { createClass } from "react"
 import { Router, Link } from "react-router"
+import { push } from 'react-router-redux'
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Col, Panel, Label } from "react-bootstrap";
 import LoginForm from "../components/LoginForm.jsx";
@@ -46,9 +47,10 @@ class LogInPage extends React.Component {
         }
         return (event) => {
             if (!this.validateForm()) {
-                return;
+
             }
             doLoginFn(this.state.usernameOrEmail, this.state.password, nextSuccessPathname);
+            event.preventDefault();
         }
     }
 
@@ -68,7 +70,7 @@ class LogInPage extends React.Component {
     }
 
     render() {
-        const { onLoginClick, responseStatus } = this.props
+        const { onLoginClick, responseStatus, requestInProgress } = this.props
         var serverErrorMessage = null
         if (!_.isNull(responseStatus) && responseStatus === 401) {
             serverErrorMessage = <h4><Label bsStyle="danger">Login failed.  Try again.</Label></h4>
@@ -76,7 +78,7 @@ class LogInPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Log In" />
-                <div class="container"><GasJotNavbar /></div>
+                <div className="container"><GasJotNavbar /></div>
                 <Col md={6} mdOffset={3}>
                     <Panel>
                         <Col md={8} mdOffset={2}>
@@ -88,6 +90,7 @@ class LogInPage extends React.Component {
                                 usernameOrEmailOnChange={this.setUsernameOrEmail}
                                 passwordOnChange={this.setPassword}
                                 onLoginClick={this.makeLoginClickHandler(onLoginClick)}
+                                requestInProgress={requestInProgress}
                                 errors={this.state.errors} />
                             <hr />
                             <p style={{paddingBottom: 10}}>Don't have an account?  <Link to="/signup">Sign up.</Link></p>

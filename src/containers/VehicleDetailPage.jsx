@@ -31,13 +31,13 @@ class VehicleDetailPage extends React.Component {
             <div>
                 <GasJotHelmet title="Vehicle Detail Page" />
                 <div class="container"><GasJotNavbar /></div>
-                <Grid>
+                <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+                <Col xs={8} xsOffset={2}>
                     <Row>
                         <Col xs={12}>
                             <Link to="/">back to vehicles</Link>
                             <h3>Vehicle Details</h3>
-                            <Button style={{marginBottom: 10}} bsStyle="primary" onClick={() => markVehicleForEdit(vehiclePayload['fpvehicle/id'])}>Edit</Button>
-                            <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+                            <Button style={{marginTop: 5}} bsStyle="primary" onClick={() => markVehicleForEdit(vehiclePayload['fpvehicle/id'])}>Edit</Button>
                         </Col>
                     </Row>
                     <Row><Col xs={12}><hr /></Col></Row>
@@ -77,7 +77,7 @@ class VehicleDetailPage extends React.Component {
                     <FieldRow
                         fieldName="Updated at"
                         fieldValue={<span><FormattedRelative value={vehiclePayload['fpvehicle/updated-at']} /> &middot; <Label><FormattedDate value={vehiclePayload['fpvehicle/updated-at']} /></Label></span>} />
-                </Grid>
+                </Col>
             </div>
         )
     }

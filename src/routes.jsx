@@ -9,16 +9,22 @@ import LoggedOutPage from "./containers/LoggedOutPage.jsx"
 import DashboardPage from "./containers/DashboardPage.jsx"
 import NotFoundPage from "./containers/NotFoundPage.jsx"
 import LoginPage from "./containers/LoginPage.jsx"
+import RedirectPage from "./containers/RedirectPage.jsx"
 import SignUpPage from "./containers/SignUpPage.jsx"
 import _ from "lodash"
 
-export default function createRoutes(store) {
+export default function createRoutes(store, isServer) {
 
     function requiresAuthentication(nextState, replace) {
         const state = store.getState()
-        if (_.isEmpty(state.authToken)) {
+        if (!isServer && _.isEmpty(state.authToken)) {
             replace({
                 pathname: "/login",
+                state: { nextPathname: nextState.location.pathname }
+            })
+        } else if (isServer) {
+            replace({
+                pathname: "/redirect?nextPathname=" + nextState.location.pathname,
                 state: { nextPathname: nextState.location.pathname }
             })
         }
@@ -36,6 +42,7 @@ export default function createRoutes(store) {
             <Route path="/signup" component={SignUpPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/loggedOut" component={LoggedOutPage} />
+            <Route path="/redirect" component={RedirectPage} />
             <Route path="*" component={NotFoundPage} />
         </Route>
     )

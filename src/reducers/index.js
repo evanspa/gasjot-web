@@ -1,15 +1,17 @@
 import {reducer as toastrReducer} from 'react-redux-toastr'
 import { routerReducer } from 'react-router-redux'
 import { combineReducers } from 'redux'
-import {authTokenReducer, apiReducer, serverSnapshotReducer} from "./Reducers"
+import { authTokenReducer, apiReducer, serverSnapshotReducer, entityIdInContextReducer } from "./Reducers"
 import * as actionTypes from "../actions/actionTypes"
+import { reducer as formReducer } from "redux-form"
+import _ from "lodash"
 
-const userUri = (state = {}, action) => {
+const userUriReducer = (state = {}, action) => {
     switch (action.type) {
-        case actionTypes.USER_URI_RECEIVED:
-            return action.userUri
-        case actionTypes.LOGOUT_REQUEST_DONE:
-            return null
+    case actionTypes.USER_URI_RECEIVED:
+        return _.isEmpty(action.userUri) ? state : action.userUri
+    case actionTypes.LOGOUT_REQUEST_DONE:
+        return null
     }
     return state;
 }
@@ -17,10 +19,12 @@ const userUri = (state = {}, action) => {
 export const rootReducer = combineReducers({
     toastr: toastrReducer,
     authToken: authTokenReducer,
-    userUri,
+    userUri: userUriReducer,
     api: apiReducer,
     serverSnapshot: serverSnapshotReducer,
-    routing: routerReducer
+    routing: routerReducer,
+    form: formReducer,
+    entityIdInContext: entityIdInContextReducer
 })
 
 export default rootReducer

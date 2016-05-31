@@ -11,10 +11,10 @@ const FieldNameXs = 6
 const FieldValueXs = 6
 
 const FieldNameMdOffset = 0
-const FieldNameMd = 3
-const FieldValueMd = 9
+const FieldNameMd = 4
+const FieldValueMd = 8
 
-const FieldNameCol = ({value}) => {
+export const FieldNameCol = ({value}) => {
     return (
         <Col xs={FieldNameXs}
              xsOffset={FieldNameXsOffset}
@@ -26,12 +26,22 @@ const FieldNameCol = ({value}) => {
     )
 }
 
-const FieldValueCol = ({value}) => {
+export const FieldValueCol = ({value}) => {
     return (
         <Col xs={FieldValueXs}
              md={FieldValueMd}
              style={{paddingTop: PaddingTop, paddingBottom: PaddingBottom, marginTop: MarginTop, marginBottom: MarginBottom}}>
             {value}
+        </Col>
+    )
+}
+
+export const FieldElementCol = (props) => {
+    return (
+        <Col xs={FieldValueXs}
+             md={FieldValueMd}
+             style={{paddingTop: PaddingTop, paddingBottom: PaddingBottom, marginTop: MarginTop, marginBottom: MarginBottom}}>
+            {props.children}
         </Col>
     )
 }

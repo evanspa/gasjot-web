@@ -1,9 +1,18 @@
 import express from "express";
 import React from "react";
+import { browserHistory } from 'react-router'
+import { createStore, applyMiddleware, compose } from 'redux'
+import { Provider } from 'react-redux';
+import { routerMiddleware } from 'react-router-redux'
 import { renderToString } from "react-dom/server";
 import { match, RouterContext } from "react-router";
+import rootReducer from "./reducers/index"
+import thunk from 'redux-thunk'
 import Helmet from "react-helmet";
-import routes from "./Routes.jsx";
+import { initialState } from "./store/configureStore"
+import createRoutes from "./Routes.jsx";
+import {IntlProvider} from 'react-intl';
+import ReduxToastr from 'react-redux-toastr'
 
 const app = express();
 
@@ -11,7 +20,14 @@ app.set("views", "./dist/server");
 app.set("view engine", "ejs");
 
 app.get("*", (req, res) => {
-    // routes is our object of React routes defined above
+    const store = compose(
+        applyMiddleware(thunk, routerMiddleware(browserHistory))
+    )(createStore)(
+        rootReducer,
+        initialState
+    )
+    const routes = createRoutes(store, true);
+
     match({ routes, location: req.url }, (err, redirectLocation, props) => {
         if (err) {
             // something went badly wrong, so 500 with a message
@@ -20,9 +36,18 @@ app.get("*", (req, res) => {
             // we matched a ReactRouter redirect, so redirect from the server
             res.redirect(302, redirectLocation.pathname + redirectLocation.search);
         } else if (props) {
-            // if we got props, that means we found a valid component to render
-            // for the given route
-            const renderedAppBody = renderToString(<RouterContext {...props} />);
+            const initialView = (
+                <Provider store={store}>
+                    <IntlProvider locale="en">
+                        <div>
+                            <RouterContext {...props} />
+                            <ReduxToastr position="top-left" />
+                        </div>
+                    </IntlProvider>
+                </Provider>
+            );
+            //const renderedAppBody = renderToString(<RouterContext {...props} />);
+            const renderedAppBody = renderToString(initialView);
             let head = Helmet.rewind();
 
             // render `index.ejs`, but pass in the markup we want it to display

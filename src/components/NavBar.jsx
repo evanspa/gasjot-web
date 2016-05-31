@@ -24,8 +24,6 @@ class GasJotNavbar extends React.Component {
 
     render() {
         const { authToken, onLogoutClick, logoutUri } = this.props
-        //console.log("in NavBar.render, authToken: [" + authToken + "]")
-        //console.log("in NavBar.render, logoutUri: [" + logoutUri + "]")
         var nav
         if (_.isEmpty(authToken)) {
             nav = (<Nav pullRight>

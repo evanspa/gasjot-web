@@ -7,7 +7,6 @@ import UnauthHomePage from "./UnauthenticatedHomePage.jsx"
 class HomePage extends React.Component {
     render() {
         const { authToken } = this.props
-
         if (_.isEmpty(authToken)) {
             return <UnauthHomePage />
         } else {

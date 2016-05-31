@@ -4,13 +4,14 @@ import * as storage from 'redux-storage'
 import createEngine from 'redux-storage-engine-localstorage';
 import thunk from 'redux-thunk'
 import rootReducer from "../reducers/index"
-import {initialServerSnapshotState} from "../reducers/Reducers"
+import {initialServerSnapshotState, initialApiState} from "../reducers/Reducers"
 
-const initialState = {
+export const initialState = {
     authToken: null,
     userUri: null,
-    api: {},
-    serverSnapshot: initialServerSnapshotState
+    api: initialApiState,
+    serverSnapshot: initialServerSnapshotState,
+    entityIdInContext: null
 }
 
 export default function configureStore(history) {

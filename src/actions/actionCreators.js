@@ -1,9 +1,12 @@
 import React from "react"
-import { push } from 'react-router-redux'
+import { push, goBack } from 'react-router-redux'
 import fetch from 'isomorphic-fetch'
 import * as actionTypes from "./actionTypes"
 import {toastr} from 'react-redux-toastr'
 import {actions as toastrActions} from 'react-redux-toastr'
+
+const LOGIN_URI = "http://www.jotyourself.com/gasjot/d/login"
+const FP_AUTH_TOKEN_HEADER = "fp-auth-token"
 
 export function initiateLoginRequest() {
     return { type: actionTypes.LOGIN_REQUEST_INITIATED }
@@ -11,6 +14,10 @@ export function initiateLoginRequest() {
 
 export function receiveServerSnapshot(serverSnapshot) {
     return { type: actionTypes.SERVER_SNAPSHOT_RECEIVED, serverSnapshot }
+}
+
+export function receiveServerVehicle(serverVehicle) {
+    return { type: actionTypes.SERVER_VEHICLE_RECEIVED, serverVehicle }
 }
 
 export function receiveAuthenticationToken(authToken) {
@@ -41,21 +48,58 @@ export function markVehicleForEdit(vehicleId) {
     return { type: actionTypes.MARK_VEHICLE_FOR_EDIT, vehicleId }
 }
 
+export function apiRequestInitiated() {
+    return { type: actionTypes.API_REQUEST_INITIATED }
+}
+
+export function apiRequestDone() {
+    return { type: actionTypes.API_REQUEST_DONE }
+}
+
+const makeMediaType = entityName => "application/vnd.fp." + entityName + "-v0.0.1+json"
+const makeContentType = (mediaType, charset) => mediaType + ";charset=" + charset
+
+const charset = "UTF-8"
+
+const userMediaType = makeMediaType("user")
+const userContentType = makeContentType(userMediaType, charset)
+
+const vehicleMediaType = makeMediaType("vehicle")
+const vehicleContentType = makeContentType(vehicleMediaType, charset)
+
+const appendCommonHeaders = (headers, mediaType) => {
+    headers.append("Accept-Language", "en-US")
+    headers.append("Accept", mediaType)
+}
+
+const appendAuthenticatedCommonHeaders = (headers, mediaType, authToken) => {
+    appendCommonHeaders(headers, mediaType)
+    headers.append("Authorization", "fp-auth fp-token=\"" + authToken + "\"")
+}
+
+const appendContentType = (headers, contentType) => {
+    headers.append("Content-Type", contentType)
+}
+
+const initForFetch = (headers, payload, method) => ({
+    method: method,
+    headers,
+    body: JSON.stringify(payload)
+})
+
+const postInitForFetch = (headers, payload) => initForFetch(headers, payload, "POST")
+const putInitForFetch = (headers, payload) => initForFetch(headers, payload, "PUT")
+
 export function logout(logoutUri, authToken) {
     return (dispatch) => {
         toastr.info('Processing logout...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
         const headers = new Headers()
-        headers.append("Accept-Language", "en-US")
-        headers.append("Accept", "application/vnd.fp.user-v0.0.1+json")
-        headers.append("Content-Type", "application/vnd.fp.user-v0.0.1+json;charset=UTF-8")
-        headers.append("Authorization", "fp-auth fp-token=\"" + authToken + "\"")
-        const init = {
-            method: "POST",
-            headers,
-            body: JSON.stringify({})
-        }
-        return fetch(logoutUri, init)
+        appendContentType(headers, userContentType)
+        appendAuthenticatedCommonHeaders(headers, userMediaType, authToken)
+        return fetch(logoutUri, postInitForFetch(headers, {}))
             .then(response => {
+                dispatch(apiRequestDone())
                 dispatch(logoutRequestDone())
                 dispatch(push("/loggedOut"))
                 toastr.clean()
@@ -64,6 +108,7 @@ export function logout(logoutUri, authToken) {
                 // because we're not going to 'gracefully' handle this from a user-perspective...because the user can't
                 // really do anything about it, and, because we'll still be deleting from localStorage the authentication
                 // token, we're pretty much good
+                dispatch(apiRequestDone())
                 dispatch(logoutRequestDone())
                 dispatch(push("/loggedOut"))
                 toastr.clean()
@@ -74,24 +119,20 @@ export function logout(logoutUri, authToken) {
 export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
     return (dispatch) => {
         toastr.info('Logging you in...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
         dispatch(initiateLoginRequest())
         const headers = new Headers()
-        headers.append("Content-Type", "application/vnd.fp.user-v0.0.1+json;charset=UTF-8")
-        headers.append("Accept-Language", "en-US")
-        headers.append("Accept", "application/vnd.fp.user-v0.0.1+json")
+        appendContentType(headers, userContentType)
+        appendCommonHeaders(headers, userMediaType)
         headers.append("fp-desired-embedded-format", "id-keyed")
         const requestPayload = {
             "user/username-or-email": usernameOrEmail,
             "user/password": password
         };
-        const init = {
-            method: "POST",
-            headers,
-            body: JSON.stringify(requestPayload)
-        }
-        return fetch("http://www.jotyourself.com/gasjot/d/login", init)
+        return fetch(LOGIN_URI, postInitForFetch(headers, requestPayload))
             .then(response => {
-                dispatch(receiveAuthenticationToken(response.headers.get("fp-auth-token")))
+                dispatch(apiRequestDone())
+                dispatch(receiveAuthenticationToken(response.headers.get(FP_AUTH_TOKEN_HEADER)))
                 dispatch(receiveUserUri(response.headers.get("Location")))
                 dispatch(receiveResponseStatus(response.status))
                 return response.json()
@@ -103,8 +144,54 @@ export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
                 toastr.success("Welcome Back", "You are now logged in.", { icon: "icon-check-1", timeOut: 4000 })
             })
             .catch(error => {
+                dispatch(apiRequestDone())
                 toastr.clean()
                 dispatch(loginRequestFailed(error))
+            })
+    }
+}
+
+const vehicleRequestPayload = form => {
+    var payload = {}
+    if (form.name.value != null) {
+        payload["fpvehicle/name"] = form.name.value
+    }
+    return payload
+}
+
+export function attemptSaveVehicle(vehicleId) {
+    return (dispatch, getState) => {
+        toastr.info('Saving vehicle...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        console.log("inside attemptSaveVehicle(" + vehicleId + ")")
+        dispatch(apiRequestInitiated())
+        dispatch({
+            type: actionTypes.SAVE_ENTITY_REQUEST_INITIATED,
+            entityId: vehicleId
+        })
+        const state = getState()
+        const headers = new Headers()
+        appendContentType(headers, vehicleContentType)
+        appendAuthenticatedCommonHeaders(headers, vehicleMediaType, state.authToken)
+        const vehicleUri = state.serverSnapshot._embedded.vehicles[vehicleId].location
+        console.log("inside attemptSaveVehicle, vehicleUri: [" + vehicleUri + "]")
+        const requestPayload = vehicleRequestPayload(state.form.vehicleEdit)
+        console.log("inside attemptSaveVehicle, requestPayload: " + JSON.stringify(requestPayload))
+        return fetch(vehicleUri, putInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiRequestDone())
+                dispatch(receiveResponseStatus(response.status))
+                return response.json()
+            })
+            .then(json => {
+                dispatch(toastrActions.clean())
+                dispatch(receiveServerVehicle(json))
+                dispatch(goBack())
+                toastr.success("Vehicle saved.", { icon: "icon-check-1", timeOut: 4000 })
+            })
+            .catch(error => {
+                dispatch(apiRequestDone())
+                toastr.clean()
+                toastr.error("Vehicle save failed.")
             })
     }
 }

@@ -1,25 +1,25 @@
 import React, { createClass } from "react"
-import { Input, Button } from "react-bootstrap";
-import GasJotInput from "./formInput.jsx";
+import { Button } from "react-bootstrap";
+import GasJotInput from "./FormInput.jsx";
 
 export default class LogInForm extends React.Component {
     render() {
         return (
-            <form>
+            <form onSubmit={this.props.onLoginClick}>
                 <GasJotInput
                     label="Username or Email address"
                     type="text"
                     error={this.props.errors.usernameOrEmail}
                     value={this.props.usernameOrEmailVal}
                     onChange={this.props.usernameOrEmailOnChange}
-                    autoFocus />
+                    autoFocus={true} />
                 <GasJotInput
                     label="Password"
                     type="password"
                     error={this.props.errors.password}
                     value={this.props.passwordVal}
                     onChange={this.props.passwordOnChange} />
-                <Button bsStyle="primary" bsSize="large" block onClick={this.props.onLoginClick}>Log in</Button>
+                <Button type="submit" bsStyle="primary" bsSize="large" disabled={this.props.requestInProgress} block>Log in submit</Button>
             </form>
         );
     }
