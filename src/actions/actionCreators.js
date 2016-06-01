@@ -151,18 +151,36 @@ export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
     }
 }
 
+const populateIfNotNull = (form, formKey, target, targetKey, transformer = null) => {
+    if (form[formKey].value != null) {
+        if (form[formKey].touched) {
+            if (transformer != null) {
+                target[targetKey] = transformer(form[formKey].value)
+            } else {
+                target[targetKey] = form[formKey].value
+            }
+        }
+    }
+}
+
 const vehicleRequestPayload = form => {
     var payload = {}
-    if (form.name.value != null) {
-        payload["fpvehicle/name"] = form.name.value
-    }
+    populateIfNotNull(form, "name",                  payload, "fpvehicle/name");
+    populateIfNotNull(form, "plate",                 payload, "fpvehicle/plate");
+    populateIfNotNull(form, "vin",                   payload, "fpvehicle/vin");
+    populateIfNotNull(form, "fuelCapacity",          payload, "fpvehicle/fuel-capacity", _.toNumber);
+    populateIfNotNull(form, "defaultOctane",         payload, "fpvehicle/default-octane", _.toNumber);
+    populateIfNotNull(form, "takesDiesel",           payload, "fpvehicle/is-diesel");
+    populateIfNotNull(form, "hasMpgReadout",         payload, "fpvehicle/has-mpg-readout");
+    populateIfNotNull(form, "hasMphReadout",         payload, "fpvehicle/has-mph-readout");
+    populateIfNotNull(form, "hasDteReadout",         payload, "fpvehicle/has-dte-readout");
+    populateIfNotNull(form, "hasOutsideTempReadout", payload, "fpvehicle/has-outside-temp-readout");
     return payload
 }
 
 export function attemptSaveVehicle(vehicleId) {
     return (dispatch, getState) => {
         toastr.info('Saving vehicle...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
-        console.log("inside attemptSaveVehicle(" + vehicleId + ")")
         dispatch(apiRequestInitiated())
         dispatch({
             type: actionTypes.SAVE_ENTITY_REQUEST_INITIATED,
@@ -173,9 +191,7 @@ export function attemptSaveVehicle(vehicleId) {
         appendContentType(headers, vehicleContentType)
         appendAuthenticatedCommonHeaders(headers, vehicleMediaType, state.authToken)
         const vehicleUri = state.serverSnapshot._embedded.vehicles[vehicleId].location
-        console.log("inside attemptSaveVehicle, vehicleUri: [" + vehicleUri + "]")
         const requestPayload = vehicleRequestPayload(state.form.vehicleEdit)
-        console.log("inside attemptSaveVehicle, requestPayload: " + JSON.stringify(requestPayload))
         return fetch(vehicleUri, putInitForFetch(headers, requestPayload))
             .then(response => {
                 dispatch(apiRequestDone())
@@ -186,7 +202,7 @@ export function attemptSaveVehicle(vehicleId) {
                 dispatch(toastrActions.clean())
                 dispatch(receiveServerVehicle(json))
                 dispatch(goBack())
-                toastr.success("Vehicle saved.", { icon: "icon-check-1", timeOut: 4000 })
+                toastr.success("Vehicle saved.", { icon: "icon-check-1", timeOut: 2500 })
             })
             .catch(error => {
                 dispatch(apiRequestDone())

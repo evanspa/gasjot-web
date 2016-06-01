@@ -37,11 +37,6 @@ export const serverSnapshotReducer = (state = {}, action) => {
     case actionTypes.LOGOUT_REQUEST_DONE:
         return initialServerSnapshotState
     case actionTypes.SERVER_VEHICLE_RECEIVED:
-        /*var serverVehicleIdPair = {}
-        serverVehicleIdPair[action.serverVehicle["fpvehicle/id"]] = action.serverVehicle
-        return {
-            _embedded: Object.assign(state._embedded.vehicles, serverVehicleIdPair)
-            }*/
         return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicle["fpvehicle/id"] + "].payload", action.serverVehicle)
     }
     return state;
