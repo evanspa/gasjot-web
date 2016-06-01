@@ -116,8 +116,9 @@ export function logout(logoutUri, authToken) {
     }
 }
 
-export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
-    return (dispatch) => {
+export function attemptLogin(nextSuccessPathname) {
+    return (dispatch, getState) => {
+        const state = getState()
         toastr.info('Logging you in...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
         dispatch(apiRequestInitiated())
         dispatch(initiateLoginRequest())
@@ -126,8 +127,8 @@ export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
         appendCommonHeaders(headers, userMediaType)
         headers.append("fp-desired-embedded-format", "id-keyed")
         const requestPayload = {
-            "user/username-or-email": usernameOrEmail,
-            "user/password": password
+            "user/username-or-email": state.form.login.usernameOrEmail.value,
+            "user/password": state.form.login.password.value
         };
         return fetch(LOGIN_URI, postInitForFetch(headers, requestPayload))
             .then(response => {
@@ -141,7 +142,7 @@ export function attemptLogin(usernameOrEmail, password, nextSuccessPathname) {
                 dispatch(receiveServerSnapshot(json))
                 dispatch(push(nextSuccessPathname))
                 dispatch(toastrActions.clean())
-                toastr.success("Welcome Back", "You are now logged in.", { icon: "icon-check-1", timeOut: 4000 })
+                toastr.success("Welcome Back", "You are now logged in.", { icon: "icon-check-1", timeOut: 3000 })
             })
             .catch(error => {
                 dispatch(apiRequestDone())

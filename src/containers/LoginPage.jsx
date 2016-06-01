@@ -7,73 +7,29 @@ import LoginForm from "../components/LoginForm.jsx";
 import { connect } from 'react-redux'
 import { attemptLogin } from "../actions/actionCreators"
 import GasJotNavbar from "../components/NavBar.jsx"
+import { reduxForm } from "redux-form"
 import _ from "lodash"
 
 class LogInPage extends React.Component {
 
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            usernameOrEmail: "",
-            password: "",
-            errors: {}
-        };
-        this.setUsernameOrEmail = this.setUsernameOrEmail.bind(this);
-        this.setPassword = this.setPassword.bind(this);
-        this.makeLoginClickHandler = this.makeLoginClickHandler.bind(this);
-        this.validateForm = this.validateForm.bind(this);
-    }
+    /* componentWillReceiveProps(nextProps) {
+     *     const { responseStatus } = nextProps
+     *     if (!_.isNull(responseStatus) && responseStatus === 401) {
+     *         //this.setState({ password: "" })
+     *         //console.log("401 received")
+     *     }
+     * }*/
 
-    validateForm() {
-        var isValid = true;
-        const errors = {};
-        if (this.state.usernameOrEmail.length == 0) {
-            isValid = false;
-            errors.usernameOrEmail = "Username or email cannot be empty.";
-        }
-        if (this.state.password.length == 0) {
-            isValid = false;
-            errors.password = "Password cannot be empty.";
-        }
-        this.setState({errors: errors});
-        return isValid;
-    }
-
-    makeLoginClickHandler(doLoginFn) {
+    render() {
+        const { handleSubmit, responseStatus, requestInProgress } = this.props
         var nextSuccessPathname = "/";
         const { location } = this.props
         if (location.state && location.state.nextPathname) {
             nextSuccessPathname = location.state.nextPathname
         }
-        return (event) => {
-            if (!this.validateForm()) {
-
-            }
-            doLoginFn(this.state.usernameOrEmail, this.state.password, nextSuccessPathname);
-            event.preventDefault();
-        }
-    }
-
-    setUsernameOrEmail(event) {
-        this.setState({ usernameOrEmail: event.target.value });
-    }
-
-    setPassword(event) {
-        this.setState({ password: event.target.value });
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { responseStatus } = nextProps
-        if (!_.isNull(responseStatus) && responseStatus === 401) {
-            this.setState({ password: "" })
-        }
-    }
-
-    render() {
-        const { onLoginClick, responseStatus, requestInProgress } = this.props
         var serverErrorMessage = null
         if (!_.isNull(responseStatus) && responseStatus === 401) {
-            serverErrorMessage = <h4><Label bsStyle="danger">Login failed.  Try again.</Label></h4>
+            serverErrorMessage = <h4 style={{marginTop: 20}}><Label bsStyle="danger">Login failed.  Try again.</Label></h4>
         }
         return (
             <div>
@@ -81,17 +37,12 @@ class LogInPage extends React.Component {
                 <div className="container"><GasJotNavbar /></div>
                 <Col md={6} mdOffset={3}>
                     <Panel>
-                        <Col md={8} mdOffset={2}>
-                            <h1 className="text-center" style={{marginBottom: 20}}>Log in to your Gas Jot account</h1>
+                        <Col xs={8} xsOffset={2}>
+                            <h1 className="text-center">Log in to your Gas Jot account</h1>
                             { (!_.isNull(serverErrorMessage)) ? serverErrorMessage : "" }
                             <LoginForm
-                                usernameOrEmailVal={this.state.usernameOrEmail}
-                                passwordVal={this.state.password}
-                                usernameOrEmailOnChange={this.setUsernameOrEmail}
-                                passwordOnChange={this.setPassword}
-                                onLoginClick={this.makeLoginClickHandler(onLoginClick)}
-                                requestInProgress={requestInProgress}
-                                errors={this.state.errors} />
+                                onSubmit={() => handleSubmit(nextSuccessPathname)}
+                                requestInProgress={requestInProgress} />
                             <hr />
                             <p style={{paddingBottom: 10}}>Don't have an account?  <Link to="/signup">Sign up.</Link></p>
                             <Link to="/forgot-password">Forgot Password?</Link>
@@ -114,9 +65,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLoginClick: (usernameOrEmail, password, nextSuccessPathname) => {
-            dispatch(attemptLogin(usernameOrEmail, password, nextSuccessPathname))
-        }
+        //handleSubmit: (usernameOrEmail, password, nextSuccessPathname) => { dispatch(attemptLogin(usernameOrEmail, password, nextSuccessPathname)) }
+        handleSubmit: (nextSuccessPathname) => { dispatch(attemptLogin(nextSuccessPathname)) }
     }
 }
 

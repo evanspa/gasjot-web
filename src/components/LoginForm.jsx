@@ -1,26 +1,41 @@
 import React, { createClass } from "react"
-import { Button } from "react-bootstrap";
-import GasJotInput from "./FormInput.jsx";
+import { Button, Row, Col } from "react-bootstrap";
+import { reduxForm } from "redux-form"
+import { GasJotTextFormGroup, GasJotFormGroup } from "./FormInput.jsx"
+import { cannotBeEmptyValidator } from "../utils"
 
-export default class LogInForm extends React.Component {
+const validate = values => {
+    const errors = {}
+    cannotBeEmptyValidator(values, errors, "usernameOrEmail")
+    cannotBeEmptyValidator(values, errors, "password")
+    return errors
+}
+
+class LogInForm extends React.Component {
     render() {
+        const { fields: {usernameOrEmail, password}, requestInProgress, handleSubmit } = this.props
         return (
-            <form onSubmit={this.props.onLoginClick}>
-                <GasJotInput
-                    label="Username or Email address"
-                    type="text"
-                    error={this.props.errors.usernameOrEmail}
-                    value={this.props.usernameOrEmailVal}
-                    onChange={this.props.usernameOrEmailOnChange}
-                    autoFocus={true} />
-                <GasJotInput
-                    label="Password"
-                    type="password"
-                    error={this.props.errors.password}
-                    value={this.props.passwordVal}
-                    onChange={this.props.passwordOnChange} />
-                <Button type="submit" bsStyle="primary" bsSize="large" disabled={this.props.requestInProgress} block>Log in submit</Button>
-            </form>
+            <div>
+                <form onSubmit={handleSubmit}>
+                    <Row><Col xs={12}><hr /></Col></Row>
+                    <GasJotTextFormGroup
+                        label="Username or E-mail"
+                        field={usernameOrEmail}
+                        autoFocus={true} />
+                    <GasJotFormGroup
+                        label="Password"
+                        type="password"
+                        field={password}
+                        autoFocus={true} />
+                    <Button type="submit" bsStyle="primary" bsSize="large" disabled={requestInProgress} block>Log in</Button>
+                </form>
+            </div>
         );
     }
 }
+
+export default reduxForm({
+    form: "login",
+    fields: ["usernameOrEmail", "password"],
+    validate
+})(LogInForm)

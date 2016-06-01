@@ -25,7 +25,7 @@ class AuthenticatedHomePage extends React.Component {
                 <GasJotHelmet title="Home" />
                 <div class="container"><GasJotNavbar /></div>
                 <Col md={8} mdOffset={2}>
-                    <Tabs activeKey={this.state.key} onSelect={this.handleSelect}>
+                    <Tabs activeKey={this.state.key} onSelect={this.handleSelect} id="dataRecords">
                         <Tab eventKey={1} title="Vehicles">
                             <VehiclesList vehicles={ vehicles } vehicleRowOnClick={ vehicleRowOnClick } />
                         </Tab>

@@ -16,7 +16,7 @@ class VehicleEditPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Edit Vehicle" />
-                <div class="container"><GasJotNavbar /></div>
+                <div className="container"><GasJotNavbar /></div>
                 <Col xs={8} xsOffset={2}>
                     <Row>
                         <Col xs={12}>

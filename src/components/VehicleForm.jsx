@@ -7,19 +7,14 @@ import { reduxForm } from "redux-form"
 import * as strs from "../strings"
 import SmallModal from "./SmallModal.jsx"
 import { GasJotTextFormGroup, GasJotCheckboxFormGroup } from "./FormInput.jsx"
+import { cannotBeEmptyValidator, mustBeNumberValidator } from "../utils"
 import _ from "lodash"
 
 const validate = values => {
     const errors = {}
-    if ((!_.isEmpty(values.fuelCapacity)) && isNaN(Number(values.fuelCapacity))) {
-        errors.fuelCapacity = "Must be a number."
-    }
-    if ((!_.isEmpty(values.defaultOctane)) && isNaN(Number(values.defaultOctane))) {
-        errors.defaultOctane = "Must be a number."
-    }
-    if (values.name != null && _.isEmpty(values.name)) {
-        errors.name = "Cannot be empty."
-    }
+    mustBeNumberValidator(values, errors, "fuelCapacity")
+    mustBeNumberValidator(values, errors, "defaultOctane")
+    cannotBeEmptyValidator(values, errors, "name")
     return errors
 }
 
@@ -32,14 +27,6 @@ class VehicleForm extends React.Component {
             modalTitle: null,
             modalContent: null
         };
-    }
-
-    validationState(error) {
-        const opts = {}
-        if (error) {
-            opts["validationState"] = "error"
-        }
-        return opts
     }
 
     render() {
