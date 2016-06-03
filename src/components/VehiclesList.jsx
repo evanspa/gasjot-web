@@ -15,7 +15,7 @@ export default class VehiclesList extends React.Component {
         }
         return (
             <div style={{marginTop: 15 }}>
-                <Button style={{marginBottom: 10}} bsStyle="primary">Create Vehicle</Button>
+                <Button style={{marginBottom: 10}} bsStyle="primary">Add Vehicle</Button>
                 { inner }
             </div>
         )

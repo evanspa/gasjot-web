@@ -1,5 +1,6 @@
 import React, { createClass } from "react"
 import { FormGroup, FormControl, ControlLabel, Checkbox, HelpBlock } from "react-bootstrap";
+import { DropdownList } from "react-widgets"
 
 export default class GasJotInput extends React.Component {
     render() {
@@ -64,6 +65,25 @@ export class GasJotCheckboxFormGroup extends React.Component {
                 <Checkbox inline defaultChecked={this.props.defaultChecked} onChange={field.onChange} name={field.name} disabled={this.props.disabled}>
                     <ControlLabel type="text">{this.props.label}</ControlLabel>
                 </Checkbox>
+            </FormGroup>
+        )
+    }
+}
+
+export class GasJotDropdownFormGroup extends React.Component {
+    render() {
+        const { field, defaultValue, disabled, data, valueField, textField } = this.props
+        return (
+            <FormGroup>
+                <ControlLabel type="text">{this.props.label}</ControlLabel>
+                <DropdownList
+                    onChange={field.onChange}
+                    name={field.name}
+                    defaultValue={defaultValue}
+                    valueField={valueField}
+                    textField={textField}
+                    data={data}
+                    disabled={disabled} />
             </FormGroup>
         )
     }

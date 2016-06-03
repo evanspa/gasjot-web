@@ -17,17 +17,13 @@ class VehicleDetailPage extends React.Component {
             <div>
                 <GasJotHelmet title="Vehicle Detail Page" />
                 <div className="container"><GasJotNavbar /></div>
-                <Col xs={8} xsOffset={2}>
-                    <Row>
-                        <Col xs={12}>
-                            <Link to="/?tabKey=1">&#8592; back to vehicles</Link>
-                            <h3 style={{paddingBottom: 5}}>Vehicle Details</h3>
-                            <VehicleForm
-                                markVehicleForEdit={markVehicleForEdit}
-                                vehiclePayload={vehiclePayload}
-                                editMode={false} />
-                        </Col>
-                    </Row>
+                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
+                    <Link to="/vehicles">&#8592; back to vehicles</Link>
+                    <h3 style={{paddingBottom: 5}}>Vehicle Details</h3>
+                    <VehicleForm
+                        markVehicleForEdit={markVehicleForEdit}
+                        vehiclePayload={vehiclePayload}
+                        editMode={false} />
                 </Col>
             </div>
         )

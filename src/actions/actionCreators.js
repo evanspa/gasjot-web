@@ -20,6 +20,10 @@ export function receiveServerVehicle(serverVehicle) {
     return { type: actionTypes.SERVER_VEHICLE_RECEIVED, serverVehicle }
 }
 
+export function receiveServerFuelstation(serverFuelstation) {
+    return { type: actionTypes.SERVER_FUELSTATION_RECEIVED, serverFuelstation }
+}
+
 export function receiveAuthenticationToken(authToken) {
     return { type: actionTypes.AUTH_TOKEN_RECEIVED, authToken }
 }
@@ -48,6 +52,10 @@ export function markVehicleForEdit(vehicleId) {
     return { type: actionTypes.MARK_VEHICLE_FOR_EDIT, vehicleId }
 }
 
+export function markFuelstationForEdit(fuelstationId) {
+    return { type: actionTypes.MARK_FUELSTATION_FOR_EDIT, fuelstationId }
+}
+
 export function apiRequestInitiated() {
     return { type: actionTypes.API_REQUEST_INITIATED }
 }
@@ -66,6 +74,9 @@ const userContentType = makeContentType(userMediaType, charset)
 
 const vehicleMediaType = makeMediaType("vehicle")
 const vehicleContentType = makeContentType(vehicleMediaType, charset)
+
+const fuelstationMediaType = makeMediaType("fuelstation")
+const fuelstationContentType = makeContentType(fuelstationMediaType, charset)
 
 const appendCommonHeaders = (headers, mediaType) => {
     headers.append("Accept-Language", "en-US")
@@ -152,25 +163,33 @@ export function attemptLogin(nextSuccessPathname) {
     }
 }
 
-const populateIfNotNull = (form, formKey, target, targetKey, transformer = null) => {
+const populateIfNotNull = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
     if (form[formKey].value != null) {
         if (form[formKey].touched) {
-            if (transformer != null) {
-                target[targetKey] = transformer(form[formKey].value)
+            let formValue
+            if (tailKey != null) {
+                formValue = form[formKey].value[tailKey]
             } else {
-                target[targetKey] = form[formKey].value
+                formValue = form[formKey].value
+            }
+            if (transformer != null) {
+                target[targetKey] = transformer(formValue)
+            } else {
+                target[targetKey] = formValue
             }
         }
     }
 }
+
+
 
 const vehicleRequestPayload = form => {
     var payload = {}
     populateIfNotNull(form, "name",                  payload, "fpvehicle/name");
     populateIfNotNull(form, "plate",                 payload, "fpvehicle/plate");
     populateIfNotNull(form, "vin",                   payload, "fpvehicle/vin");
-    populateIfNotNull(form, "fuelCapacity",          payload, "fpvehicle/fuel-capacity", _.toNumber);
-    populateIfNotNull(form, "defaultOctane",         payload, "fpvehicle/default-octane", _.toNumber);
+    populateIfNotNull(form, "fuelCapacity",          payload, "fpvehicle/fuel-capacity", null, _.toNumber);
+    populateIfNotNull(form, "defaultOctane",         payload, "fpvehicle/default-octane", null, _.toNumber);
     populateIfNotNull(form, "takesDiesel",           payload, "fpvehicle/is-diesel");
     populateIfNotNull(form, "hasMpgReadout",         payload, "fpvehicle/has-mpg-readout");
     populateIfNotNull(form, "hasMphReadout",         payload, "fpvehicle/has-mph-readout");
@@ -209,6 +228,53 @@ export function attemptSaveVehicle(vehicleId) {
                 dispatch(apiRequestDone())
                 toastr.clean()
                 toastr.error("Vehicle save failed.")
+            })
+    }
+}
+
+const fuelstationRequestPayload = form => {
+    var payload = {}
+    populateIfNotNull(form, "name",                  payload, "fpfuelstation/name");
+    populateIfNotNull(form, "typeId",                payload, "fpfuelstation/type-id", "id", null);
+    populateIfNotNull(form, "street",                payload, "fpfuelstation/street");
+    populateIfNotNull(form, "city",                  payload, "fpfuelstation/city");
+    populateIfNotNull(form, "state",                 payload, "fpfuelstation/state");
+    populateIfNotNull(form, "zip",                   payload, "fpfuelstation/zip");
+    populateIfNotNull(form, "latitude",              payload, "fpfuelstation/latitude", null, _.toNumber);
+    populateIfNotNull(form, "longitude",             payload, "fpfuelstation/longitude", null, _.toNumber);
+    return payload
+}
+
+export function attemptSaveFuelstation(fuelstationId) {
+    return (dispatch, getState) => {
+        toastr.info('Saving gas station...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
+        dispatch({
+            type: actionTypes.SAVE_ENTITY_REQUEST_INITIATED,
+            entityId: fuelstationId
+        })
+        const state = getState()
+        const headers = new Headers()
+        appendContentType(headers, fuelstationContentType)
+        appendAuthenticatedCommonHeaders(headers, fuelstationMediaType, state.authToken)
+        const fuelstationUri = state.serverSnapshot._embedded.fuelstations[fuelstationId].location
+        const requestPayload = fuelstationRequestPayload(state.form.fuelstationEdit)
+        return fetch(fuelstationUri, putInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiRequestDone())
+                dispatch(receiveResponseStatus(response.status))
+                return response.json()
+            })
+            .then(json => {
+                dispatch(toastrActions.clean())
+                dispatch(receiveServerFuelstation(json))
+                dispatch(goBack())
+                toastr.success("Gas station saved.", { icon: "icon-check-1", timeOut: 2500 })
+            })
+            .catch(error => {
+                dispatch(apiRequestDone())
+                toastr.clean()
+                toastr.error("Gas station save failed.")
             })
     }
 }

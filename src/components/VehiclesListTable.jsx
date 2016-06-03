@@ -3,7 +3,7 @@ import { Table } from "react-bootstrap"
 import { Link } from "react-router"
 import _ from "lodash"
 
-export default class AuthenticatedHomePage extends React.Component {
+export default class VehiclesListTable extends React.Component {
     render() {
         return (
             <Table responsive stiped hover>

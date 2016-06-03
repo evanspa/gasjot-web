@@ -41,7 +41,7 @@ var config = {
             "node_modules/react-redux-toastr/lib/css/react-redux-toastr.min.css",
             "./src/**/*.css"
         ],
-        images:         "./src/images/*",
+        images:         "./src/images/**",
         favicon:        "./src/favicon.ico",
         clientRenderJs: "./src/client-render.jsx",
         serverJs:       "./src/server.js",
@@ -119,6 +119,7 @@ gulp.task("lint", function() {
 
 gulp.task("watch", function() {
     livereload.listen();
+    gulp.watch(config.paths.images, ["images"]);
     gulp.watch(config.paths.ejs, ["ejs"]);
     gulp.watch(config.paths.css, ["bundle:css"]);
     gulp.watch(config.paths.js, ["bundle:js", "lint"]);

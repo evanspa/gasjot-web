@@ -65,7 +65,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        //handleSubmit: (usernameOrEmail, password, nextSuccessPathname) => { dispatch(attemptLogin(usernameOrEmail, password, nextSuccessPathname)) }
         handleSubmit: (nextSuccessPathname) => { dispatch(attemptLogin(nextSuccessPathname)) }
     }
 }

@@ -17,19 +17,15 @@ class VehicleEditPage extends React.Component {
             <div>
                 <GasJotHelmet title="Edit Vehicle" />
                 <div className="container"><GasJotNavbar /></div>
-                <Col xs={8} xsOffset={2}>
-                    <Row>
-                        <Col xs={12}>
-                            <Link to="/">&#8592; back to vehicles</Link>
-                            <h3 style={{paddingBottom: 5}}>Edit Vehicle</h3>
-                            <VehicleForm
-                                cancelVehicleEdit={cancelVehicleEdit}
-                                onSubmit={() => handleSubmit(vehiclePayload['fpvehicle/id'])}
-                                requestInProgress={requestInProgress}
-                                vehiclePayload={vehiclePayload}
-                                editMode={true} />
-                        </Col>
-                    </Row>
+                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
+                    <Link to="/vehicles">&#8592; back to vehicles</Link>
+                    <h3 style={{paddingBottom: 5}}>Edit Vehicle</h3>
+                    <VehicleForm
+                        cancelVehicleEdit={cancelVehicleEdit}
+                        onSubmit={() => handleSubmit(vehiclePayload['fpvehicle/id'])}
+                        requestInProgress={requestInProgress}
+                        vehiclePayload={vehiclePayload}
+                        editMode={true} />
                 </Col>
             </div>
         )

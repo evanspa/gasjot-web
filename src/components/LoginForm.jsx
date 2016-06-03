@@ -25,8 +25,7 @@ class LogInForm extends React.Component {
                     <GasJotFormGroup
                         label="Password"
                         type="password"
-                        field={password}
-                        autoFocus={true} />
+                        field={password} />
                     <Button type="submit" bsStyle="primary" bsSize="large" disabled={requestInProgress} block>Log in</Button>
                 </form>
             </div>

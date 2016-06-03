@@ -38,6 +38,8 @@ export const serverSnapshotReducer = (state = {}, action) => {
         return initialServerSnapshotState
     case actionTypes.SERVER_VEHICLE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicle["fpvehicle/id"] + "].payload", action.serverVehicle)
+    case actionTypes.SERVER_FUELSTATION_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstation["fpfuelstation/id"] + "].payload", action.serverFuelstation)
     }
     return state;
 }
