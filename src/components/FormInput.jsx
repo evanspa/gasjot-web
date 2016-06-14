@@ -2,33 +2,10 @@ import React, { createClass } from "react"
 import { FormGroup, FormControl, ControlLabel, Checkbox, HelpBlock } from "react-bootstrap";
 import { DropdownList } from "react-widgets"
 
-export default class GasJotInput extends React.Component {
-    render() {
-        const areErrors = (this.props.error != null) && (this.props.error.length > 0);
-        const formGroupOpts = {} // http://stackoverflow.com/a/29103727/1034895
-        if (areErrors) {
-            formGroupOpts['validationState'] = "error"
-        }
-        return (
-            <div>
-                <FormGroup {...formGroupOpts}>
-                    <ControlLabel>{this.props.label}</ControlLabel>
-                    <FormControl
-                        type={this.props.type}
-                        onChange={this.props.onChange}
-                        value={this.props.value}
-                        autoFocus={this.props.autoFocus} />
-                    <HelpBlock>{this.props.error}</HelpBlock>
-                </FormGroup>
-            </div>
-        )
-    }
-}
-
 export class GasJotFormGroup extends React.Component {
     render() {
         const { field } = this.props
-        const areErrors = (field.error != null) && (field.error.length > 0);
+        const areErrors = !this.props.disabled && field.touched && (field.error != null) && (field.error.length > 0);
         const formGroupOpts = {} // http://stackoverflow.com/a/29103727/1034895
         if (areErrors) {
             formGroupOpts['validationState'] = "error"
@@ -39,12 +16,12 @@ export class GasJotFormGroup extends React.Component {
                     <ControlLabel type={this.props.type}>{this.props.label}</ControlLabel>
                     <FormControl
                         type={this.props.type}
-                        defaultValue={this.props.defaultValue}
+                        defaultValue={field.initialValue}
                         onChange={field.onChange}
                         name={field.name}
                         disabled={this.props.disabled}
                         autoFocus={this.props.autoFocus} />
-                    <HelpBlock>{field.error}</HelpBlock>
+                    <HelpBlock>{areErrors ? field.error : ""}</HelpBlock>
                 </FormGroup>
             </div>
         )
@@ -62,7 +39,12 @@ export class GasJotCheckboxFormGroup extends React.Component {
         const { field } = this.props
         return (
             <FormGroup>
-                <Checkbox inline defaultChecked={this.props.defaultChecked} onChange={field.onChange} name={field.name} disabled={this.props.disabled}>
+                <Checkbox
+                    inline={true}
+                    defaultChecked={field.initialValue}
+                    onChange={field.onChange}
+                    name={field.name}
+                    disabled={this.props.disabled}>
                     <ControlLabel type="text">{this.props.label}</ControlLabel>
                 </Checkbox>
             </FormGroup>
@@ -79,7 +61,7 @@ export class GasJotDropdownFormGroup extends React.Component {
                 <DropdownList
                     onChange={field.onChange}
                     name={field.name}
-                    defaultValue={defaultValue}
+                    defaultValue={field.initialValue}
                     valueField={valueField}
                     textField={textField}
                     data={data}

@@ -7,6 +7,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import FuelstationForm from "../components/FuelstationForm.jsx"
 import { attemptSaveFuelstation } from "../actions/actionCreators"
+import { toFuelstationFormModel } from "../utils"
 
 class FuelstationEditPage extends React.Component {
 
@@ -16,15 +17,16 @@ class FuelstationEditPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Edit Gas Station Page" />
-                <div className="container"><GasJotNavbar /></div>
+                <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <Link to="/fuelstations">&#8592; back to gas stations</Link>
+                    <Link to="/fuelstations">&#8592; your gas stations</Link>
                     <h3 style={{paddingBottom: 5}}>Edit Gas Station</h3>
                     <FuelstationForm
                         cancelFuelstationEdit={cancelFuelstationEdit}
                         onSubmit={() => handleSubmit(fuelstationPayload['fpfuelstation/id'])}
                         requestInProgress={requestInProgress}
-                        fuelstationPayload={fuelstationPayload}
+                        fuelstationId={fuelstationPayload["fpfuelstation/id"]}
+                        initialValues={toFuelstationFormModel(fuelstationPayload)}
                         editMode={true} />
                 </Col>
             </div>

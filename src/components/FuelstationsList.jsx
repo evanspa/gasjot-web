@@ -11,7 +11,7 @@ export default class FuelstationsList extends React.Component {
             inner = <FuelstationsListTable fuelstations={this.props.fuelstations}
                                            fuelstationRowOnClick={this.props.fuelstationRowOnClick} />
         } else {
-            inner = <Label>You have no gas stations.</Label>
+            inner = <div style={{marginTop: 15}}>You currently have no gas stations.</div>
         }
         return (
             <div style={{marginTop: 15 }}>

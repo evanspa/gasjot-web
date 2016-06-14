@@ -21,7 +21,7 @@ class RedirectPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Log In" />
-                <div className="container"><GasJotNavbar /></div>
+                <GasJotNavbar />
                 <Col md={6} mdOffset={3}>
                     <Panel>
                         <Col md={8} mdOffset={2}>

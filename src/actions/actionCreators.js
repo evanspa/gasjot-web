@@ -4,20 +4,38 @@ import fetch from 'isomorphic-fetch'
 import * as actionTypes from "./actionTypes"
 import {toastr} from 'react-redux-toastr'
 import {actions as toastrActions} from 'react-redux-toastr'
+import { formToModelIfNotNull } from "../utils"
 
 const LOGIN_URI = "http://www.jotyourself.com/gasjot/d/login"
+const SIGNUP_URI = "http://www.jotyourself.com/gasjot/d/users"
 const FP_AUTH_TOKEN_HEADER = "fp-auth-token"
-
-export function initiateLoginRequest() {
-    return { type: actionTypes.LOGIN_REQUEST_INITIATED }
-}
+const FP_ERR_MASK_HEADER = "fp-error-mask"
+const FP_ESTABLISH_SESSION_HEADER = "fp-establish-session"
+const FP_DESIRED_EMBEDDED_FORMAT_HEADER = "fp-desired-embedded-format"
+const FP_ID_KEYED_EMBEDDED_FORMAT = "id-keyed"
 
 export function receiveServerSnapshot(serverSnapshot) {
     return { type: actionTypes.SERVER_SNAPSHOT_RECEIVED, serverSnapshot }
 }
 
+export function receiveServerUser(serverUser) {
+    return { type: actionTypes.SERVER_USER_RECEIVED, serverUser }
+}
+
 export function receiveServerVehicle(serverVehicle) {
     return { type: actionTypes.SERVER_VEHICLE_RECEIVED, serverVehicle }
+}
+
+export function receiveServerVehicleLocation(serverVehicleId, serverVehicleLocation) {
+    return { type: actionTypes.SERVER_VEHICLE_LOCATION_RECEIVED,
+             serverVehicleId: serverVehicleId,
+             serverVehicleLocation: serverVehicleLocation }
+}
+
+export function receiveServerVehicleMediaType(serverVehicleId, serverVehicleMediaType) {
+    return { type: actionTypes.SERVER_VEHICLE_MEDIATYPE_RECEIVED,
+             serverVehicleId: serverVehicleId,
+             serverVehicleMediaType }
 }
 
 export function receiveServerFuelstation(serverFuelstation) {
@@ -32,12 +50,13 @@ export function receiveUserUri(userUri) {
     return { type: actionTypes.USER_URI_RECEIVED, userUri }
 }
 
-export function receiveResponseStatus(responseStatus) {
-    return { type: actionTypes.RESPONSE_STATUS_RECEIVED, responseStatus}
-}
-
-export function loginRequestFailed(error) {
-    return { type: actionTypes.LOGIN_REQUEST_INITIATED, error }
+export function receiveResponseStatus(responseStatus, fpErrorMask = null) {
+    let action = { type: actionTypes.RESPONSE_STATUS_RECEIVED,
+                   responseStatus: responseStatus }
+    if (fpErrorMask != null) {
+        action.fpErrorMask = _.toNumber(fpErrorMask)
+    }
+    return action
 }
 
 export function logoutRequestInitiated() {
@@ -46,6 +65,10 @@ export function logoutRequestInitiated() {
 
 export function logoutRequestDone() {
     return { type: actionTypes.LOGOUT_REQUEST_DONE }
+}
+
+export function markUserForEdit() {
+    return { type: actionTypes.MARK_USER_FOR_EDIT }
 }
 
 export function markVehicleForEdit(vehicleId) {
@@ -127,16 +150,51 @@ export function logout(logoutUri, authToken) {
     }
 }
 
+export function attemptSignUp() {
+    return (dispatch, getState) => {
+        const state = getState()
+        toastr.info('Creating account...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
+        const headers = new Headers()
+        appendContentType(headers, userContentType)
+        appendCommonHeaders(headers, userMediaType)
+        headers.append(FP_ESTABLISH_SESSION_HEADER, "true")
+        headers.append(FP_DESIRED_EMBEDDED_FORMAT_HEADER, FP_ID_KEYED_EMBEDDED_FORMAT)
+        const requestPayload = {
+            "user/name": state.form.signup.name.value,
+            "user/email": state.form.signup.email.value,
+            "user/password": state.form.signup.password.value
+        };
+        return fetch(SIGNUP_URI, postInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiRequestDone())
+                dispatch(receiveAuthenticationToken(response.headers.get(FP_AUTH_TOKEN_HEADER)))
+                dispatch(receiveUserUri(response.headers.get("Location")))
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                return response.json()
+            })
+            .then(json => {
+                dispatch(receiveServerSnapshot(json))
+                dispatch(toastrActions.clean())
+                dispatch(push("/accountCreated"))
+                toastr.success("Account created successfully!", { icon: "icon-check-1", timeOut: 3000 })
+            })
+            .catch(error => {
+                dispatch(apiRequestDone())
+                toastr.clean()
+            })
+    }
+}
+
 export function attemptLogin(nextSuccessPathname) {
     return (dispatch, getState) => {
         const state = getState()
         toastr.info('Logging you in...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
         dispatch(apiRequestInitiated())
-        dispatch(initiateLoginRequest())
         const headers = new Headers()
         appendContentType(headers, userContentType)
         appendCommonHeaders(headers, userMediaType)
-        headers.append("fp-desired-embedded-format", "id-keyed")
+        headers.append(FP_DESIRED_EMBEDDED_FORMAT_HEADER, FP_ID_KEYED_EMBEDDED_FORMAT)
         const requestPayload = {
             "user/username-or-email": state.form.login.usernameOrEmail.value,
             "user/password": state.form.login.password.value
@@ -146,7 +204,7 @@ export function attemptLogin(nextSuccessPathname) {
                 dispatch(apiRequestDone())
                 dispatch(receiveAuthenticationToken(response.headers.get(FP_AUTH_TOKEN_HEADER)))
                 dispatch(receiveUserUri(response.headers.get("Location")))
-                dispatch(receiveResponseStatus(response.status))
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                 return response.json()
             })
             .then(json => {
@@ -158,64 +216,80 @@ export function attemptLogin(nextSuccessPathname) {
             .catch(error => {
                 dispatch(apiRequestDone())
                 toastr.clean()
-                dispatch(loginRequestFailed(error))
             })
     }
 }
 
-const populateIfNotNull = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
-    if (form[formKey].value != null) {
-        if (form[formKey].touched) {
-            let formValue
-            if (tailKey != null) {
-                formValue = form[formKey].value[tailKey]
-            } else {
-                formValue = form[formKey].value
-            }
-            if (transformer != null) {
-                target[targetKey] = transformer(formValue)
-            } else {
-                target[targetKey] = formValue
-            }
-        }
-    }
+const vehicleRequestPayload = form => {
+    let payload = {}
+    formToModelIfNotNull(form, "name",                  payload, "fpvehicle/name");
+    formToModelIfNotNull(form, "plate",                 payload, "fpvehicle/plate");
+    formToModelIfNotNull(form, "vin",                   payload, "fpvehicle/vin");
+    formToModelIfNotNull(form, "fuelCapacity",          payload, "fpvehicle/fuel-capacity", null, _.toNumber);
+    formToModelIfNotNull(form, "defaultOctane",         payload, "fpvehicle/default-octane", null, _.toNumber);
+    formToModelIfNotNull(form, "takesDiesel",           payload, "fpvehicle/is-diesel");
+    formToModelIfNotNull(form, "hasMpgReadout",         payload, "fpvehicle/has-mpg-readout");
+    formToModelIfNotNull(form, "hasMphReadout",         payload, "fpvehicle/has-mph-readout");
+    formToModelIfNotNull(form, "hasDteReadout",         payload, "fpvehicle/has-dte-readout");
+    formToModelIfNotNull(form, "hasOutsideTempReadout", payload, "fpvehicle/has-outside-temp-readout");
+    return payload
 }
 
-
-
-const vehicleRequestPayload = form => {
-    var payload = {}
-    populateIfNotNull(form, "name",                  payload, "fpvehicle/name");
-    populateIfNotNull(form, "plate",                 payload, "fpvehicle/plate");
-    populateIfNotNull(form, "vin",                   payload, "fpvehicle/vin");
-    populateIfNotNull(form, "fuelCapacity",          payload, "fpvehicle/fuel-capacity", null, _.toNumber);
-    populateIfNotNull(form, "defaultOctane",         payload, "fpvehicle/default-octane", null, _.toNumber);
-    populateIfNotNull(form, "takesDiesel",           payload, "fpvehicle/is-diesel");
-    populateIfNotNull(form, "hasMpgReadout",         payload, "fpvehicle/has-mpg-readout");
-    populateIfNotNull(form, "hasMphReadout",         payload, "fpvehicle/has-mph-readout");
-    populateIfNotNull(form, "hasDteReadout",         payload, "fpvehicle/has-dte-readout");
-    populateIfNotNull(form, "hasOutsideTempReadout", payload, "fpvehicle/has-outside-temp-readout");
+const userRequestPayload = form => {
+    let payload = {}
+    formToModelIfNotNull(form, "name", payload, "user/name")
+    formToModelIfNotNull(form, "email", payload, "user/email")
+    if (form.password.value != null && !_.isEmpty(form.password.value)) {
+        payload["user/password"] = form.password.value
+    }
     return payload
+}
+
+export function attemptSaveUser() {
+    return (dispatch, getState) => {
+        toastr.info('Saving user account...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
+        const state = getState()
+        const headers = new Headers()
+        appendContentType(headers, userContentType)
+        appendAuthenticatedCommonHeaders(headers, userMediaType, state.authToken)
+        const userUri = state.userUri
+        const requestPayload = userRequestPayload(state.form.userAccountEdit)
+        return fetch(userUri, putInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiRequestDone())
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                return response.json()
+            })
+            .then(json => {
+                dispatch(toastrActions.clean())
+                dispatch(receiveServerUser(json))
+                dispatch(goBack())
+                toastr.success("User account saved.", { icon: "icon-check-1", timeOut: 2500 })
+            })
+            .catch(error => {
+                dispatch(apiRequestDone())
+                toastr.clean()
+                toastr.error("User account save failed.")
+            })
+    }
 }
 
 export function attemptSaveVehicle(vehicleId) {
     return (dispatch, getState) => {
         toastr.info('Saving vehicle...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
         dispatch(apiRequestInitiated())
-        dispatch({
-            type: actionTypes.SAVE_ENTITY_REQUEST_INITIATED,
-            entityId: vehicleId
-        })
         const state = getState()
         const headers = new Headers()
         appendContentType(headers, vehicleContentType)
         appendAuthenticatedCommonHeaders(headers, vehicleMediaType, state.authToken)
         const vehicleUri = state.serverSnapshot._embedded.vehicles[vehicleId].location
-        const requestPayload = vehicleRequestPayload(state.form.vehicleEdit)
+        const requestPayload = vehicleRequestPayload(state.form.vehicle)
+        console.log("in save vhielce, request: " + JSON.stringify(requestPayload))
         return fetch(vehicleUri, putInitForFetch(headers, requestPayload))
             .then(response => {
                 dispatch(apiRequestDone())
-                dispatch(receiveResponseStatus(response.status))
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                 return response.json()
             })
             .then(json => {
@@ -232,16 +306,54 @@ export function attemptSaveVehicle(vehicleId) {
     }
 }
 
+export function attemptSaveNewVehicle(nextPathname) {
+    return (dispatch, getState) => {
+        toastr.info('Saving vehicle...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
+        const state = getState()
+        const headers = new Headers()
+        appendContentType(headers, vehicleContentType)
+        appendAuthenticatedCommonHeaders(headers, vehicleMediaType, state.authToken)
+        const vehiclesUri = state.serverSnapshot._links.vehicles.href
+        const requestPayload = vehicleRequestPayload(state.form.vehicle)
+        return fetch(vehiclesUri, postInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiRequestDone())
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                const location = response.headers.get("location")
+                const vehicleId = _.last(_.split(location, "/")) // brittle!
+                dispatch(receiveServerVehicleLocation(vehicleId, location))
+                dispatch(receiveServerVehicleMediaType(vehicleId, response.headers.get("content-type")))
+                return response.json()
+            })
+            .then(json => {
+                dispatch(toastrActions.clean())
+                dispatch(receiveServerVehicle(json))
+                if (nextPathname != null) {
+                    dispatch(push(nextPathname))
+                } else {
+                    dispatch(goBack())
+                }
+                toastr.success("Vehicle saved.", { icon: "icon-check-1", timeOut: 2500 })
+            })
+            .catch(error => {
+                dispatch(apiRequestDone())
+                toastr.clean()
+                toastr.error("Vehicle save failed.")
+            })
+    }
+}
+
 const fuelstationRequestPayload = form => {
     var payload = {}
-    populateIfNotNull(form, "name",                  payload, "fpfuelstation/name");
-    populateIfNotNull(form, "typeId",                payload, "fpfuelstation/type-id", "id", null);
-    populateIfNotNull(form, "street",                payload, "fpfuelstation/street");
-    populateIfNotNull(form, "city",                  payload, "fpfuelstation/city");
-    populateIfNotNull(form, "state",                 payload, "fpfuelstation/state");
-    populateIfNotNull(form, "zip",                   payload, "fpfuelstation/zip");
-    populateIfNotNull(form, "latitude",              payload, "fpfuelstation/latitude", null, _.toNumber);
-    populateIfNotNull(form, "longitude",             payload, "fpfuelstation/longitude", null, _.toNumber);
+    formToModelIfNotNull(form, "name",                  payload, "fpfuelstation/name");
+    formToModelIfNotNull(form, "typeId",                payload, "fpfuelstation/type-id", "id", null);
+    formToModelIfNotNull(form, "street",                payload, "fpfuelstation/street");
+    formToModelIfNotNull(form, "city",                  payload, "fpfuelstation/city");
+    formToModelIfNotNull(form, "state",                 payload, "fpfuelstation/state");
+    formToModelIfNotNull(form, "zip",                   payload, "fpfuelstation/zip");
+    formToModelIfNotNull(form, "latitude",              payload, "fpfuelstation/latitude", null, _.toNumber);
+    formToModelIfNotNull(form, "longitude",             payload, "fpfuelstation/longitude", null, _.toNumber);
     return payload
 }
 
@@ -249,20 +361,16 @@ export function attemptSaveFuelstation(fuelstationId) {
     return (dispatch, getState) => {
         toastr.info('Saving gas station...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
         dispatch(apiRequestInitiated())
-        dispatch({
-            type: actionTypes.SAVE_ENTITY_REQUEST_INITIATED,
-            entityId: fuelstationId
-        })
         const state = getState()
         const headers = new Headers()
         appendContentType(headers, fuelstationContentType)
         appendAuthenticatedCommonHeaders(headers, fuelstationMediaType, state.authToken)
         const fuelstationUri = state.serverSnapshot._embedded.fuelstations[fuelstationId].location
-        const requestPayload = fuelstationRequestPayload(state.form.fuelstationEdit)
+        const requestPayload = fuelstationRequestPayload(state.form.fuelstation)
         return fetch(fuelstationUri, putInitForFetch(headers, requestPayload))
             .then(response => {
                 dispatch(apiRequestDone())
-                dispatch(receiveResponseStatus(response.status))
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                 return response.json()
             })
             .then(json => {

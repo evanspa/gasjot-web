@@ -1,13 +1,12 @@
 import React, { createClass } from "react"
-import { Router, Link } from "react-router"
-import { push } from 'react-router-redux'
+import { Link } from "react-router"
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Col, Panel, Label } from "react-bootstrap";
 import LoginForm from "../components/LoginForm.jsx";
 import { connect } from 'react-redux'
 import { attemptLogin } from "../actions/actionCreators"
 import GasJotNavbar from "../components/NavBar.jsx"
-import { reduxForm } from "redux-form"
+import { makeLoginHandler } from "../utils"
 import _ from "lodash"
 
 class LogInPage extends React.Component {
@@ -21,28 +20,19 @@ class LogInPage extends React.Component {
      * }*/
 
     render() {
-        const { handleSubmit, responseStatus, requestInProgress } = this.props
-        var nextSuccessPathname = "/";
-        const { location } = this.props
-        if (location.state && location.state.nextPathname) {
-            nextSuccessPathname = location.state.nextPathname
-        }
-        var serverErrorMessage = null
-        if (!_.isNull(responseStatus) && responseStatus === 401) {
-            serverErrorMessage = <h4 style={{marginTop: 20}}><Label bsStyle="danger">Login failed.  Try again.</Label></h4>
-        }
+        const { location, handleSubmit, responseStatus, requestInProgress } = this.props
         return (
             <div>
                 <GasJotHelmet title="Log In" />
-                <div className="container"><GasJotNavbar /></div>
+                <GasJotNavbar />
                 <Col md={6} mdOffset={3}>
                     <Panel>
                         <Col xs={8} xsOffset={2}>
                             <h1 className="text-center">Log in to your Gas Jot account</h1>
-                            { (!_.isNull(serverErrorMessage)) ? serverErrorMessage : "" }
                             <LoginForm
-                                onSubmit={() => handleSubmit(nextSuccessPathname)}
-                                requestInProgress={requestInProgress} />
+                                onSubmit={ makeLoginHandler(location, handleSubmit) }
+                                requestInProgress={requestInProgress}
+                                responseStatus={responseStatus} />
                             <hr />
                             <p style={{paddingBottom: 10}}>Don't have an account?  <Link to="/signup">Sign up.</Link></p>
                             <Link to="/forgot-password">Forgot Password?</Link>

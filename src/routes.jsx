@@ -6,7 +6,10 @@ import AuthHomePage from "./containers/AuthenticatedHomePage.jsx"
 import UnauthHomePage from "./containers/UnauthenticatedHomePage.jsx"
 import VehiclesPage from "./containers/VehiclesPage.jsx"
 import VehicleDetailPage from "./containers/VehicleDetailPage.jsx"
+import UserAccountPage from "./containers/UserAccountPage.jsx"
+import UserAccountEditPage from "./containers/UserAccountEditPage.jsx"
 import VehicleEditPage from "./containers/VehicleEditPage.jsx"
+import VehicleAddPage from "./containers/VehicleAddPage.jsx"
 import FuelstationsPage from "./containers/FuelstationsPage.jsx"
 import FuelstationDetailPage from "./containers/FuelstationDetailPage.jsx"
 import FuelstationEditPage from "./containers/FuelstationEditPage.jsx"
@@ -16,6 +19,8 @@ import NotFoundPage from "./containers/NotFoundPage.jsx"
 import LoginPage from "./containers/LoginPage.jsx"
 import RedirectPage from "./containers/RedirectPage.jsx"
 import SignUpPage from "./containers/SignUpPage.jsx"
+//import SettingsPage from "./containers/SettingsPage.jsx"
+import AccountCreatedPage from "./containers/AccountCreatedPage.jsx"
 import _ from "lodash"
 
 export default function createRoutes(store, isServer) {
@@ -40,14 +45,19 @@ export default function createRoutes(store, isServer) {
         <Route path="/" component={App}>
             <IndexRoute component={HomePage} />
             <Route path="/dashboard" component={DashboardPage} onEnter={requiresAuthentication} />
+            {/*<Route path="/settings" component={SettingsPage} onEnter={requiresAuthentication} />*/}
+            <Route path="/account" component={UserAccountPage} onEnter={requiresAuthentication} />
+            <Route path="/account/edit" component={UserAccountEditPage} onEnter={requiresAuthentication} />
             <Route path="/vehicles" component={VehiclesPage} onEnter={requiresAuthentication} />
             <Route path="/vehicles/:vehicleId" component={VehicleDetailPage} onEnter={requiresAuthentication} />
             <Route path="/vehicles/:vehicleId/edit" component={VehicleEditPage} onEnter={requiresAuthentication} />
+            <Route path="/addVehicle" component={VehicleAddPage} onEnter={requiresAuthentication} />
             <Route path="/fuelstations" component={FuelstationsPage} onEnter={requiresAuthentication} />
             <Route path="/fuelstations/:fuelstationId" component={FuelstationDetailPage} onEnter={requiresAuthentication} />
             <Route path="/fuelstations/:fuelstationId/edit" component={FuelstationEditPage} onEnter={requiresAuthentication} />
             <Route path="/welcome" component={UnauthHomePage} />
             <Route path="/signup" component={SignUpPage} />
+            <Route path="/accountCreated" component={AccountCreatedPage} onEnter={requiresAuthentication} />
             <Route path="/login" component={LoginPage} />
             <Route path="/loggedOut" component={LoggedOutPage} />
             <Route path="/redirect" component={RedirectPage} />

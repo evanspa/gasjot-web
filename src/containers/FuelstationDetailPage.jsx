@@ -7,6 +7,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import FuelstationForm from "../components/FuelstationForm.jsx"
 import { markFuelstationForEdit } from "../actions/actionCreators"
+import { toFuelstationFormModel } from "../utils"
 
 class FuelstationDetailPage extends React.Component {
     render() {
@@ -15,13 +16,14 @@ class FuelstationDetailPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Gas Station Detail Page" />
-                <div className="container"><GasJotNavbar /></div>
+                <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <Link to="/fuelstations">&#8592; back to gas stations</Link>
                     <h3 style={{paddingBottom: 5}}>Gas Station Details</h3>
                     <FuelstationForm
                         markFuelstationForEdit={markFuelstationForEdit}
-                        fuelstationPayload={fuelstationPayload}
+                        fuelstationId={fuelstationPayload["fpfuelstation/id"]}
+                        initialValues={toFuelstationFormModel(fuelstationPayload)}
                         editMode={false} />
                 </Col>
             </div>

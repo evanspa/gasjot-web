@@ -35,6 +35,8 @@ class GasJotNavbar extends React.Component {
         } else {
             nav = (<Nav pullRight>
                 <LinkContainer to={{ pathname: '/' }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: '/account' }}><NavItem eventKey={2} role="presentation">Account</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: '/setings' }}><NavItem eventKey={2} role="presentation">Settings</NavItem></LinkContainer>
                 <NavItem role="presentation" onClick={() => onLogoutClick(logoutUri, authToken)}>Logout</NavItem>
             </Nav>)
         }

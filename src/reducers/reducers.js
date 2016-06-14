@@ -13,13 +13,15 @@ export const initialServerSnapshotState = {
 
 export const initialApiState = {
     responseStatus: null,
+    fpErrorMask: null,
     requestInProgress: false
 }
 
 export const apiReducer = (state = {}, action) => {
     switch (action.type) {
     case actionTypes.RESPONSE_STATUS_RECEIVED:
-        return Object.assign({}, state, {responseStatus: action.responseStatus})
+        return Object.assign({}, state, { responseStatus: action.responseStatus,
+                                          fpErrorMask: action.fpErrorMask })
     case actionTypes.LOGOUT_REQUEST_DONE:
         return initialApiState
     case actionTypes.API_REQUEST_INITIATED:
@@ -36,8 +38,14 @@ export const serverSnapshotReducer = (state = {}, action) => {
         return _.isEmpty(action.serverSnapshot) ? state : action.serverSnapshot;
     case actionTypes.LOGOUT_REQUEST_DONE:
         return initialServerSnapshotState
+    case actionTypes.SERVER_USER_RECEIVED:
+        return Object.assign(Object.assign({}, state), action.serverUser)
     case actionTypes.SERVER_VEHICLE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicle["fpvehicle/id"] + "].payload", action.serverVehicle)
+    case actionTypes.SERVER_VEHICLE_LOCATION_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicleId + "].location", action.serverVehicleLocation)
+    case actionTypes.SERVER_VEHICLE_MEDIATYPE_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicleId + "].media-type", action.serverVehicleMediaType)
     case actionTypes.SERVER_FUELSTATION_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstation["fpfuelstation/id"] + "].payload", action.serverFuelstation)
     }
@@ -52,12 +60,4 @@ export const authTokenReducer = (state = {}, action) => {
         return null
     }
     return state;
-}
-
-export const entityIdInContextReducer = (state = {}, action) => {
-    switch (action.type) {
-    case actionTypes.SAVE_ENTITY_REQUEST_INITIATED:
-        return action.entityId
-    }
-    return state
 }

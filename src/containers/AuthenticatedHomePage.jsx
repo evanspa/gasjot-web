@@ -14,8 +14,8 @@ class AuthenticatedHomePage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Home" />
-                <div class="container"><GasJotNavbar /></div>
-                <Col md={8} mdOffset={2}>
+                <GasJotNavbar />
+                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <ListGroup>
                         <ListGroupItem header="Vehicles" onClick={() => onItemSelect("/vehicles")}>
                             {vehicleCount} vehicle records.

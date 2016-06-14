@@ -11,15 +11,17 @@ import _ from "lodash"
 
 class VehiclesPage extends React.Component {
     render() {
-        const { vehicles, vehicleRowOnClick } = this.props
+        const { vehicles, vehicleRowOnClick, handleAddVehicle } = this.props
         return (
             <div>
                 <GasJotHelmet title="Your Vehicles" />
-                <div className="container"><GasJotNavbar /></div>
-                <Col md={8} mdOffset={2}>
+                <GasJotNavbar />
+                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <Link to="/">&#8592; back</Link>
                     <h3 style={{paddingBottom: 5}}>Your Vehicles</h3>
-                    <VehiclesList vehicles={ vehicles } vehicleRowOnClick={ vehicleRowOnClick } />
+                    <VehiclesList vehicles={ vehicles }
+                                  handleAddVehicle={ handleAddVehicle }
+                                  vehicleRowOnClick={ vehicleRowOnClick } />
                 </Col>
             </div>
         )
@@ -39,7 +41,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        vehicleRowOnClick: (vehicleId) => { dispatch(push("/vehicles/" + vehicleId)) }
+        vehicleRowOnClick: (vehicleId) => { dispatch(push("/vehicles/" + vehicleId)) },
+        handleAddVehicle : () => { dispatch(push("/addVehicle")) }
     }
 }
 

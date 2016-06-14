@@ -1,25 +1,32 @@
 import React, { createClass } from "react"
 import { Link } from "react-router"
+import { connect } from 'react-redux'
+import { attemptSignUp } from "../actions/actionCreators"
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import { Col, Input, Panel, Button } from "react-bootstrap";
+import { Col, Panel, Button } from "react-bootstrap";
+import SignUpForm from "../components/SignUpForm.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
+import _ from "lodash"
 
-export default class SignUpPage extends React.Component {
+class SignUpPage extends React.Component {
     render() {
+        const { handleSubmit,
+                responseStatus,
+                requestInProgress,
+                fpErrorMask } = this.props
+        var nextSuccessPathname = "/";
         return (
             <div>
                 <GasJotHelmet title="Sign Up" />
-                <div class="container"><GasJotNavbar /></div>
+                <GasJotNavbar />
                 <Col md={6} mdOffset={3}>
                     <Panel>
                         <Col md={8} mdOffset={2}>
                             <h1 className="text-center" style={{marginBottom: 20}}>Sign up for a Gas Jot account.</h1>
-                            <form>
-                                <Input label="Your name" type="text" placeholder="e.g., Bruce Jones" />
-                                <Input label="Email address" type="email" placeholder="e.g., bruce@gmail.com" />
-                                <Input label="Password" type="password" placeholder="e.g., &#183;&#183;&#183;&#183;&#183;&#183;&#183;&#183;&#183;&#183;&#183;&#183;&#183;" />
-                                <Button bsStyle="primary" bsSize="large" block>Sign up</Button>
-                            </form>
+                            <SignUpForm
+                                onSubmit={() => handleSubmit()}
+                                requestInProgress={requestInProgress}
+                                fpErrorMask={fpErrorMask} />
                             <hr />
                             <p>Already have an account?  <Link to="/login">Log in.</Link></p>
                         </Col>
@@ -29,3 +36,20 @@ export default class SignUpPage extends React.Component {
         );
     }
 }
+
+// https://github.com/reactjs/react-router/issues/975#issuecomment-192272704
+SignUpPage.contextTypes = {
+    router: React.PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => {
+    return state.api;
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        handleSubmit: () => { dispatch(attemptSignUp()) }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpPage)

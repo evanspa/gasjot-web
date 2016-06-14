@@ -23,8 +23,7 @@ export const rootReducer = combineReducers({
     api: apiReducer,
     serverSnapshot: serverSnapshotReducer,
     routing: routerReducer,
-    form: formReducer,
-    entityIdInContext: entityIdInContextReducer
+    form: formReducer
 })
 
 export default rootReducer

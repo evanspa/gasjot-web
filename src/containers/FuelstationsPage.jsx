@@ -15,8 +15,8 @@ class FuelstationsPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Your Gas Stations" />
-                <div class="container"><GasJotNavbar /></div>
-                <Col xs={8} xsOffset={2}>
+                <GasJotNavbar />
+                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <Link to="/">&#8592; back</Link>
                     <h3 style={{paddingBottom: 5}}>Your Gas Stations</h3>
                     <FuelstationsList fuelstations={ fuelstations } fuelstationRowOnClick={ fuelstationRowOnClick } />

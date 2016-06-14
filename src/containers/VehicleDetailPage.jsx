@@ -7,6 +7,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import VehicleForm from "../components/VehicleForm.jsx"
 import { markVehicleForEdit } from "../actions/actionCreators"
+import { toVehicleFormModel } from "../utils"
 
 class VehicleDetailPage extends React.Component {
 
@@ -16,13 +17,14 @@ class VehicleDetailPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Vehicle Detail Page" />
-                <div className="container"><GasJotNavbar /></div>
+                <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <Link to="/vehicles">&#8592; back to vehicles</Link>
                     <h3 style={{paddingBottom: 5}}>Vehicle Details</h3>
                     <VehicleForm
                         markVehicleForEdit={markVehicleForEdit}
-                        vehiclePayload={vehiclePayload}
+                        vehicleId={vehiclePayload["fpvehicle/id"]}
+                        initialValues={toVehicleFormModel(vehiclePayload)}
                         editMode={false} />
                 </Col>
             </div>
