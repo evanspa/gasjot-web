@@ -28,6 +28,8 @@ export const apiReducer = (state = {}, action) => {
         return Object.assign({}, state, {requestInProgress: true})
     case actionTypes.API_REQUEST_DONE:
         return Object.assign({}, state, {requestInProgress: false})
+    case actionTypes.BECAME_UNAUTHENTICATED:
+        return Object.assign({}, state, { responseStatus: null })
     }
     return state
 }
@@ -57,6 +59,7 @@ export const authTokenReducer = (state = {}, action) => {
     case actionTypes.AUTH_TOKEN_RECEIVED:
         return _.isEmpty(action.authToken) ? state : action.authToken
     case actionTypes.LOGOUT_REQUEST_DONE:
+    case actionTypes.BECAME_UNAUTHENTICATED:
         return null
     }
     return state;

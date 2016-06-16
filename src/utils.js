@@ -2,7 +2,7 @@ import _ from "lodash"
 
 export function makeLoginHandler(location, handleSubmit) {
     var nextSuccessPathname = "/";
-    if (location.state && location.state.nextPathname) {
+    if (location != null && location.state && location.state.nextPathname) {
         nextSuccessPathname = location.state.nextPathname
     }
     return function() { handleSubmit(nextSuccessPathname) }
@@ -45,21 +45,27 @@ export const mustBeEmailValidator = (values, errors, fieldName) => {
 
 export const formToModelIfNotNull = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
     if (form[formKey].value != null) {
-        if (form[formKey].touched) {
-            let formValue
+        if (form[formKey].touched != null && form[formKey].touched) {
+            let formValue = null
             if (tailKey != null) {
-                formValue = form[formKey].value[tailKey]
-            } else {
-                formValue = form[formKey].value
-            }
-            if (!_.isEmpty(_.trim(formValue))) {
-                if (transformer != null) {
-                    target[targetKey] = transformer(formValue)
-                } else {
-                    target[targetKey] = formValue
+                if (form[formKey].value[tailKey] != null) {
+                    formValue = form[formKey].value[tailKey]
                 }
             } else {
-                target[targetKey] = null
+                if (form[formKey].value != null) {
+                    formValue = form[formKey].value
+                }
+            }
+            if (formValue != null) {
+                if (!_.isEmpty(_.trim(formValue))) {
+                    if (transformer != null) {
+                        target[targetKey] = transformer(formValue)
+                    } else {
+                        target[targetKey] = formValue
+                    }
+                } else {
+                    target[targetKey] = null
+                }
             }
         }
     }

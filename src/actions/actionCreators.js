@@ -6,6 +6,7 @@ import {toastr} from 'react-redux-toastr'
 import {actions as toastrActions} from 'react-redux-toastr'
 import { formToModelIfNotNull } from "../utils"
 
+const LIGHT_LOGIN_URI = "http://www.jotyourself.com/gasjot/d/light-login"
 const LOGIN_URI = "http://www.jotyourself.com/gasjot/d/login"
 const SIGNUP_URI = "http://www.jotyourself.com/gasjot/d/users"
 const FP_AUTH_TOKEN_HEADER = "fp-auth-token"
@@ -36,6 +37,18 @@ export function receiveServerVehicleMediaType(serverVehicleId, serverVehicleMedi
     return { type: actionTypes.SERVER_VEHICLE_MEDIATYPE_RECEIVED,
              serverVehicleId: serverVehicleId,
              serverVehicleMediaType }
+}
+
+export function becameUnauthenticated() {
+    return { type: actionTypes.BECAME_UNAUTHENTICATED }
+}
+
+export function becameReauthenticated() {
+    return { type: actionTypes.BECAME_REAUTHENTICATED }
+}
+
+export function presentedLightLoginForm() {
+    return { type: actionTypes.PRESENTED_LIGHT_LOGIN_FORM }
 }
 
 export function receiveServerFuelstation(serverFuelstation) {
@@ -216,6 +229,42 @@ export function attemptLogin(nextSuccessPathname) {
             .catch(error => {
                 dispatch(apiRequestDone())
                 toastr.clean()
+                toastr.error("Server error.  Please try again.")
+            })
+    }
+}
+
+export function attemptLightLogin() {
+    return (dispatch, getState) => {
+        const state = getState()
+        toastr.info('Re-authenticating...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
+        dispatch(apiRequestInitiated())
+        const headers = new Headers()
+        appendContentType(headers, userContentType)
+        appendCommonHeaders(headers, userMediaType)
+        headers.append(FP_DESIRED_EMBEDDED_FORMAT_HEADER, FP_ID_KEYED_EMBEDDED_FORMAT)
+        const requestPayload = {
+            "user/username-or-email": state.form.login.usernameOrEmail.value,
+            "user/password": state.form.login.password.value
+        };
+        return fetch(LIGHT_LOGIN_URI, postInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiRequestDone())
+                dispatch(receiveAuthenticationToken(response.headers.get(FP_AUTH_TOKEN_HEADER)))
+                dispatch(receiveUserUri(response.headers.get("Location")))
+                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                if (response.status == 204) {
+                    dispatch(toastrActions.clean())
+                    toastr.success("Success", "You've been re-authenticated.", { icon: "icon-check-1", timeOut: 3000 })
+                    dispatch(becameReauthenticated())
+                } else {
+                    toastr.clean()
+                    dispatch(apiRequestDone())
+                }
+            })
+            .catch(error => {
+                toastr.clean()
+                dispatch(apiRequestDone())
             })
     }
 }
@@ -275,6 +324,12 @@ export function attemptSaveUser() {
     }
 }
 
+function checkBecameUnauthenticated(response, dispatch) {
+    if (response.status == 401) {
+        dispatch(becameUnauthenticated())
+    }
+}
+
 export function attemptSaveVehicle(vehicleId) {
     return (dispatch, getState) => {
         toastr.info('Saving vehicle...', { transitionIn: "fadeIn", transitionOut: "fadeOut" })
@@ -285,11 +340,11 @@ export function attemptSaveVehicle(vehicleId) {
         appendAuthenticatedCommonHeaders(headers, vehicleMediaType, state.authToken)
         const vehicleUri = state.serverSnapshot._embedded.vehicles[vehicleId].location
         const requestPayload = vehicleRequestPayload(state.form.vehicle)
-        console.log("in save vhielce, request: " + JSON.stringify(requestPayload))
         return fetch(vehicleUri, putInitForFetch(headers, requestPayload))
             .then(response => {
                 dispatch(apiRequestDone())
                 dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                checkBecameUnauthenticated(response, dispatch)
                 return response.json()
             })
             .then(json => {
@@ -301,7 +356,7 @@ export function attemptSaveVehicle(vehicleId) {
             .catch(error => {
                 dispatch(apiRequestDone())
                 toastr.clean()
-                toastr.error("Vehicle save failed.")
+                toastr.error("Vehicle save failed.", { timeOut: 1000 })
             })
     }
 }
@@ -367,6 +422,7 @@ export function attemptSaveFuelstation(fuelstationId) {
         appendAuthenticatedCommonHeaders(headers, fuelstationMediaType, state.authToken)
         const fuelstationUri = state.serverSnapshot._embedded.fuelstations[fuelstationId].location
         const requestPayload = fuelstationRequestPayload(state.form.fuelstation)
+        console.log("fs payload: " + JSON.stringify(requestPayload))
         return fetch(fuelstationUri, putInitForFetch(headers, requestPayload))
             .then(response => {
                 dispatch(apiRequestDone())

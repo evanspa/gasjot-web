@@ -8,6 +8,7 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import UserAccountForm from "../components/UserAccountForm.jsx"
 import { attemptSaveUser } from "../actions/actionCreators"
 import { toUserFormModel } from "../utils"
+import ReauthenticateModal from "./ReauthenticateModal.jsx"
 
 class UserAccountEditPage extends React.Component {
     render() {
@@ -15,10 +16,12 @@ class UserAccountEditPage extends React.Component {
         userPayload["user/name"] = this.props.userName;
         userPayload["user/email"] = this.props.userEmail;
         const { cancelUserEdit, handleSubmit, requestInProgress } = this.props
+        const { becameUnauthenticated } = this.props
         return (
             <div>
                 <GasJotHelmet title="Edit User Account" />
                 <GasJotNavbar />
+                <ReauthenticateModal showModal={becameUnauthenticated} />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <h3 style={{paddingBottom: 5}}>Edit User Account</h3>
                     <UserAccountForm
@@ -38,7 +41,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         requestInProgress: state.api.requestInProgress,
         userName: state.serverSnapshot["user/name"],
-        userEmail: state.serverSnapshot["user/email"]
+        userEmail: state.serverSnapshot["user/email"],
+        becameUnauthenticated: state.becameUnauthenticated
     }
 }
 

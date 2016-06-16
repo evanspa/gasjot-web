@@ -8,16 +8,19 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import FuelstationForm from "../components/FuelstationForm.jsx"
 import { attemptSaveFuelstation } from "../actions/actionCreators"
 import { toFuelstationFormModel } from "../utils"
+import ReauthenticateModal from "./ReauthenticateModal.jsx"
 
 class FuelstationEditPage extends React.Component {
 
     render() {
         const fuelstationPayload = this.props.fuelstation.payload
         const { cancelFuelstationEdit, handleSubmit, requestInProgress } = this.props
+        const { becameUnauthenticated } = this.props
         return (
             <div>
                 <GasJotHelmet title="Edit Gas Station Page" />
                 <GasJotNavbar />
+                <ReauthenticateModal showModal={becameUnauthenticated} />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <Link to="/fuelstations">&#8592; your gas stations</Link>
                     <h3 style={{paddingBottom: 5}}>Edit Gas Station</h3>
@@ -37,7 +40,8 @@ class FuelstationEditPage extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         requestInProgress: state.api.requestInProgress,
-        fuelstation: state.serverSnapshot._embedded.fuelstations[ownProps.params.fuelstationId]
+        fuelstation: state.serverSnapshot._embedded.fuelstations[ownProps.params.fuelstationId],
+        becameUnauthenticated: state.becameUnauthenticated
     }
 }
 

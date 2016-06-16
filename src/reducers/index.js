@@ -13,13 +13,25 @@ const userUriReducer = (state = {}, action) => {
     case actionTypes.LOGOUT_REQUEST_DONE:
         return null
     }
-    return state;
+    return state
+}
+
+const becameUnauthenticatedReducer = (state = false, action) => {
+    switch (action.type) {
+    case actionTypes.BECAME_UNAUTHENTICATED:
+        return true
+    case actionTypes.BECAME_REAUTHENTICATED:
+    case actionTypes.LOGOUT_REQUEST_DONE:
+        return false
+    }
+    return state
 }
 
 export const rootReducer = combineReducers({
     toastr: toastrReducer,
     authToken: authTokenReducer,
     userUri: userUriReducer,
+    becameUnauthenticated: becameUnauthenticatedReducer,
     api: apiReducer,
     serverSnapshot: serverSnapshotReducer,
     routing: routerReducer,
