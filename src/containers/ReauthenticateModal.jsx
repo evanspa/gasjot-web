@@ -20,7 +20,6 @@ class ReauthenticateModal extends React.Component {
     }
 
     render() {
-        //const modalCancel = () => this.setState({ showModal: false })
         const { handleSubmit, handleCancel, responseStatus, requestInProgress } = this.props
         const cancel = () => {
             this.setState({showModal: false})
@@ -29,9 +28,10 @@ class ReauthenticateModal extends React.Component {
         return (
             <Modal show={this.state.showModal} onHide={cancel}>
                 <Modal.Body>
-                    <h4>For you security, please re-authenticate.</h4>
+                    {/*<h4>For you security, please re-authenticate.</h4>*/}
+                    <h4>{this.props.message}</h4>
                     <LoginForm
-                        onSubmit={ handleSubmit }
+                        onSubmit={handleSubmit}
                         requestInProgress={requestInProgress}
                         responseStatus={responseStatus} />
                 </Modal.Body>
@@ -61,7 +61,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(logoutRequestDone())
             dispatch(push("/login"))
         },
-        handleSubmit: () => { dispatch(attemptLightLogin()) }
+        handleSubmit: () => { dispatch(attemptLightLogin(ownProps.operationOnLightLoginSuccess)) }
     }
 }
 

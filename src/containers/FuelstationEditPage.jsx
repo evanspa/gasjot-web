@@ -8,38 +8,39 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import FuelstationForm from "../components/FuelstationForm.jsx"
 import { attemptSaveFuelstation } from "../actions/actionCreators"
 import { toFuelstationFormModel } from "../utils"
+import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 
 class FuelstationEditPage extends React.Component {
-
     render() {
         const fuelstationPayload = this.props.fuelstation.payload
-        const { cancelFuelstationEdit, handleSubmit, requestInProgress } = this.props
-        const { becameUnauthenticated } = this.props
-        return (
-            <div>
-                <GasJotHelmet title="Edit Gas Station Page" />
-                <GasJotNavbar />
-                <ReauthenticateModal showModal={becameUnauthenticated} />
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <Link to="/fuelstations">&#8592; your gas stations</Link>
-                    <h3 style={{paddingBottom: 5}}>Edit Gas Station</h3>
-                    <FuelstationForm
-                        cancelFuelstationEdit={cancelFuelstationEdit}
-                        onSubmit={() => handleSubmit(fuelstationPayload['fpfuelstation/id'])}
-                        requestInProgress={requestInProgress}
-                        fuelstationId={fuelstationPayload["fpfuelstation/id"]}
-                        initialValues={toFuelstationFormModel(fuelstationPayload)}
-                        editMode={true} />
-                </Col>
-            </div>
-        )
+        const { cancelFuelstationEdit, handleSubmit, api, becameUnauthenticated } = this.props
+        const { requestInProgress, fpErrorMask } = api
+        const fuelstationId = fuelstationPayload["fpfuelstation/id"]
+        const reauthenticateModal = <ReauthenticateModal
+                                        showModal={becameUnauthenticated}
+                                        message="To save your gas station, we need you to re-authenticate."
+                                        operationOnLightLoginSuccess={() => handleSubmit(fuelstationId)} />
+        const entityForm = <FuelstationForm
+                               cancelFuelstationEdit={cancelFuelstationEdit}
+                               onSubmit={() => handleSubmit(fuelstationId)}
+                               requestInProgress={requestInProgress}
+                               fuelstationId={fuelstationId}
+                               initialValues={toFuelstationFormModel(fuelstationPayload)}
+                               editMode={true}
+                               fpErrorMask={fpErrorMask} />
+        return (<EntityEditDetailPage
+                    editMode={true}
+                    entityType="fuelstation"
+                    entitiesUri="/fuelstations"
+                    reauthenticateModal={reauthenticateModal}
+                    entityForm={entityForm} />)
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        requestInProgress: state.api.requestInProgress,
+        api: state.api,
         fuelstation: state.serverSnapshot._embedded.fuelstations[ownProps.params.fuelstationId],
         becameUnauthenticated: state.becameUnauthenticated
     }

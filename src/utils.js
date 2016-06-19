@@ -1,5 +1,21 @@
 import _ from "lodash"
 
+export function vehicleDetailUrl(vehicleId) {
+    return "/vehicles/" + vehicleId
+}
+
+export function vehicleEditUrl(vehicleId) {
+    return vehicleDetailUrl(vehicleId) + "/edit"
+}
+
+export function fuelstationDetailUrl(fuelstationId) {
+    return "/fuelstations/" + fuelstationId
+}
+
+export function fuelstationEditUrl(fuelstationId) {
+    return fuelstationDetailUrl(fuelstationId) + "/edit"
+}
+
 export function makeLoginHandler(location, handleSubmit) {
     var nextSuccessPathname = "/";
     if (location != null && location.state && location.state.nextPathname) {

@@ -30,6 +30,8 @@ export const apiReducer = (state = {}, action) => {
         return Object.assign({}, state, {requestInProgress: false})
     case actionTypes.BECAME_UNAUTHENTICATED:
         return Object.assign({}, state, { responseStatus: null })
+    case actionTypes.CANCEL_RECORD_EDIT:
+        return Object.assign({}, state, { fpErrorMask: null })
     }
     return state
 }

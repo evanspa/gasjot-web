@@ -10,6 +10,8 @@ import { GasJotTextFormGroup, GasJotCheckboxFormGroup } from "./FormInput.jsx"
 import { cannotBeEmptyValidator, mustBePositiveNumberValidator } from "../utils"
 import _ from "lodash"
 import * as errFlags from "../errorFlags"
+import ActionsArray from "./ActionsArray.jsx"
+import ErrorMessages from "./ErrorMessages.jsx"
 
 const validate = values => {
     const errors = {}
@@ -46,54 +48,35 @@ class VehicleForm extends React.Component {
                 vehicleId,
                 markVehicleForEdit,
                 cancelVehicleEdit,
+                downloadVehicle,
                 handleSubmit,
                 requestInProgress,
+                responseStatus,
                 editMode,
                 fpErrorMask } = this.props
-
         let modalClose = () => this.setState({ showModal: false })
-        let cancelButton = null
-        let saveButton = null
-        let editButton = null
-        let actionArray;
-
-        if (vehicleId != null) {
-            if (editMode) {
-                cancelButton = <Button style={{marginBottom: 0, marginRight: 10}} onClick={() => cancelVehicleEdit(vehicleId)} disabled={requestInProgress}>Cancel</Button>
-                saveButton = <Button type="submit" style={{marginBottom: 0}} bsStyle="success" disabled={requestInProgress}>Save</Button>
-                actionArray = <div>{cancelButton}{saveButton}</div>
-            } else {
-                editButton = <Button bsStyle="primary" onClick={() => markVehicleForEdit(vehicleId)}>Edit</Button>
-                actionArray = editButton
-            }
-        } else {
-            cancelButton = <Button style={{marginBottom: 0, marginRight: 10}} onClick={cancelVehicleEdit} disabled={requestInProgress}>Cancel</Button>
-            saveButton = <Button type="submit" style={{marginBottom: 0}} bsStyle="success" disabled={requestInProgress}>Save</Button>
-            actionArray = <div>{cancelButton}{saveButton}</div>
-        }
+        const actionArray = <ActionsArray
+                                editMode={editMode}
+                                entityId={vehicleId}
+                                cancelEntityEdit={cancelVehicleEdit}
+                                requestInProgress={requestInProgress}
+                                markEntityForEdit={markVehicleForEdit}
+                                cancelEntityAdd={cancelVehicleEdit}
+                                downloadEntity={downloadVehicle} />
+        const errors = [
+            { flag: errFlags.SAVE_VEHICLE_CANNOT_BE_BOTH_DIESEL_OCTANE,
+              message: "Vehicle cannot have default octane and take diesel."},
+            { flag: errFlags.SAVE_VEHICLE_CANNOT_BE_PURPLE,
+              message: "Vehicle name cannot contain 'purple'."},
+            { flag: errFlags.SAVE_VEHICLE_CANNOT_BE_RED,
+              message: "Vehicle name cannot contain 'red'."},
+            { flag: errFlags.SAVE_VEHICLE_ALREADY_EXISTS,
+              message: "Vehicle name already used."}
+        ]
         return (
         <div>
             <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
-            { (() => {
-                  let errMessages = []
-                  if (fpErrorMask != null) {
-                      if (fpErrorMask & errFlags.SAVE_VEHICLE_CANNOT_BE_BOTH_DIESEL_OCTANE) {
-                          errMessages.push(<h4 style={{marginTop: 0, marginBottom: 20}}><Label bsStyle="danger">Vehicle cannot have default octane and take diesel.</Label></h4>)
-                      }
-                      if (fpErrorMask & errFlags.SAVE_VEHICLE_CANNOT_BE_PURPLE) {
-                          errMessages.push(<h4 style={{marginTop: 0, marginBottom: 20}}><Label bsStyle="danger">Vehicle name cannot contain 'purple'.</Label></h4>)
-                      }
-                      if (fpErrorMask & errFlags.SAVE_VEHICLE_CANNOT_BE_RED) {
-                          errMessages.push(<h4 style={{marginTop: 0, marginBottom: 20}}><Label bsStyle="danger">Vehicle name cannot contain 'red'.</Label></h4>)
-                      }
-                      if (fpErrorMask & errFlags.SAVE_VEHICLE_ALREADY_EXISTS) {
-                          errMessages.push(<h4 style={{marginTop: 0, marginBottom: 20}}><Label bsStyle="danger">Vehicle name already used.</Label></h4>)
-                      }
-                      return (<div>{errMessages}</div>)
-                  }
-                  return ""
-              })()
-            }
+            <ErrorMessages errorMask={fpErrorMask} errors={errors} />
             <form onSubmit={handleSubmit}>
                 { actionArray }
                 <Row><Col xs={12}><hr /></Col></Row>

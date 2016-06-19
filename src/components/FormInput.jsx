@@ -16,7 +16,7 @@ export class GasJotFormGroup extends React.Component {
                     <ControlLabel type={this.props.type}>{this.props.label}</ControlLabel>
                     <FormControl
                         type={this.props.type}
-                        defaultValue={field.initialValue}
+                        value={field.value}
                         onChange={field.onChange}
                         name={field.name}
                         disabled={this.props.disabled}
@@ -41,7 +41,7 @@ export class GasJotCheckboxFormGroup extends React.Component {
             <FormGroup>
                 <Checkbox
                     inline={true}
-                    defaultChecked={field.initialValue}
+                    checked={field.value}
                     onChange={field.onChange}
                     name={field.name}
                     disabled={this.props.disabled}>
@@ -61,7 +61,7 @@ export class GasJotDropdownFormGroup extends React.Component {
                 <DropdownList
                     onChange={field.onChange}
                     name={field.name}
-                    defaultValue={field.initialValue}
+                    value={field.value}
                     valueField={valueField}
                     textField={textField}
                     data={data}
