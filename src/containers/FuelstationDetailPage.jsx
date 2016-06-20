@@ -1,22 +1,20 @@
 import React from "react"
-import { Row, Col } from "react-bootstrap";
-import { Link } from "react-router"
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import GasJotNavbar from "../components/NavBar.jsx"
 import FuelstationForm from "../components/FuelstationForm.jsx"
 import { markFuelstationForEdit, attemptDownloadFuelstation } from "../actions/actionCreators"
 import { toFuelstationFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import * as urls from "../urls"
 
 class FuelstationDetailPage extends React.Component {
     render() {
         const fuelstationPayload = this.props.fuelstation.payload
         const { markFuelstationForEdit, downloadFuelstation, becameUnauthenticated } = this.props
-        const fuelstationId = fuelstationPayload["fpfuelstation/id"]
+        const fuelstationIdKey = "fpfuelstation/id"
+        const fuelstationId = fuelstationPayload[fuelstationIdKey]
         const reauthenticateModal = <ReauthenticateModal
                                         showModal={becameUnauthenticated}
                                         message="To download your gas station, we need you to re-authenticate."
@@ -24,13 +22,13 @@ class FuelstationDetailPage extends React.Component {
         const entityForm = <FuelstationForm
                                markFuelstationForEdit={markFuelstationForEdit}
                                downloadFuelstation={downloadFuelstation}
-                               fuelstationId={fuelstationPayload["fpfuelstation/id"]}
+                               fuelstationId={fuelstationId}
                                initialValues={toFuelstationFormModel(fuelstationPayload)}
                                editMode={false} />
         return (<EntityEditDetailPage
                     editMode={false}
                     entityType="gas station"
-                    entitiesUri="/fuelstations"
+                    entitiesUri={urls.FUELSTATIONS_URI}
                     reauthenticateModal={reauthenticateModal}
                     entityForm={entityForm} />)
     }
@@ -48,10 +46,10 @@ const mapDispatchToProps = (dispatch) => {
         markFuelstationForEdit: (fuelstationId) => {
             toastr.clean()
             dispatch(markFuelstationForEdit(fuelstationId))
-            dispatch(push("/fuelstations/" + fuelstationId + "/edit"))
+            dispatch(push(urls.fuelstationEditUrl(fuelstationId)))
         },
         downloadFuelstation: (fuelstationId) => {
-            dispatch(attemptDownloadFuelstation(fuelstationId, "/fuelstations/" + fuelstationId))
+            dispatch(attemptDownloadFuelstation(fuelstationId, urls.fuelstationDetailUrl(fuelstationId)))
         }
     }
 }

@@ -1,15 +1,13 @@
 import React from "react"
-import { Row, Col } from "react-bootstrap";
-import { Link } from "react-router"
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import GasJotNavbar from "../components/NavBar.jsx"
 import FuelstationForm from "../components/FuelstationForm.jsx"
+import { toastr } from 'react-redux-toastr'
 import { attemptSaveFuelstation } from "../actions/actionCreators"
 import { toFuelstationFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import * as urls from "../urls"
 
 class FuelstationEditPage extends React.Component {
     render() {
@@ -31,8 +29,8 @@ class FuelstationEditPage extends React.Component {
                                fpErrorMask={fpErrorMask} />
         return (<EntityEditDetailPage
                     editMode={true}
-                    entityType="fuelstation"
-                    entitiesUri="/fuelstations"
+                    entityType="gas station"
+                    entitiesUri={urls.FUELSTATIONS_URI}
                     reauthenticateModal={reauthenticateModal}
                     entityForm={entityForm} />)
     }
@@ -48,8 +46,12 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        cancelFuelstationEdit: (fuelstationId) => { dispatch(push("/fuelstations/" + fuelstationId)) },
+        cancelFuelstationEdit: (fuelstationId) => {
+            toastr.clean()
+            dispatch(push(urls.fuelstationDetailUrl(fuelstationId)))
+        },
         handleSubmit: (fuelstationId) => {
+            toastr.clean()
             dispatch(attemptSaveFuelstation(fuelstationId));
         }
     }

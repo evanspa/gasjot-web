@@ -9,6 +9,7 @@ import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "../containers/ReauthenticateModal.jsx"
+import * as urls from "../urls"
 
 class VehicleDetailPage extends React.Component {
     render() {
@@ -28,7 +29,7 @@ class VehicleDetailPage extends React.Component {
         return (<EntityEditDetailPage
                     editMode={false}
                     entityType="vehicle"
-                    entitiesUri="/vehicles"
+                    entitiesUri={urls.VEHICLES_URI}
                     reauthenticateModal={reauthenticateModal}
                     entityForm={entityForm} />)
     }
@@ -46,10 +47,10 @@ const mapDispatchToProps = (dispatch) => {
         markVehicleForEdit: (vehicleId) => {
             toastr.clean()
             dispatch(markVehicleForEdit(vehicleId))
-            dispatch(push("/vehicles/" + vehicleId + "/edit"))
+            dispatch(push(urls.vehicleEditUrl(vehicleId)))
         },
         downloadVehicle: (vehicleId) => {
-            dispatch(attemptDownloadVehicle(vehicleId, "/vehicles/" + vehicleId))
+            dispatch(attemptDownloadVehicle(vehicleId, urls.vehicleDetailUrl(vehicleId)))
         }
     }
 }

@@ -1,27 +1,27 @@
 import React from "react"
 import { connect } from 'react-redux'
 import { push, goBack } from 'react-router-redux'
-import VehicleForm from "../components/VehicleForm.jsx"
-import { attemptSaveNewVehicle } from "../actions/actionCreators"
+import FuelstationForm from "../components/FuelstationForm.jsx"
+import { attemptSaveNewFuelstation } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 
-class VehicleAddPage extends React.Component {
+class FuelstationAddPage extends React.Component {
     render() {
         const {
-            cancelVehicleAdd,
+            cancelFuelstationAdd,
             handleSubmit,
             requestInProgress,
             backLink } = this.props
-        const vehicleForm = (<VehicleForm
-                                 cancelVehicleEdit={cancelVehicleAdd}
-                                 onSubmit={() => handleSubmit()}
-                                 requestInProgress={requestInProgress}
-                                 editMode={true} />)
+        const fuelstationForm = (<FuelstationForm
+                                     cancelFuelstationEdit={cancelFuelstationAdd}
+                                     onSubmit={() => handleSubmit()}
+                                     requestInProgress={requestInProgress}
+                                     editMode={true} />)
         return (
             <EntityAddPage
-                entityType="vehicle"
+                entityType="gas station"
                 backLink={backLink}
-                entityForm={vehicleForm}/>
+                entityForm={fuelstationForm}/>
         )
     }
 }
@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         nextPathname = query.nextPathname
     }
     return {
-        cancelVehicleAdd: () => {
+        cancelFuelstationAdd: () => {
             if (nextPathname != null) {
                 dispatch(push(nextPathname))
             } else {
@@ -47,9 +47,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             }
         },
         handleSubmit: () => {
-            dispatch(attemptSaveNewVehicle(nextPathname))
+            dispatch(attemptSaveNewFuelstation(nextPathname))
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(VehicleAddPage)
+export default connect(mapStateToProps, mapDispatchToProps)(FuelstationAddPage)

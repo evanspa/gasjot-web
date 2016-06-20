@@ -52,6 +52,16 @@ export const serverSnapshotReducer = (state = {}, action) => {
         return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicleId + "].media-type", action.serverVehicleMediaType)
     case actionTypes.SERVER_FUELSTATION_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstation["fpfuelstation/id"] + "].payload", action.serverFuelstation)
+    case actionTypes.SERVER_FUELSTATION_LOCATION_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstationId + "].location", action.serverFuelstationLocation)
+    case actionTypes.SERVER_FUELSTATION_MEDIATYPE_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstationId + "].media-type", action.serverFuelstationMediaType)
+    case actionTypes.SERVER_ODOMETERLOG_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLog["envlog/id"] + "].payload", action.serverOdometerLog)
+    case actionTypes.SERVER_ODOMETERLOG_LOCATION_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLogId + "].location", action.serverOdometerLogLocation)
+    case actionTypes.SERVER_ODOMETERLOG_MEDIATYPE_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLogId + "].media-type", action.serverOdometerLogMediaType)
     }
     return state;
 }

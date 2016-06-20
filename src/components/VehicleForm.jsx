@@ -1,7 +1,6 @@
 import React from "react"
 import { Label, Button, Row, Col } from "react-bootstrap";
 import momentLocalizer from "react-widgets/lib/localizers/moment"
-import DateTimePicker from "react-widgets/lib/DateTimePicker"
 import moment from "moment"
 import { reduxForm } from "redux-form"
 import * as strs from "../strings"

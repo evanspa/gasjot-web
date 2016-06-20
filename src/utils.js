@@ -1,19 +1,45 @@
 import _ from "lodash"
+import moment from "moment"
+import momentLocalizer from "react-widgets/lib/localizers/moment"
 
-export function vehicleDetailUrl(vehicleId) {
-    return "/vehicles/" + vehicleId
+String.prototype.toTitleCase = function() {
+    var i, j, str, lowers, uppers;
+    str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+
+    // Certain minor words should be left lowercase unless
+    // they are the first or last words in the string
+    lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
+              'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+    for (i = 0, j = lowers.length; i < j; i++)
+        str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'),
+                          function(txt) {
+                              return txt.toLowerCase();
+                          });
+
+    // Certain words such as initialisms or acronyms should be left uppercase
+    uppers = ['Id', 'Tv'];
+    for (i = 0, j = uppers.length; i < j; i++)
+        str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'),
+                          uppers[i].toUpperCase());
+
+    return str;
 }
 
-export function vehicleEditUrl(vehicleId) {
-    return vehicleDetailUrl(vehicleId) + "/edit"
+export const DATE_DISPLAY_FORMAT = "dddd, MMMM Do YYYY"
+export const DATE_EDIT_FORMAT    = "MM/DD/YYYY"
+
+export function formatDate(moment, dateAsLongSince1970) {
+    return moment(dateAsLongSince1970).format(DATE_DISPLAY_FORMAT)
 }
 
-export function fuelstationDetailUrl(fuelstationId) {
-    return "/fuelstations/" + fuelstationId
+export function toMoment(moment, dateAsString) {
+    return moment(dateAsString, DATE_DISPLAY_FORMAT)
 }
 
-export function fuelstationEditUrl(fuelstationId) {
-    return fuelstationDetailUrl(fuelstationId) + "/edit"
+export function toUnixEpoch(moment, dateAsString) {
+    return toMoment(moment, dateAsString).valueOf()
 }
 
 export function makeLoginHandler(location, handleSubmit) {
@@ -27,6 +53,12 @@ export function makeLoginHandler(location, handleSubmit) {
 export const cannotBeEmptyValidator = (values, errors, fieldName) => {
     if (!values[fieldName] || _.isEmpty(_.trim(values[fieldName]))) {
         errors[fieldName] = "Cannot be empty."
+    }
+}
+
+export const cannotBeUnselectedValidator = (values, errors, fieldName, errMessage) => {
+    if ((values[fieldName] == null) || _.isEmpty(_.trim(values[fieldName]))) {
+        errors[fieldName] = errMessage
     }
 }
 
@@ -98,6 +130,19 @@ export const modelToFormModelIfNotNull = (formModel, formKey, model, modelKey, t
     }
 }
 
+export const toDropdownValues = (entities, valueKey, displayKey) => {
+    let dropdownValues = []
+    let values = _.values(entities)
+    for (let i = 0; i < values.length; i++) {
+        let dropdownValue = {}
+        let payload = values[i]["payload"]
+        dropdownValue[valueKey] = payload[valueKey]
+        dropdownValue[displayKey] = payload[displayKey]
+        dropdownValues.push(dropdownValue)
+    }
+    return dropdownValues
+}
+
 export const toUserFormModel = (userPayload) => {
     let formModel = {}
     const userModelToFormModel = (formKey, modelKey, transformer = null) => {
@@ -139,5 +184,21 @@ export const toFuelstationFormModel = (fuelstationPayload) => {
     fuelstationModelToFormModel("typeId",    "fpfuelstation/type-id")
     fuelstationModelToFormModel("street",    "fpfuelstation/street")
     fuelstationModelToFormModel("city",      "fpfuelstation/city")
+    return formModel
+}
+
+export const toOdometerLogFormModel = (odometerLogPayload) => {
+    momentLocalizer(moment)
+    let formModel = {}
+    const odometerLogModelToFormModel = (formKey, modelKey, transformer = null) => {
+        modelToFormModelIfNotNull(formModel, formKey, odometerLogPayload, modelKey, transformer)
+    }
+    odometerLogModelToFormModel("vehicleId",          "envlog/vehicle-id")
+    odometerLogModelToFormModel("logDate",            "envlog/logged-at", loggedAt => formatDate(moment, loggedAt))
+    odometerLogModelToFormModel("odometer",           "envlog/odometer")
+    odometerLogModelToFormModel("avgMpgReadout",      "envlog/reported-avg-mpg")
+    odometerLogModelToFormModel("avgMphReadout",      "envlog/reported-avg-mph")
+    odometerLogModelToFormModel("rangeReadout",       "envlog/dte")
+    odometerLogModelToFormModel("outsideTempReadout", "envlog/reported-outside-temp")
     return formModel
 }

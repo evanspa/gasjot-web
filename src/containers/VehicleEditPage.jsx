@@ -1,16 +1,13 @@
 import React from "react"
-import { Col, Modal, Button } from "react-bootstrap";
-import { Link } from "react-router"
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import GasJotNavbar from "../components/NavBar.jsx"
 import VehicleForm from "../components/VehicleForm.jsx"
 import { cancelRecordEdit, attemptSaveVehicle, attemptDownloadVehicle } from "../actions/actionCreators"
 import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import * as urls from "../urls"
 
 class VehicleEditPage extends React.Component {
     render() {
@@ -33,7 +30,7 @@ class VehicleEditPage extends React.Component {
         return (<EntityEditDetailPage
                     editMode={true}
                     entityType="vehicle"
-                    entitiesUri="/vehicles"
+                    entitiesUri={urls.VEHICLES_URI}
                     reauthenticateModal={reauthenticateModal}
                     entityForm={entityForm} />)
     }
@@ -50,10 +47,14 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         cancelVehicleEdit: (vehicleId) => {
+            toastr.clean()
             dispatch(cancelRecordEdit())
-            dispatch(push("/vehicles/" + vehicleId))
+            dispatch(push(urls.vehicleDetailUrl(vehicleId)))
         },
-        handleSubmit: (vehicleId) => { dispatch(attemptSaveVehicle(vehicleId)) }
+        handleSubmit: (vehicleId) => {
+            toastr.clean()
+            dispatch(attemptSaveVehicle(vehicleId))
+        }
     }
 }
 

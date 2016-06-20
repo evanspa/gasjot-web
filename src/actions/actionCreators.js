@@ -6,6 +6,8 @@ import { toastr } from 'react-redux-toastr'
 import { actions as toastrActions } from 'react-redux-toastr'
 import * as utils from "../utils"
 import * as apiUtils from "./api-utils"
+import moment from "moment"
+import momentLocalizer from "react-widgets/lib/localizers/moment"
 
 const LIGHT_LOGIN_URI = "http://www.jotyourself.com/gasjot/d/light-login"
 const LOGIN_URI = "http://www.jotyourself.com/gasjot/d/login"
@@ -51,6 +53,34 @@ export function receiveServerFuelstation(serverFuelstation) {
     return { type: actionTypes.SERVER_FUELSTATION_RECEIVED, serverFuelstation }
 }
 
+export function receiveServerFuelstationLocation(serverFuelstationId, serverFuelstationLocation) {
+    return { type: actionTypes.SERVER_FUELSTATION_LOCATION_RECEIVED,
+             serverFuelstationId: serverFuelstationId,
+             serverFuelstationLocation: serverFuelstationLocation }
+}
+
+export function receiveServerFuelstationMediaType(serverFuelstationId, serverFuelstationMediaType) {
+    return { type: actionTypes.SERVER_FUELSTATION_MEDIATYPE_RECEIVED,
+             serverFuelstationId: serverFuelstationId,
+             serverFuelstationMediaType }
+}
+
+export function receiveServerOdometerLog(serverOdometerLog) {
+    return { type: actionTypes.SERVER_ODOMETERLOG_RECEIVED, serverOdometerLog }
+}
+
+export function receiveServerOdometerLogLocation(serverOdometerLogId, serverOdometerLogLocation) {
+    return { type: actionTypes.SERVER_ODOMETERLOG_LOCATION_RECEIVED,
+             serverOdometerLogId: serverOdometerLogId,
+             serverOdometerLogLocation: serverOdometerLogLocation }
+}
+
+export function receiveServerOdometerLogMediaType(serverOdometerLogId, serverOdometerLogMediaType) {
+    return { type: actionTypes.SERVER_ODOMETERLOG_MEDIATYPE_RECEIVED,
+             serverOdometerLogId: serverOdometerLogId,
+             serverOdometerLogMediaType }
+}
+
 export function receiveAuthenticationToken(authToken) {
     return { type: actionTypes.AUTH_TOKEN_RECEIVED, authToken }
 }
@@ -79,6 +109,10 @@ export function markFuelstationForEdit(fuelstationId) {
     return { type: actionTypes.MARK_FUELSTATION_FOR_EDIT, fuelstationId }
 }
 
+export function markOdometerLogForEdit(odometerLogId) {
+    return { type: actionTypes.MARK_ODOMETERLOG_FOR_EDIT, odometerLogId }
+}
+
 const makeMediaType = entityName => "application/vnd.fp." + entityName + "-v0.0.1+json"
 const makeContentType = (mediaType, charset) => mediaType + ";charset=" + charset
 
@@ -92,6 +126,9 @@ const vehicleContentType = makeContentType(vehicleMediaType, charset)
 
 const fuelstationMediaType = makeMediaType("fuelstation")
 const fuelstationContentType = makeContentType(fuelstationMediaType, charset)
+
+const odometerLogMediaType = makeMediaType("envlog")
+const odometerLogContentType = makeContentType(odometerLogMediaType, charset)
 
 export function logout(logoutUri, authToken) {
     return (dispatch) => {
@@ -308,6 +345,18 @@ function getFuelstationUpdatedAt(state, fuelstationId) {
     return state.serverSnapshot._embedded.fuelstations[fuelstationId].payload["fpfuelstation/updated-at"]
 }
 
+function getOdometerLogsUri(state) {
+    return state.serverSnapshot._links.envlogs.href
+}
+
+function getOdometerLogUri(state, odometerLogId) {
+    return state.serverSnapshot._embedded.envlogs[odometerLogId].location
+}
+
+function getOdometerLogUpdatedAt(state, odometerLogId) {
+    return state.serverSnapshot._embedded.envlogs[odometerLogId].payload["envlog/updated-at"]
+}
+
 export const attemptDownloadVehicle = apiUtils.makeAttemptDownloadEntityFn(
     "vehicle",
     vehicleMediaType,
@@ -370,3 +419,63 @@ export const attemptSaveFuelstation = apiUtils.makeAttemptSaveEntityFn(
     attemptDownloadFuelstation,
     utils.fuelstationEditUrl,
     receiveServerFuelstation)
+
+export const attemptSaveNewFuelstation = apiUtils.makeAttemptSaveNewEntity(
+    "fuelstation",
+    fuelstationContentType,
+    fuelstationMediaType,
+    getFuelstationsUri,
+    fuelstationRequestPayload,
+    "fuelstation",
+    "fpfuelstation/id",
+    receiveServerFuelstationLocation,
+    receiveServerFuelstationMediaType,
+    receiveServerFuelstation)
+
+const odometerLogRequestPayloadFnMaker = vehicles => {
+    return form => {
+        momentLocalizer(moment)
+        var payload = {}
+        utils.formToModelIfNotNull(form, "vehicleId",          payload, "envlog/vehicle",               "fpvehicle/id", vehicleId => vehicles[vehicleId].location)
+        utils.formToModelIfNotNull(form, "logDate",            payload, "envlog/logged-at",             null,           loggedAtStr => utils.toUnixEpoch(moment, loggedAtStr))
+        utils.formToModelIfNotNull(form, "odometer",           payload, "envlog/odometer",              null,           _.toNumber)
+        utils.formToModelIfNotNull(form, "avgMpgReadout",      payload, "envlog/reported-avg-mpg",      null,           _.toNumber)
+        utils.formToModelIfNotNull(form, "avgMphReadout",      payload, "envlog/reported-avg-mph",      null,           _.toNumber)
+        utils.formToModelIfNotNull(form, "rangeReadout",       payload, "envlog/dte",                   null,           _.toNumber)
+        utils.formToModelIfNotNull(form, "outsideTempReadout", payload, "envlog/reported-outside-temp", null,           _.toNumber)
+        return payload
+    }
+}
+
+export const attemptDownloadOdometerLog = apiUtils.makeAttemptDownloadEntityFn(
+    "odometer log",
+    odometerLogMediaType,
+    getOdometerLogUpdatedAt,
+    getOdometerLogUri,
+    receiveServerOdometerLog)
+
+export const attemptSaveOdometerLogFnMaker = vehicles =>
+    apiUtils.makeAttemptSaveEntityFn(
+        "odometer log",
+        odometerLogContentType,
+        odometerLogMediaType,
+        getOdometerLogUpdatedAt,
+        getOdometerLogUri,
+        odometerLogRequestPayloadFnMaker(vehicles),
+        "odometerlog",
+        attemptDownloadOdometerLog,
+        utils.odometerLogEditUrl,
+        receiveServerOdometerLog)
+
+export const attemptSaveNewOdometerLogFnMaker = vehicles =>
+    apiUtils.makeAttemptSaveNewEntity(
+        "odometer log",
+        odometerLogContentType,
+        odometerLogMediaType,
+        getOdometerLogsUri,
+        odometerLogRequestPayloadFnMaker(vehicles),
+        "odometerlog",
+        "envlog/id",
+        receiveServerOdometerLogLocation,
+        receiveServerOdometerLogMediaType,
+        receiveServerOdometerLog)

@@ -13,7 +13,7 @@ export default class EntityDetailPage extends React.Component {
                 entityForm,
                 editMode
         } = this.props
-        const capitalizedEntityType = _.capitalize(entityType)
+        const capitalizedEntityType = entityType.toTitleCase()
         let pageTitle
         let heading
         if (editMode) {

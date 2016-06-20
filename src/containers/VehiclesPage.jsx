@@ -1,29 +1,29 @@
 import React from "react"
 import { push } from 'react-router-redux'
-import { Row, Col, Tabs } from "react-bootstrap";
-import { Link } from "react-router"
 import { connect } from 'react-redux'
-import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import GasJotNavbar from "../components/NavBar.jsx"
-import VehiclesList from "../components/VehiclesList.jsx"
-import FuelstationsList from "../components/FuelstationsList.jsx"
+import EntitiesPage from "../components/EntitiesPage.jsx"
 import _ from "lodash"
+import * as urls from "../urls"
 
 class VehiclesPage extends React.Component {
     render() {
         const { vehicles, vehicleRowOnClick, handleAddVehicle } = this.props
+        const fields = [
+            { label: "Vehicle Name", valueKey: "fpvehicle/name" },
+            { label: "Plate #",      valueKey: "fpvehicle/plate" }
+        ]
         return (
-            <div>
-                <GasJotHelmet title="Your Vehicles" />
-                <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <Link to="/">&#8592; back</Link>
-                    <h3 style={{paddingBottom: 5}}>Your Vehicles</h3>
-                    <VehiclesList vehicles={ vehicles }
-                                  handleAddVehicle={ handleAddVehicle }
-                                  vehicleRowOnClick={ vehicleRowOnClick } />
-                </Col>
-            </div>
+            <EntitiesPage
+                entityType="vehicle"
+                entityIdKey="fpvehicle/id"
+                entities={vehicles}
+                fields={fields}
+                entityRowOnClick={vehicleRowOnClick}
+                entitiesSortFn={(o1, o2) => {
+                        return o2.payload["fpvehicle/updated-at"] - o1.payload["fpvehicle/updated-at"]
+                    }}
+                handleAddEntity={ handleAddVehicle }
+                entityLinkToFn={(vehicleId) => { return urls.vehicleDetailUrl(vehicleId) }} />
         )
     }
 }
@@ -41,7 +41,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        vehicleRowOnClick: (vehicleId) => { dispatch(push("/vehicles/" + vehicleId)) },
+        vehicleRowOnClick: (vehicleId) => { dispatch(push(urls.vehicleDetailUrl(vehicleId))) },
         handleAddVehicle : () => { dispatch(push("/addVehicle")) }
     }
 }

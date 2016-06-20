@@ -4,9 +4,13 @@ import { reduxForm } from "redux-form"
 import * as strs from "../strings"
 import SmallModal from "./SmallModal.jsx"
 import { GasJotTextFormGroup,
+         GasJotDateFormGroup,
          GasJotCheckboxFormGroup,
          GasJotDropdownFormGroup } from "./FormInput.jsx"
-import { cannotBeEmptyValidator, cannotBeUnselectedValidator, mustBeNumberValidator } from "../utils"
+import { cannotBeEmptyValidator,
+         mustBePositiveNumberValidator,
+         cannotBeUnselectedValidator,
+         mustBeNumberValidator } from "../utils"
 import { FSTYPES_ARRAY } from "../fstypes"
 import _ from "lodash"
 import * as errFlags from "../errorFlags"
@@ -15,14 +19,17 @@ import ErrorMessages from "./ErrorMessages.jsx"
 
 const validate = values => {
     const errors = {}
-    cannotBeEmptyValidator(values, errors, "name")
-    cannotBeUnselectedValidator(values, errors, "typeId", 'Please select a value.  (pick "Other" if not sure of brand)')
-    mustBeNumberValidator(values, errors, "longitude")
-    mustBeNumberValidator(values, errors, "latitude")
+    cannotBeUnselectedValidator(values, errors, "vehicleId", "Select a vehicle.")
+    cannotBeEmptyValidator(values, errors, "odometer")
+    mustBePositiveNumberValidator(values, errors, "odometer")
+    mustBePositiveNumberValidator(values, errors, "avgMpgReadout")
+    mustBePositiveNumberValidator(values, errors, "rangeReadout")
+    mustBePositiveNumberValidator(values, errors, "avgMphReadout")
+    mustBeNumberValidator(values, errors, "outsideTempReadout")
     return errors
 }
 
-class FuelstationForm extends React.Component {
+class OdometerLogForm extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -35,11 +42,12 @@ class FuelstationForm extends React.Component {
 
     render() {
         // https://github.com/erikras/redux-form/issues/190
-        const { fields: {name, typeId, street, city, state, zip, latitude, longitude},
-                fuelstationId,
-                markFuelstationForEdit,
-                cancelFuelstationEdit,
-                downloadFuelstation,
+        const { fields: { vehicleId, logDate, odometer, avgMpgReadout, rangeReadout, avgMphReadout, outsideTempReadout },
+                vehicles,
+                odometerLogId,
+                markOdometerLogForEdit,
+                cancelOdometerLogEdit,
+                downloadOdometerLog,
                 handleSubmit,
                 requestInProgress,
                 responseStatus,
@@ -48,15 +56,15 @@ class FuelstationForm extends React.Component {
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
                                 editMode={editMode}
-                                entityId={fuelstationId}
-                                cancelEntityEdit={cancelFuelstationEdit}
+                                entityId={odometerLogId}
+                                cancelEntityEdit={cancelOdometerLogEdit}
                                 requestInProgress={requestInProgress}
-                                markEntityForEdit={markFuelstationForEdit}
-                                cancelEntityAdd={cancelFuelstationEdit}
-                                downloadEntity={downloadFuelstation} />
+                                markEntityForEdit={markOdometerLogForEdit}
+                                cancelEntityAdd={cancelOdometerLogEdit}
+                                downloadEntity={downloadOdometerLog} />
         const errors = [
-            { flag: errFlags.SAVE_FUELSTATION_CANNOT_BE_PURPLEX,
-              message: "Gas station name cannot contain 'purplex'."}
+            { flag: errFlags.SAVE_ODOMETERLOG_VEHICLE_DOES_NOT_EXIST,
+              message: "The selected vehicle no longer exists."}
         ]
         return (
             <div>
@@ -65,41 +73,36 @@ class FuelstationForm extends React.Component {
                 <form onSubmit={handleSubmit}>
                     { actionArray }
                     <Row><Col xs={12}><hr /></Col></Row>
-                    <GasJotTextFormGroup
-                        label="Gas station name"
-                        field={name}
-                        disabled={!editMode}
-                        autoFocus={true} />
                     <GasJotDropdownFormGroup
-                        label="Brand"
-                        field={typeId}
+                        label="Vehicle"
+                        field={vehicleId}
                         disabled={!editMode}
-                        valueField="id"
-                        textField="label"
-                        data={FSTYPES_ARRAY} />
-                    <GasJotTextFormGroup
-                        label="Street name"
-                        field={street}
+                        valueField="fpvehicle/id"
+                        textField="fpvehicle/name"
+                        data={vehicles} />
+                    <GasJotDateFormGroup
+                        label="Log date"
+                        field={logDate}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="City"
-                        field={city}
+                        label="Odometer"
+                        field={odometer}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="State"
-                        field={state}
+                        label="Average MPG readout"
+                        field={avgMpgReadout}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="Zip"
-                        field={zip}
+                        label="Average MPH readout"
+                        field={avgMphReadout}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="Latitude"
-                        field={latitude}
+                        label="Range readout"
+                        field={rangeReadout}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="Longitude"
-                        field={longitude}
+                        label="Outside temperature readout"
+                        field={outsideTempReadout}
                         disabled={!editMode} />
                     <Row><Col xs={12}><hr style={{ marginTop: 5, marginBottom: 15}}/></Col></Row>
                     { actionArray }
@@ -110,7 +113,7 @@ class FuelstationForm extends React.Component {
 }
 
 export default reduxForm({
-    form: "fuelstation",
-    fields: ["name", "typeId", "street", "city", "state", "zip", "latitude", "longitude"],
+    form: "odometerlog",
+    fields: ["vehicleId", "logDate", "odometer", "avgMpgReadout", "rangeReadout", "avgMphReadout", "outsideTempReadout"],
     validate
-})(FuelstationForm)
+})(OdometerLogForm)

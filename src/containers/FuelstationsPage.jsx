@@ -1,27 +1,34 @@
 import React from "react"
 import { push } from 'react-router-redux'
-import { Row, Col } from "react-bootstrap";
-import { Link } from "react-router"
 import { connect } from 'react-redux'
-import GasJotHelmet from "../components/GasJotHelmet.jsx";
-import GasJotNavbar from "../components/NavBar.jsx"
-import VehiclesList from "../components/VehiclesList.jsx"
-import FuelstationsList from "../components/FuelstationsList.jsx"
+import { Image } from "react-bootstrap"
+import EntitiesPage from "../components/EntitiesPage.jsx"
 import _ from "lodash"
+import * as urls from "../urls"
 
 class FuelstationsPage extends React.Component {
     render() {
-        const { fuelstations, fuelstationRowOnClick } = this.props
+        const { fuelstations, fuelstationRowOnClick, handleAddFuelstation } = this.props
+        const fields = [
+            { label: "Gas Station Name", valueKey: "fpfuelstation/name" },
+            { label: "Brand",
+              valueKey: "fpfuelstation/type-id",
+              formatter: (typeId) => {
+                  return (<Image src={"/images/fstypes/thumbnails/fstype-" + typeId + ".png"} responsive />)
+              }}
+        ]
         return (
-            <div>
-                <GasJotHelmet title="Your Gas Stations" />
-                <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <Link to="/">&#8592; back</Link>
-                    <h3 style={{paddingBottom: 5}}>Your Gas Stations</h3>
-                    <FuelstationsList fuelstations={ fuelstations } fuelstationRowOnClick={ fuelstationRowOnClick } />
-                </Col>
-            </div>
+            <EntitiesPage
+                entityType="gas station"
+                entityIdKey="fpfuelstation/id"
+                entities={fuelstations}
+                fields={fields}
+                entityRowOnClick={fuelstationRowOnClick}
+                entitiesSortFn={(o1, o2) => {
+                        return o2.payload["fpfuelstation/updated-at"] - o1.payload["fpfuelstation/updated-at"]
+                    }}
+                handleAddEntity={ handleAddFuelstation }
+                entityLinkToFn={(fuelstationId) => { return urls.fuelstationDetailUrl(fuelstationId) }} />
         )
     }
 }
@@ -39,7 +46,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fuelstationRowOnClick: (fuelstationId) => { dispatch(push("/fuelstations/" + fuelstationId)) }
+        fuelstationRowOnClick: (fuelstationId) => { dispatch(push(urls.fuelstationDetailUrl(fuelstationId))) },
+        handleAddFuelstation: () => { dispatch(push("/addFuelstation")) }
     }
 }
 

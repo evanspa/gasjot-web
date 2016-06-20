@@ -7,3 +7,5 @@ export const SAVE_VEHICLE_CANNOT_BE_RED                = 1 << 4
 export const SAVE_VEHICLE_CANNOT_BE_BOTH_DIESEL_OCTANE = 1 << 6
 
 export const SAVE_FUELSTATION_CANNOT_BE_PURPLEX        = 1 << 3
+
+export const SAVE_ODOMETERLOG_VEHICLE_DOES_NOT_EXIST   = 1 << 5
