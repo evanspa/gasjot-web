@@ -350,7 +350,7 @@ function getFuelstationUpdatedAt(state, fuelstationId) {
 }
 
 function getOdometerLogsUri(state) {
-    return state.serverSnapshot._links.envlogs.href
+    return state.serverSnapshot._links["environment-logs"].href
 }
 
 function getOdometerLogUri(state, odometerLogId) {

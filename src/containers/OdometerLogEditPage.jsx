@@ -13,19 +13,16 @@ import * as urls from "../urls"
 class OdometerLogEditPage extends React.Component {
     render() {
         const odometerLogPayload = this.props.odometerLog.payload
-        const { cancelOdometerLogEdit,
-                handleSubmit,
-                api,
-                becameUnauthenticated,
-                vehicles
+        const {
+            cancelOdometerLogEdit,
+            handleSubmit,
+            api,
+            becameUnauthenticated,
+            vehicles
         } = this.props
         const { requestInProgress, fpErrorMask } = api
         const odometerLogId = odometerLogPayload["envlog/id"]
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
-        const reauthenticateModal = <ReauthenticateModal
-                                        showModal={becameUnauthenticated}
-                                        message="To save your odometer log, we need you to re-authenticate."
-                                        operationOnLightLoginSuccess={() => handleSubmit(vehicles, odometerLogId)} />
         const entityForm = <OdometerLogForm
                                vehicles={vehicleDropdownValues}
                                cancelOdometerLogEdit={cancelOdometerLogEdit}
@@ -35,6 +32,10 @@ class OdometerLogEditPage extends React.Component {
                                initialValues={toOdometerLogFormModel(odometerLogPayload)}
                                editMode={true}
                                fpErrorMask={fpErrorMask} />
+        const reauthenticateModal = <ReauthenticateModal
+                                        showModal={becameUnauthenticated}
+                                        message="To save your odometer log, we need you to re-authenticate."
+                                        operationOnLightLoginSuccess={() => handleSubmit(vehicles, odometerLogId)} />
         return (<EntityEditDetailPage
                     editMode={true}
                     entityType="odometer log"

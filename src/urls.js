@@ -1,17 +1,23 @@
-export const ROOT_URI            = "/"
-export const VEHICLES_URI        = "/vehicles"
-export const FUELSTATIONS_URI    = "/fuelstations"
-export const ODOMETER_LOGS_URI   = "/odometerLogs"
-export const LOGIN_URI           = "/login"
-export const SIGNUP_URI          = "/signup"
-export const WELCOME_URI         = "/welcome"
-export const ACCOUNT_URI         = "/account"
-export const EDIT_ACCOUNT_URI    = ACCOUNT_URI + "/edit"
-export const LOGGED_OUT_URI      = "/loggedOut"
-export const ACCOUNT_CREATED_URI = "/accountCreated"
-export const REDIRECT_URI        = "/redirect"
-export const ADD_VEHICLE_URI     = "/addVehicle"
-export const ADD_FUELSTATION_URI = "/addFuelstation"
+export const ROOT_URI             = "/"
+
+export const VEHICLES_URI         = "/vehicles"
+export const ADD_VEHICLE_URI      = "/addVehicle"
+
+export const FUELSTATIONS_URI     = "/fuelstations"
+export const ADD_FUELSTATION_URI  = "/addFuelstation"
+
+export const ODOMETER_LOGS_URI    = "/odometerLogs"
+export const ADD_ODOMETER_LOG_URI = "/addOdometerLog"
+
+export const ACCOUNT_URI          = "/account"
+export const EDIT_ACCOUNT_URI     = ACCOUNT_URI + "/edit"
+
+export const LOGIN_URI            = "/login"
+export const SIGNUP_URI           = "/signup"
+export const WELCOME_URI          = "/welcome"
+export const LOGGED_OUT_URI       = "/loggedOut"
+export const ACCOUNT_CREATED_URI  = "/accountCreated"
+export const REDIRECT_URI         = "/redirect"
 
 export function vehicleDetailUrl(vehicleId) {
     return VEHICLES_URI + "/" + vehicleId

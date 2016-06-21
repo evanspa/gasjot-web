@@ -17,6 +17,7 @@ import FuelstationAddPage from "./containers/FuelstationAddPage.jsx"
 import OdometerLogsPage from "./containers/OdometerLogsPage.jsx"
 import OdometerLogDetailPage from "./containers/OdometerLogDetailPage.jsx"
 import OdometerLogEditPage from "./containers/OdometerLogEditPage.jsx"
+import OdometerLogAddPage from "./containers/OdometerLogAddPage.jsx"
 import LoggedOutPage from "./containers/LoggedOutPage.jsx"
 import DashboardPage from "./containers/DashboardPage.jsx"
 import NotFoundPage from "./containers/NotFoundPage.jsx"
@@ -39,7 +40,7 @@ export default function createRoutes(store, isServer) {
             })
         } else if (isServer) {
             replace({
-                pathname: "/redirect?nextPathname=" + nextState.location.pathname,
+                pathname: urls.REDIRECT_URI + "?nextPathname=" + nextState.location.pathname,
                 state: { nextPathname: nextState.location.pathname }
             })
         }
@@ -64,6 +65,7 @@ export default function createRoutes(store, isServer) {
             <Route path={urls.ODOMETER_LOGS_URI}              component={OdometerLogsPage}      onEnter={requiresAuthentication} />
             <Route path={urls.odometerLogDetailTemplateUrl()} component={OdometerLogDetailPage} onEnter={requiresAuthentication} />
             <Route path={urls.odometerLogEditTemplateUrl()}   component={OdometerLogEditPage}   onEnter={requiresAuthentication} />
+            <Route path={urls.ADD_ODOMETER_LOG_URI}           component={OdometerLogAddPage}    onEnter={requiresAuthentication} />
             <Route path={urls.WELCOME_URI}                    component={UnauthHomePage} />
             <Route path={urls.SIGNUP_URI}                     component={SignUpPage} />
             <Route path={urls.ACCOUNT_CREATED_URI}            component={AccountCreatedPage}    onEnter={requiresAuthentication} />

@@ -1,45 +1,48 @@
 import React from "react"
 import { connect } from 'react-redux'
 import { push, goBack } from 'react-router-redux'
-import FuelstationForm from "../components/FuelstationForm.jsx"
-import { cancelRecordEdit, attemptSaveNewFuelstation } from "../actions/actionCreators"
+import OdometerLogForm from "../components/OdometerLogForm.jsx"
+import { cancelRecordEdit, attemptSaveNewOdometerLogFnMaker } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { toastr } from 'react-redux-toastr'
+import * as utils from "../utils"
 
-class FuelstationAddPage extends React.Component {
+class OdometerLogAddPage extends React.Component {
     render() {
         const {
-            cancelFuelstationAdd,
+            cancelOdometerLogAdd,
             handleSubmit,
             becameUnauthenticated,
             api,
+            vehicles,
             backLink
         } = this.props
         const { requestInProgress, fpErrorMask } = api
-        const fuelstationForm = (<FuelstationForm
-                                     cancelFuelstationEdit={cancelFuelstationAdd}
-                                     onSubmit={() => handleSubmit()}
+        const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
+        const odometerLogForm = (<OdometerLogForm
+                                     vehicles={vehicleDropdownValues}
+                                     cancelOdometerLogEdit={cancelOdometerLogAdd}
+                                     onSubmit={() => handleSubmit(vehicles)}
                                      requestInProgress={requestInProgress}
                                      editMode={true}
                                      fpErrorMask={fpErrorMask} />)
         const reauthenticateModal = <ReauthenticateModal
                                         showModal={becameUnauthenticated}
-                                        message="To save your gas station, we need you to re-authenticate."
-                                        operationOnLightLoginSuccess={() => handleSubmit()} />
-        return (
-            <EntityAddPage
-                entityType="gas station"
-                backLink={backLink}
-                reauthenticateModal={reauthenticateModal}
-                entityForm={fuelstationForm}/>
-        )
+                                        message="To save your odometer log, we need you to re-authenticate."
+                                        operationOnLightLoginSuccess={() => handleSubmit(vehicles)} />
+        return (<EntityAddPage
+                    entityType="odometer log"
+                    backLink={backLink}
+                    reauthenticateModal={reauthenticateModal}
+                    entityForm={odometerLogForm}/>)
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
         api: state.api,
+        vehicles: state.serverSnapshot._embedded.vehicles,
         becameUnauthenticated: state.becameUnauthenticated
     }
 }
@@ -51,7 +54,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         nextPathname = query.nextPathname
     }
     return {
-        cancelFuelstationAdd: () => {
+        cancelOdometerLogAdd: () => {
             toastr.clean()
             dispatch(cancelRecordEdit())
             if (nextPathname != null) {
@@ -60,11 +63,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 dispatch(goBack())
             }
         },
-        handleSubmit: () => {
+        handleSubmit: (vehicles) => {
             toastr.clean()
-            dispatch(attemptSaveNewFuelstation(nextPathname))
+            dispatch(attemptSaveNewOdometerLogFnMaker(vehicles)(nextPathname))
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FuelstationAddPage)
+export default connect(mapStateToProps, mapDispatchToProps)(OdometerLogAddPage)

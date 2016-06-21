@@ -53,7 +53,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         odometerLogRowOnClick: (odometerLogId) => { dispatch(push(urls.odometerLogDetailUrl(odometerLogId))) },
-        handleAddOdometerLog: () => { dispatch(push(urls.ODOMETER_LOGS_URI)) }
+        handleAddOdometerLog: () => { dispatch(push(urls.ADD_ODOMETER_LOG_URI)) }
     }
 }
 

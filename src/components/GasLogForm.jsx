@@ -19,9 +19,10 @@ import ErrorMessages from "./ErrorMessages.jsx"
 const validate = values => {
     const errors = {}
     cannotBeUnselectedValidator(values, errors, "vehicleId", "Select a vehicle.")
+    cannotBeUnselectedValidator(values, errors, "fuelstationId", "Select a gas station.")
     cannotBeEmptyValidator(values, errors, "logDate")
-    cannotBeEmptyValidator(values, errors, "odometer")
-    mustBePositiveNumberValidator(values, errors, "odometer")
+    cannotBeEmptyValidator(values, errors, "numGallons")
+    mustBePositiveNumberValidator(values, errors, "numGallons")
     mustBePositiveNumberValidator(values, errors, "avgMpgReadout")
     mustBePositiveNumberValidator(values, errors, "rangeReadout")
     mustBePositiveNumberValidator(values, errors, "avgMphReadout")
@@ -29,7 +30,7 @@ const validate = values => {
     return errors
 }
 
-class OdometerLogForm extends React.Component {
+class GasLogForm extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -45,10 +46,10 @@ class OdometerLogForm extends React.Component {
         const {
             fields: { vehicleId, logDate, odometer, avgMpgReadout, rangeReadout, avgMphReadout, outsideTempReadout },
             vehicles,
-            odometerLogId,
-            markOdometerLogForEdit,
-            cancelOdometerLogEdit,
-            downloadOdometerLog,
+            gasLogId,
+            markGasLogForEdit,
+            cancelGasLogEdit,
+            downloadGasLog,
             handleSubmit,
             requestInProgress,
             responseStatus,
@@ -58,15 +59,17 @@ class OdometerLogForm extends React.Component {
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
                                 editMode={editMode}
-                                entityId={odometerLogId}
-                                cancelEntityEdit={cancelOdometerLogEdit}
+                                entityId={gasLogId}
+                                cancelEntityEdit={cancelGasLogEdit}
                                 requestInProgress={requestInProgress}
-                                markEntityForEdit={markOdometerLogForEdit}
-                                cancelEntityAdd={cancelOdometerLogEdit}
-                                downloadEntity={downloadOdometerLog} />
+                                markEntityForEdit={markGasLogForEdit}
+                                cancelEntityAdd={cancelGasLogEdit}
+                                downloadEntity={downloadGasLog} />
         const errors = [
-            { flag: errFlags.SAVE_ODOMETERLOG_VEHICLE_DOES_NOT_EXIST,
-              message: "The selected vehicle no longer exists."}
+            { flag: errFlags.SAVE_GASLOG_VEHICLE_DOES_NOT_EXIST,
+              message: "The selected vehicle no longer exists."},
+            { flag: errFlags.SAVE_GASLOG_FUELSTATION_DOES_NOT_EXIST,
+              message: "The selected gas station no longer exists."}
         ]
         return (
             <div>
@@ -115,7 +118,7 @@ class OdometerLogForm extends React.Component {
 }
 
 export default reduxForm({
-    form: "odometerlog",
+    form: "gaslog",
     fields: ["vehicleId", "logDate", "odometer", "avgMpgReadout", "rangeReadout", "avgMphReadout", "outsideTempReadout"],
     validate
-})(OdometerLogForm)
+})(GasLogForm)
