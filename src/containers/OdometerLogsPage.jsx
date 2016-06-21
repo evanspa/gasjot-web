@@ -6,6 +6,7 @@ import * as utils from "../utils"
 import _ from "lodash"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
+import * as urls from "../urls"
 
 class OdometerLogsPage extends React.Component {
     render() {
@@ -31,8 +32,8 @@ class OdometerLogsPage extends React.Component {
                 entitiesSortFn={(o1, o2) => {
                         return o2.payload["envlog/logged-at"] - o1.payload["envlog/logged-at"]
                     }}
-                handleAddEntity={ handleAddOdometerLog }
-                entityLinkToFn={(odometerLogId) => { return "/odometerLogs/" + odometerLogId }} />
+                handleAddEntity={handleAddOdometerLog}
+                entityLinkToFn={odometerLogId => urls.odometerLogDetailUrl(odometerLogId)} />
         )
     }
 }
@@ -51,8 +52,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        odometerLogRowOnClick: (odometerLogId) => { dispatch(push("/odometerLogs/" + odometerLogId)) },
-        handleAddOdometerLog: () => { dispatch(push("/addOdometerLog")) }
+        odometerLogRowOnClick: (odometerLogId) => { dispatch(push(urls.odometerLogDetailUrl(odometerLogId))) },
+        handleAddOdometerLog: () => { dispatch(push(urls.ODOMETER_LOGS_URI)) }
     }
 }
 

@@ -5,6 +5,7 @@ import { push } from 'react-router-redux'
 import GasJotHelmet from "../components/GasJotHelmet.jsx"
 import GasJotNavbar from "../components/NavBar.jsx"
 import _ from "lodash"
+import * as urls from "../urls"
 
 class AccountCreatedPage extends React.Component {
     render() {
@@ -37,7 +38,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        handleAddVehicle: () => { dispatch(push('/addVehicle?nextPathname=/')) }
+        handleAddVehicle: () => { dispatch(push(urls.ADD_VEHICLE_URI + "?nextPathname=" + urls.ROOT_URI)) }
     }
 }
 

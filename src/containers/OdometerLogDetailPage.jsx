@@ -9,6 +9,7 @@ import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import _ from "lodash"
 import * as utils from "../utils"
+import * as urls from "../urls"
 
 class OdometerLogDetailPage extends React.Component {
     render() {
@@ -35,7 +36,7 @@ class OdometerLogDetailPage extends React.Component {
         return (<EntityEditDetailPage
                     editMode={false}
                     entityType="odometer log"
-                    entitiesUri="/odometerLogs"
+                    entitiesUri={urls.ODOMETER_LOGS_URI}
                     reauthenticateModal={reauthenticateModal}
                     entityForm={entityForm} />)
     }
@@ -54,10 +55,10 @@ const mapDispatchToProps = (dispatch) => {
         markOdometerLogForEdit: (odometerLogId) => {
             toastr.clean()
             dispatch(markOdometerLogForEdit(odometerLogId))
-            dispatch(push("/odometerLogs/" + odometerLogId + "/edit"))
+            dispatch(push(urls.odometerLogEditUrl(odometerLogId)))
         },
         downloadOdometerLog: (odometerLogId) => {
-            dispatch(attemptDownloadOdometerLog(odometerLogId, "/odometerLogs/" + odometerLogId))
+            dispatch(attemptDownloadOdometerLog(odometerLogId, urls.odometerLogDetailUrl(odometerLogId)))
         }
     }
 }

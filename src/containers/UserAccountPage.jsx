@@ -8,6 +8,7 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import UserAccountForm from "../components/UserAccountForm.jsx"
 import { markUserForEdit } from "../actions/actionCreators"
 import { toUserFormModel } from "../utils"
+import * as urls from "../urls"
 
 class UserAccountPage extends React.Component {
     render() {
@@ -45,7 +46,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         markUserForEdit: () => {
             dispatch(markUserForEdit())
-            dispatch(push("/account/edit"))
+            dispatch(push(urls.EDIT_ACCOUNT_URI))
         }
     }
 }

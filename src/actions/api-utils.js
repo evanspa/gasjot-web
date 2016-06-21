@@ -203,20 +203,27 @@ export function makeAttemptSaveNewEntity(
             .then(response => {
                 dispatch(apiRequestDone())
                 dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
-                const location = response.headers.get("location")
-                return response.json().then(json => {
-                    dispatch(toastrActions.clean())
-                    const entityId = json[entityIdKeyName]
-                    dispatch(receiveServerEntityLocationFn(entityId, location))
-                    dispatch(receiveServerEntityMediaTypeFn(entityId, response.headers.get("content-type")))
-                    dispatch(receiveServerEntityFn(json))
-                    if (nextPathname != null) {
-                        dispatch(push(nextPathname))
-                    } else {
-                        dispatch(goBack())
+                if (!checkBecameUnauthenticated(response, dispatch)) {
+                    if (response.status == 201) {
+                        const location = response.headers.get("location")
+                        return response.json().then(json => {
+                            dispatch(toastrActions.clean())
+                            const entityId = json[entityIdKeyName]
+                            dispatch(receiveServerEntityLocationFn(entityId, location))
+                            dispatch(receiveServerEntityMediaTypeFn(entityId, response.headers.get("content-type")))
+                            dispatch(receiveServerEntityFn(json))
+                            if (nextPathname != null) {
+                                dispatch(push(nextPathname))
+                            } else {
+                                dispatch(goBack())
+                            }
+                            toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
+                        })
+                    } else if (!response.ok) {
+                        toastr.clean()
+                        toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
                     }
-                    toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
-                })
+                }
             })
             .catch(error => {
                 dispatch(apiRequestDone())

@@ -2,25 +2,36 @@ import React from "react"
 import { connect } from 'react-redux'
 import { push, goBack } from 'react-router-redux'
 import VehicleForm from "../components/VehicleForm.jsx"
-import { attemptSaveNewVehicle } from "../actions/actionCreators"
+import { cancelRecordEdit, attemptSaveNewVehicle } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
+import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { toastr } from 'react-redux-toastr'
 
 class VehicleAddPage extends React.Component {
     render() {
         const {
             cancelVehicleAdd,
             handleSubmit,
-            requestInProgress,
-            backLink } = this.props
+            becameUnauthenticated,
+            api,
+            backLink
+        } = this.props
+        const { requestInProgress, fpErrorMask } = api
         const vehicleForm = (<VehicleForm
                                  cancelVehicleEdit={cancelVehicleAdd}
                                  onSubmit={() => handleSubmit()}
                                  requestInProgress={requestInProgress}
-                                 editMode={true} />)
+                                 editMode={true}
+                                 fpErrorMask={fpErrorMask} />)
+        const reauthenticateModal = <ReauthenticateModal
+                                        showModal={becameUnauthenticated}
+                                        message="To save your vehicle, we need you to re-authenticate."
+                                        operationOnLightLoginSuccess={() => handleSubmit()} />
         return (
             <EntityAddPage
                 entityType="vehicle"
                 backLink={backLink}
+                reauthenticateModal={reauthenticateModal}
                 entityForm={vehicleForm}/>
         )
     }
@@ -28,7 +39,8 @@ class VehicleAddPage extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        requestInProgress: state.api.requestInProgress
+        api: state.api,
+        becameUnauthenticated: state.becameUnauthenticated
     }
 }
 
@@ -40,6 +52,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     }
     return {
         cancelVehicleAdd: () => {
+            toastr.clean()
+            dispatch(cancelRecordEdit())
             if (nextPathname != null) {
                 dispatch(push(nextPathname))
             } else {
@@ -47,6 +61,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             }
         },
         handleSubmit: () => {
+            toastr.clean()
             dispatch(attemptSaveNewVehicle(nextPathname))
         }
     }

@@ -8,6 +8,7 @@ import { attemptLogin } from "../actions/actionCreators"
 import GasJotNavbar from "../components/NavBar.jsx"
 import { makeLoginHandler } from "../utils"
 import _ from "lodash"
+import * as urls from "../urls"
 
 class LogInPage extends React.Component {
 
@@ -34,7 +35,7 @@ class LogInPage extends React.Component {
                                 requestInProgress={requestInProgress}
                                 responseStatus={responseStatus} />
                             <hr />
-                            <p style={{paddingBottom: 10}}>Don't have an account?  <Link to="/signup">Sign up.</Link></p>
+                            <p style={{paddingBottom: 10}}>Don't have an account?  <Link to={urls.SIGNUP_URI}>Sign up.</Link></p>
                             <Link to="/forgot-password">Forgot Password?</Link>
                         </Col>
                     </Panel>

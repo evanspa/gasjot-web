@@ -9,6 +9,7 @@ import UserAccountForm from "../components/UserAccountForm.jsx"
 import { attemptSaveUser } from "../actions/actionCreators"
 import { toUserFormModel } from "../utils"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import * as urls from "../urls"
 
 class UserAccountEditPage extends React.Component {
     render() {
@@ -48,7 +49,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        cancelUserEdit: () => { dispatch(push("/account")) },
+        cancelUserEdit: () => { dispatch(push(urls.ACCOUNT_URI)) },
         handleSubmit: () => {
             dispatch(attemptSaveUser())
         }

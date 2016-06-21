@@ -7,11 +7,12 @@ import GasJotNavbar from "../components/NavBar.jsx"
 
 export default class EntityDetailPage extends React.Component {
     render() {
-        const { entityType,
-                entitiesUri,
-                reauthenticateModal,
-                entityForm,
-                editMode
+        const {
+            entityType,
+            entitiesUri,
+            reauthenticateModal,
+            entityForm,
+            editMode
         } = this.props
         const capitalizedEntityType = entityType.toTitleCase()
         let pageTitle

@@ -8,6 +8,7 @@ export default class EntityAddPage extends React.Component {
         const {
             entityType,
             entityForm,
+            reauthenticateModal,
             backLink
         } = this.props
         const titleCasedEntityType = entityType.toTitleCase()
@@ -15,6 +16,7 @@ export default class EntityAddPage extends React.Component {
             <div>
                 <GasJotHelmet title={"Add " + titleCasedEntityType} />
                 <GasJotNavbar />
+                {reauthenticateModal}
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     { backLink != null ? backLink : "" }
                     <h3 style={{paddingBottom: 5}}>{"Add " + titleCasedEntityType}</h3>

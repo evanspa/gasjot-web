@@ -47,7 +47,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         fuelstationRowOnClick: (fuelstationId) => { dispatch(push(urls.fuelstationDetailUrl(fuelstationId))) },
-        handleAddFuelstation: () => { dispatch(push("/addFuelstation")) }
+        handleAddFuelstation: () => { dispatch(push(urls.ADD_FUELSTATION_URI)) }
     }
 }
 

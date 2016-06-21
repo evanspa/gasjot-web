@@ -7,14 +7,17 @@ import { Col, Panel, Button } from "react-bootstrap";
 import SignUpForm from "../components/SignUpForm.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import _ from "lodash"
+import * as urls from "../urls"
 
 class SignUpPage extends React.Component {
     render() {
-        const { handleSubmit,
-                responseStatus,
-                requestInProgress,
-                fpErrorMask } = this.props
-        var nextSuccessPathname = "/";
+        const {
+            handleSubmit,
+            responseStatus,
+            requestInProgress,
+            fpErrorMask
+        } = this.props
+        var nextSuccessPathname = urls.ROOT_URI
         return (
             <div>
                 <GasJotHelmet title="Sign Up" />
@@ -28,7 +31,7 @@ class SignUpPage extends React.Component {
                                 requestInProgress={requestInProgress}
                                 fpErrorMask={fpErrorMask} />
                             <hr />
-                            <p>Already have an account?  <Link to="/login">Log in.</Link></p>
+                            <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
                         </Col>
                     </Panel>
                 </Col>
@@ -40,7 +43,7 @@ class SignUpPage extends React.Component {
 // https://github.com/reactjs/react-router/issues/975#issuecomment-192272704
 SignUpPage.contextTypes = {
     router: React.PropTypes.object.isRequired
-};
+}
 
 const mapStateToProps = (state) => {
     return state.api;

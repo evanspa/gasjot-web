@@ -2,7 +2,9 @@ import React from "react"
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import VehicleForm from "../components/VehicleForm.jsx"
-import { cancelRecordEdit, attemptSaveVehicle, attemptDownloadVehicle } from "../actions/actionCreators"
+import { cancelRecordEdit,
+         attemptSaveVehicle,
+         attemptDownloadVehicle } from "../actions/actionCreators"
 import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -12,7 +14,12 @@ import * as urls from "../urls"
 class VehicleEditPage extends React.Component {
     render() {
         const vehiclePayload = this.props.vehicle.payload
-        const { cancelVehicleEdit, handleSubmit, api, becameUnauthenticated } = this.props
+        const {
+            cancelVehicleEdit,
+            handleSubmit,
+            api,
+            becameUnauthenticated
+        } = this.props
         const { requestInProgress, fpErrorMask } = api
         const vehicleId = vehiclePayload["fpvehicle/id"]
         const reauthenticateModal = <ReauthenticateModal

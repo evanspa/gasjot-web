@@ -26,7 +26,7 @@ class AuthenticatedHomePage extends React.Component {
                         <ListGroupItem header="Gas Stations" onClick={() => onItemSelect(urls.FUELSTATIONS_URI)}>
                             {fuelstationCount} gas station records.
                         </ListGroupItem>
-                        <ListGroupItem header="Odometer Logs" onClick={() => onItemSelect("/odometerLogs")}>
+                        <ListGroupItem header="Odometer Logs" onClick={() => onItemSelect(urls.ODOMETER_LOGS_URI)}>
                             {odometerLogCount} odometer log records.
                         </ListGroupItem>
                     </ListGroup>

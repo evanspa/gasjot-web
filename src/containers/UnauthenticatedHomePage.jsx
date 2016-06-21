@@ -3,6 +3,7 @@ import { Link } from "react-router"
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Jumbotron, Col, Row } from "react-bootstrap";
 import GasJotNavbar from "../components/NavBar.jsx"
+import * as urls from "../urls"
 
 export default (props) =>
     <div>
@@ -12,7 +13,7 @@ export default (props) =>
             <Jumbotron>
                 <h1>Welcome to Gas Jot</h1>
                 <p className="lead">A fun way to track your gas usage.</p>
-                <p><Link className="btn btn-lg btn-success" to="/signup" role="button">Sign up today</Link></p>
+                <p><Link className="btn btn-lg btn-success" to={urls.SIGNUP_URI} role="button">Sign up today</Link></p>
             </Jumbotron>
             <Row className="marketing">
                 <Col md={12}>

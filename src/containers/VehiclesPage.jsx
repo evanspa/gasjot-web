@@ -22,8 +22,8 @@ class VehiclesPage extends React.Component {
                 entitiesSortFn={(o1, o2) => {
                         return o2.payload["fpvehicle/updated-at"] - o1.payload["fpvehicle/updated-at"]
                     }}
-                handleAddEntity={ handleAddVehicle }
-                entityLinkToFn={(vehicleId) => { return urls.vehicleDetailUrl(vehicleId) }} />
+                handleAddEntity={handleAddVehicle}
+                entityLinkToFn={vehicleId => urls.vehicleDetailUrl(vehicleId)} />
         )
     }
 }
@@ -42,7 +42,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         vehicleRowOnClick: (vehicleId) => { dispatch(push(urls.vehicleDetailUrl(vehicleId))) },
-        handleAddVehicle : () => { dispatch(push("/addVehicle")) }
+        handleAddVehicle : () => { dispatch(push(urls.ADD_VEHICLE_URI)) }
     }
 }
 

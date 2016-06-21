@@ -5,6 +5,7 @@ import { push } from 'react-router-redux'
 import LoginForm from "../components/LoginForm.jsx";
 import { makeLoginHandler } from "../utils"
 import { attemptLightLogin, presentedLightLoginForm, logoutRequestDone } from "../actions/actionCreators"
+import * as urls from "../urls"
 
 class ReauthenticateModal extends React.Component {
 
@@ -28,7 +29,6 @@ class ReauthenticateModal extends React.Component {
         return (
             <Modal show={this.state.showModal} onHide={cancel}>
                 <Modal.Body>
-                    {/*<h4>For you security, please re-authenticate.</h4>*/}
                     <h4>{this.props.message}</h4>
                     <LoginForm
                         onSubmit={handleSubmit}
@@ -59,7 +59,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         handleCancel: () => {
             dispatch(logoutRequestDone())
-            dispatch(push("/login"))
+            dispatch(push(urls.LOGIN_URI))
         },
         handleSubmit: () => { dispatch(attemptLightLogin(ownProps.operationOnLightLoginSuccess)) }
     }
