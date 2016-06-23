@@ -18,6 +18,10 @@ import OdometerLogsPage from "./containers/OdometerLogsPage.jsx"
 import OdometerLogDetailPage from "./containers/OdometerLogDetailPage.jsx"
 import OdometerLogEditPage from "./containers/OdometerLogEditPage.jsx"
 import OdometerLogAddPage from "./containers/OdometerLogAddPage.jsx"
+import GasLogsPage from "./containers/GasLogsPage.jsx"
+import GasLogDetailPage from "./containers/GasLogDetailPage.jsx"
+import GasLogEditPage from "./containers/GasLogEditPage.jsx"
+import GasLogAddPage from "./containers/GasLogAddPage.jsx"
 import LoggedOutPage from "./containers/LoggedOutPage.jsx"
 import DashboardPage from "./containers/DashboardPage.jsx"
 import NotFoundPage from "./containers/NotFoundPage.jsx"
@@ -66,6 +70,10 @@ export default function createRoutes(store, isServer) {
             <Route path={urls.odometerLogDetailTemplateUrl()} component={OdometerLogDetailPage} onEnter={requiresAuthentication} />
             <Route path={urls.odometerLogEditTemplateUrl()}   component={OdometerLogEditPage}   onEnter={requiresAuthentication} />
             <Route path={urls.ADD_ODOMETER_LOG_URI}           component={OdometerLogAddPage}    onEnter={requiresAuthentication} />
+            <Route path={urls.GAS_LOGS_URI}                   component={GasLogsPage}           onEnter={requiresAuthentication} />
+            <Route path={urls.gasLogDetailTemplateUrl()}      component={GasLogDetailPage}      onEnter={requiresAuthentication} />
+            <Route path={urls.gasLogEditTemplateUrl()}        component={GasLogEditPage}        onEnter={requiresAuthentication} />
+            <Route path={urls.ADD_GAS_LOG_URI}                component={GasLogAddPage}         onEnter={requiresAuthentication} />
             <Route path={urls.WELCOME_URI}                    component={UnauthHomePage} />
             <Route path={urls.SIGNUP_URI}                     component={SignUpPage} />
             <Route path={urls.ACCOUNT_CREATED_URI}            component={AccountCreatedPage}    onEnter={requiresAuthentication} />

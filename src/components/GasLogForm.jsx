@@ -20,13 +20,15 @@ const validate = values => {
     const errors = {}
     cannotBeUnselectedValidator(values, errors, "vehicleId", "Select a vehicle.")
     cannotBeUnselectedValidator(values, errors, "fuelstationId", "Select a gas station.")
-    cannotBeEmptyValidator(values, errors, "logDate")
+    cannotBeEmptyValidator(values, errors, "purchaseDate")
     cannotBeEmptyValidator(values, errors, "numGallons")
     mustBePositiveNumberValidator(values, errors, "numGallons")
-    mustBePositiveNumberValidator(values, errors, "avgMpgReadout")
-    mustBePositiveNumberValidator(values, errors, "rangeReadout")
-    mustBePositiveNumberValidator(values, errors, "avgMphReadout")
-    mustBeNumberValidator(values, errors, "outsideTempReadout")
+    cannotBeEmptyValidator(values, errors, "octane")
+    mustBePositiveNumberValidator(values, errors, "octane")
+    cannotBeEmptyValidator(values, errors, "odometer")
+    mustBePositiveNumberValidator(values, errors, "odometer")
+    mustBePositiveNumberValidator(values, errors, "pricePerGallon")
+    mustBePositiveNumberValidator(values, errors, "carWashPerGallonDiscount")
     return errors
 }
 
@@ -44,8 +46,9 @@ class GasLogForm extends React.Component {
     render() {
         // https://github.com/erikras/redux-form/issues/190
         const {
-            fields: { vehicleId, logDate, odometer, avgMpgReadout, rangeReadout, avgMphReadout, outsideTempReadout },
+            fields: { vehicleId, fuelstationId, purchaseDate, octane, odometer, pricePerGallon, gotCarWash, carWashPerGallonDiscount, numGallons },
             vehicles,
+            fuelstations,
             gasLogId,
             markGasLogForEdit,
             cancelGasLogEdit,
@@ -85,29 +88,40 @@ class GasLogForm extends React.Component {
                         valueField="fpvehicle/id"
                         textField="fpvehicle/name"
                         data={vehicles} />
+                    <GasJotDropdownFormGroup
+                        label="Gas station"
+                        field={fuelstationId}
+                        disabled={!editMode}
+                        valueField="fpfuelstation/id"
+                        textField="fpfuelstation/name"
+                        data={fuelstations} />
                     <GasJotDateFormGroup
-                        label="Log date"
-                        field={logDate}
+                        label="Purchase date"
+                        field={purchaseDate}
+                        disabled={!editMode} />
+                    <GasJotTextFormGroup
+                        label="Octane"
+                        field={octane}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
                         label="Odometer"
                         field={odometer}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="Average MPG readout"
-                        field={avgMpgReadout}
+                        label="Price per gallon"
+                        field={pricePerGallon}
+                        disabled={!editMode} />
+                    <GasJotCheckboxFormGroup
+                        label="Got car wash?"
+                        field={gotCarWash}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="Average MPH readout"
-                        field={avgMphReadout}
+                        label="Car wash per-gallon discount"
+                        field={carWashPerGallonDiscount}
                         disabled={!editMode} />
                     <GasJotTextFormGroup
-                        label="Range readout"
-                        field={rangeReadout}
-                        disabled={!editMode} />
-                    <GasJotTextFormGroup
-                        label="Outside temperature readout"
-                        field={outsideTempReadout}
+                        label="Num gallons"
+                        field={numGallons}
                         disabled={!editMode} />
                     <Row><Col xs={12}><hr style={{ marginTop: 5, marginBottom: 15}}/></Col></Row>
                     { actionArray }
@@ -119,6 +133,6 @@ class GasLogForm extends React.Component {
 
 export default reduxForm({
     form: "gaslog",
-    fields: ["vehicleId", "logDate", "odometer", "avgMpgReadout", "rangeReadout", "avgMphReadout", "outsideTempReadout"],
+    fields: ["vehicleId", "fuelstationId", "purchaseDate", "octane", "odometer", "pricePerGallon", "gotCarWash", "carWashPerGallonDiscount", "numGallons"],
     validate
 })(GasLogForm)

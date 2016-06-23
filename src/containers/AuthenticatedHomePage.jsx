@@ -12,7 +12,8 @@ class AuthenticatedHomePage extends React.Component {
         const { onItemSelect,
                 vehicleCount,
                 fuelstationCount,
-                odometerLogCount
+                odometerLogCount,
+                gasLogCount
         } = this.props
         return (
             <div>
@@ -28,6 +29,9 @@ class AuthenticatedHomePage extends React.Component {
                         </ListGroupItem>
                         <ListGroupItem header="Odometer Logs" onClick={() => onItemSelect(urls.ODOMETER_LOGS_URI)}>
                             {odometerLogCount} odometer log records.
+                        </ListGroupItem>
+                        <ListGroupItem header="Gas Logs" onClick={() => onItemSelect(urls.GAS_LOGS_URI)}>
+                            {gasLogCount} gas log records.
                         </ListGroupItem>
                     </ListGroup>
                 </Col>
@@ -45,7 +49,8 @@ const mapStateToProps = (state) => {
     return {
         vehicleCount: _.size(state.serverSnapshot._embedded.vehicles),
         fuelstationCount: _.size(state.serverSnapshot._embedded.fuelstations),
-        odometerLogCount: _.size(state.serverSnapshot._embedded.envlogs)
+        odometerLogCount: _.size(state.serverSnapshot._embedded.envlogs),
+        gasLogCount: _.size(state.serverSnapshot._embedded.fplogs),
     }
 }
 

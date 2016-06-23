@@ -235,15 +235,15 @@ export function makeAttemptSaveNewEntity(
 }
 
 export function makeAttemptSaveEntityFn(entityType,
-                                 entityContentType,
-                                 entityMediaType,
-                                 getEntityUpdatedAtFn,
-                                 getEntityUriFn,
-                                 entityRequestPayloadFn,
-                                 entityFormName,
-                                 attemptDownloadEntityFn,
-                                 entityEditUrlFn,
-                                 receiveServerEntityFn) {
+                                        entityContentType,
+                                        entityMediaType,
+                                        getEntityUpdatedAtFn,
+                                        getEntityUriFn,
+                                        entityRequestPayloadFn,
+                                        entityFormName,
+                                        attemptDownloadEntityFn,
+                                        entityEditUrlFn,
+                                        receiveServerEntityFn) {
     return (entityId) => {
         return (dispatch, getState) => {
             toastr.info(entitySavingMessage(entityType), toastConfigWorkingOnIt())

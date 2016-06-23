@@ -202,3 +202,21 @@ export const toOdometerLogFormModel = (odometerLogPayload) => {
     odometerLogModelToFormModel("outsideTempReadout", "envlog/reported-outside-temp")
     return formModel
 }
+
+export const toGasLogFormModel = (gasLogPayload) => {
+    momentLocalizer(moment)
+    let formModel = {}
+    const gasLogModelToFormModel = (formKey, modelKey, transformer = null) => {
+        modelToFormModelIfNotNull(formModel, formKey, gasLogPayload, modelKey, transformer)
+    }
+    gasLogModelToFormModel("vehicleId",                "fplog/vehicle-id")
+    gasLogModelToFormModel("fuelstationId",            "fplog/fuelstation-id")
+    gasLogModelToFormModel("purchaseDate",             "fplog/purchased-at", purchasedAt => formatDate(moment, purchasedAt))
+    gasLogModelToFormModel("octane",                   "fplog/octane")
+    gasLogModelToFormModel("odometer",                 "fplog/odometer")
+    gasLogModelToFormModel("pricePerGallon",           "fplog/gallon-price")
+    gasLogModelToFormModel("gotCarWash",               "fplog/got-car-wash")
+    gasLogModelToFormModel("carWashPerGallonDiscount", "fplog/car-wash-per-gal-discount")
+    gasLogModelToFormModel("numGallons",               "fplog/num-gallons")
+    return formModel
+}

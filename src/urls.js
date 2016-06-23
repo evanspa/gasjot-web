@@ -9,6 +9,9 @@ export const ADD_FUELSTATION_URI  = "/addFuelstation"
 export const ODOMETER_LOGS_URI    = "/odometerLogs"
 export const ADD_ODOMETER_LOG_URI = "/addOdometerLog"
 
+export const GAS_LOGS_URI         = "/gasLogs"
+export const ADD_GAS_LOG_URI      = "/addGasLog"
+
 export const ACCOUNT_URI          = "/account"
 export const EDIT_ACCOUNT_URI     = ACCOUNT_URI + "/edit"
 
@@ -65,4 +68,20 @@ export function odometerLogDetailTemplateUrl() {
 
 export function odometerLogEditTemplateUrl() {
     return odometerLogDetailTemplateUrl() + "/edit"
+}
+
+export function gasLogDetailUrl(gasLogId) {
+    return GAS_LOGS_URI + "/" + gasLogId
+}
+
+export function gasLogEditUrl(gasLogId) {
+    return gasLogDetailUrl(gasLogId) + "/edit"
+}
+
+export function gasLogDetailTemplateUrl() {
+    return gasLogDetailUrl(":gasLogId")
+}
+
+export function gasLogEditTemplateUrl() {
+    return gasLogDetailTemplateUrl() + "/edit"
 }

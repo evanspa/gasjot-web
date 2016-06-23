@@ -6,6 +6,7 @@ import { toastr } from 'react-redux-toastr'
 import { actions as toastrActions } from 'react-redux-toastr'
 import * as utils from "../utils"
 import * as apiUtils from "./api-utils"
+import * as urls from "../urls"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 
@@ -81,6 +82,22 @@ export function receiveServerOdometerLogMediaType(serverOdometerLogId, serverOdo
              serverOdometerLogMediaType }
 }
 
+export function receiveServerGasLog(serverGasLog) {
+    return { type: actionTypes.SERVER_GASLOG_RECEIVED, serverGasLog }
+}
+
+export function receiveServerGasLogLocation(serverGasLogId, serverGasLogLocation) {
+    return { type: actionTypes.SERVER_GASLOG_LOCATION_RECEIVED,
+             serverGasLogId: serverGasLogId,
+             serverGasLogLocation: serverGasLogLocation }
+}
+
+export function receiveServerGasLogMediaType(serverGasLogId, serverGasLogMediaType) {
+    return { type: actionTypes.SERVER_GASLOG_MEDIATYPE_RECEIVED,
+             serverGasLogId: serverGasLogId,
+             serverGasLogMediaType }
+}
+
 export function receiveAuthenticationToken(authToken) {
     return { type: actionTypes.AUTH_TOKEN_RECEIVED, authToken }
 }
@@ -113,6 +130,10 @@ export function markOdometerLogForEdit(odometerLogId) {
     return { type: actionTypes.MARK_ODOMETERLOG_FOR_EDIT, odometerLogId }
 }
 
+export function markGasLogForEdit(gasLogId) {
+    return { type: actionTypes.MARK_GASLOG_FOR_EDIT, gasLogId }
+}
+
 const makeMediaType = entityName => "application/vnd.fp." + entityName + "-v0.0.1+json"
 const makeContentType = (mediaType, charset) => mediaType + ";charset=" + charset
 
@@ -129,6 +150,9 @@ const fuelstationContentType = makeContentType(fuelstationMediaType, charset)
 
 const odometerLogMediaType = makeMediaType("envlog")
 const odometerLogContentType = makeContentType(odometerLogMediaType, charset)
+
+const gasLogMediaType = makeMediaType("fplog")
+const gasLogContentType = makeContentType(gasLogMediaType, charset)
 
 export function logout(logoutUri, authToken) {
     return (dispatch) => {
@@ -361,6 +385,18 @@ function getOdometerLogUpdatedAt(state, odometerLogId) {
     return state.serverSnapshot._embedded.envlogs[odometerLogId].payload["envlog/updated-at"]
 }
 
+function getGasLogsUri(state) {
+    return state.serverSnapshot._links["fuelpurchase-logs"].href
+}
+
+function getGasLogUri(state, gasLogId) {
+    return state.serverSnapshot._embedded.fplogs[gasLogId].location
+}
+
+function getGasLogUpdatedAt(state, gasLogId) {
+    return state.serverSnapshot._embedded.fplogs[gasLogId].payload["fplog/updated-at"]
+}
+
 export const attemptDownloadVehicle = apiUtils.makeAttemptDownloadEntityFn(
     "vehicle",
     vehicleMediaType,
@@ -377,7 +413,7 @@ export const attemptSaveVehicle = apiUtils.makeAttemptSaveEntityFn(
     vehicleRequestPayload,
     "vehicle",
     attemptDownloadVehicle,
-    utils.vehicleEditUrl,
+    urls.vehicleEditUrl,
     receiveServerVehicle)
 
 export const attemptSaveNewVehicle = apiUtils.makeAttemptSaveNewEntity(
@@ -421,7 +457,7 @@ export const attemptSaveFuelstation = apiUtils.makeAttemptSaveEntityFn(
     fuelstationRequestPayload,
     "fuelstation",
     attemptDownloadFuelstation,
-    utils.fuelstationEditUrl,
+    urls.fuelstationEditUrl,
     receiveServerFuelstation)
 
 export const attemptSaveNewFuelstation = apiUtils.makeAttemptSaveNewEntity(
@@ -468,7 +504,7 @@ export const attemptSaveOdometerLogFnMaker = vehicles =>
         odometerLogRequestPayloadFnMaker(vehicles),
         "odometerlog",
         attemptDownloadOdometerLog,
-        utils.odometerLogEditUrl,
+        urls.odometerLogEditUrl,
         receiveServerOdometerLog)
 
 export const attemptSaveNewOdometerLogFnMaker = vehicles =>
@@ -483,3 +519,53 @@ export const attemptSaveNewOdometerLogFnMaker = vehicles =>
         receiveServerOdometerLogLocation,
         receiveServerOdometerLogMediaType,
         receiveServerOdometerLog)
+
+const gasLogRequestPayloadFnMaker = (vehicles, fuelstations) => {
+    return form => {
+        momentLocalizer(moment)
+        var payload = {}
+        utils.formToModelIfNotNull(form, "vehicleId",                payload, "fplog/vehicle",                   "fpvehicle/id",     vehicleId => vehicles[vehicleId].location)
+        utils.formToModelIfNotNull(form, "fuelstationId",            payload, "fplog/fuelstation",               "fpfuelstation/id", fuelstationId => fuelstations[fuelstationId].location)
+        utils.formToModelIfNotNull(form, "purchaseDate",             payload, "fplog/purchased-at",              null,               purchasedAtStr => utils.toUnixEpoch(moment, purchasedAtStr))
+        utils.formToModelIfNotNull(form, "octane",                   payload, "fplog/octane",                    null, _.toNumber)
+        utils.formToModelIfNotNull(form, "odometer",                 payload, "fplog/odometer",                  null, _.toNumber)
+        utils.formToModelIfNotNull(form, "pricePerGallon",           payload, "fplog/gallon-price",              null, _.toNumber)
+        utils.formToModelIfNotNull(form, "gotCarWash",               payload, "fplog/got-car-wash")
+        utils.formToModelIfNotNull(form, "carWashPerGallonDiscount", payload, "fplog/car-wash-per-gal-discount", null, _.toNumber)
+        utils.formToModelIfNotNull(form, "numGallons",               payload, "fplog/num-gallons",               null, _.toNumber)
+        return payload
+    }
+}
+
+export const attemptDownloadGasLog = apiUtils.makeAttemptDownloadEntityFn(
+    "gas log",
+    gasLogMediaType,
+    getGasLogUpdatedAt,
+    getGasLogUri,
+    receiveServerGasLog)
+
+export const attemptSaveGasLogFnMaker = (vehicles, fuelstations) =>
+    apiUtils.makeAttemptSaveEntityFn(
+        "gas log",
+        gasLogContentType,
+        gasLogMediaType,
+        getGasLogUpdatedAt,
+        getGasLogUri,
+        gasLogRequestPayloadFnMaker(vehicles, fuelstations),
+        "gaslog",
+        attemptDownloadGasLog,
+        urls.gasLogEditUrl,
+        receiveServerGasLog)
+
+export const attemptSaveNewGasLogFnMaker = (vehicles, fuelstations) =>
+    apiUtils.makeAttemptSaveNewEntity(
+        "gas log",
+        gasLogContentType,
+        gasLogMediaType,
+        getGasLogsUri,
+        gasLogRequestPayloadFnMaker(vehicles, fuelstations),
+        "gaslog",
+        "fplog/id",
+        receiveServerGasLogLocation,
+        receiveServerGasLogMediaType,
+        receiveServerGasLog)

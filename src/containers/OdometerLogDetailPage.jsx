@@ -14,10 +14,11 @@ import * as urls from "../urls"
 class OdometerLogDetailPage extends React.Component {
     render() {
         const odometerLogPayload = this.props.odometerLog.payload
-        const { markOdometerLogForEdit,
-                downloadOdometerLog,
-                becameUnauthenticated,
-                vehicles
+        const {
+            markOdometerLogForEdit,
+            downloadOdometerLog,
+            becameUnauthenticated,
+            vehicles
         } = this.props
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
         const odometerLogIdKey = "envlog/id"

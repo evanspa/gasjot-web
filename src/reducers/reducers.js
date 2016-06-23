@@ -62,6 +62,12 @@ export const serverSnapshotReducer = (state = {}, action) => {
         return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLogId + "].location", action.serverOdometerLogLocation)
     case actionTypes.SERVER_ODOMETERLOG_MEDIATYPE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLogId + "].media-type", action.serverOdometerLogMediaType)
+    case actionTypes.SERVER_GASLOG_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.fplogs[" + action.serverGasLog["fplog/id"] + "].payload", action.serverGasLog)
+    case actionTypes.SERVER_GASLOG_LOCATION_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.fplogs[" + action.serverGasLogId + "].location", action.serverGasLogLocation)
+    case actionTypes.SERVER_GASLOG_MEDIATYPE_RECEIVED:
+        return _.set(Object.assign({}, state), "_embedded.fplogs[" + action.serverGasLogId + "].media-type", action.serverGasLogMediaType)
     }
     return state;
 }
