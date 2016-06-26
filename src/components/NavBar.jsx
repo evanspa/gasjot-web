@@ -6,6 +6,7 @@ import { LinkContainer } from "react-router-bootstrap"
 import { Navbar, Nav, NavItem } from "react-bootstrap"
 import { logout } from "../actions/actionCreators"
 import _ from "lodash"
+import * as urls from "../urls"
 
 class GasJotNavbar extends React.Component {
 
@@ -27,16 +28,15 @@ class GasJotNavbar extends React.Component {
         var nav
         if (_.isEmpty(authToken)) {
             nav = (<Nav pullRight>
-                <LinkContainer to={{ pathname: "/" }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.ROOT_URI }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
                 <NavItem eventKey={2} role="presentation">FAQ</NavItem>
-                <LinkContainer to={{ pathname: "/signup" }}><NavItem eventKey={3} role="presentation">Sign up</NavItem></LinkContainer>
-                <LinkContainer to={{ pathname: "/login" }}><NavItem eventKey={4}role="presentation">Log in</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.SIGNUP_URI }}><NavItem eventKey={3} role="presentation">Sign up</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.LOGIN_URI }}><NavItem eventKey={4}role="presentation">Log in</NavItem></LinkContainer>
             </Nav>)
         } else {
             nav = (<Nav pullRight>
-                <LinkContainer to={{ pathname: '/' }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
-                <LinkContainer to={{ pathname: '/account' }}><NavItem eventKey={2} role="presentation">Account</NavItem></LinkContainer>
-                <LinkContainer to={{ pathname: '/setings' }}><NavItem eventKey={2} role="presentation">Settings</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.ROOT_URI }} onlyActiveOnIndex><NavItem eventKey={1} role="presentation">Home</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.ACCOUNT_URI }}><NavItem eventKey={2} role="presentation">Account</NavItem></LinkContainer>
                 <NavItem role="presentation" onClick={() => onLogoutClick(logoutUri, authToken)}>Logout</NavItem>
             </Nav>)
         }
@@ -44,7 +44,7 @@ class GasJotNavbar extends React.Component {
             <Navbar bsStyle="default" fluid>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <Link to="/">Gas Jot</Link>
+                        <Link to={urls.ROOT_URI}>Gas Jot</Link>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>

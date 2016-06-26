@@ -10,12 +10,17 @@ import * as urls from "../urls"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 
-const LIGHT_LOGIN_URI = "http://www.jotyourself.com/gasjot/d/light-login"
-const LOGIN_URI = "http://www.jotyourself.com/gasjot/d/login"
-const SIGNUP_URI = "http://www.jotyourself.com/gasjot/d/users"
+const LIGHT_LOGIN_URI          = "http://www.jotyourself.com/gasjot/d/light-login"
+const LOGIN_URI                = "http://www.jotyourself.com/gasjot/d/login"
+const SIGNUP_URI               = "http://www.jotyourself.com/gasjot/d/users"
+const SEND_PWD_RESET_EMAIL_URI = "http://www.jotyourself.com/gasjot/d/send-password-reset-email"
 
 export function cancelRecordEdit() {
     return { type: actionTypes.CANCEL_RECORD_EDIT }
+}
+
+export function clearErrors() {
+    return { type: actionTypes.CLEAR_ERRORS }
 }
 
 export function receiveServerSnapshot(serverSnapshot) {
@@ -24,6 +29,10 @@ export function receiveServerSnapshot(serverSnapshot) {
 
 export function receiveServerUser(serverUser) {
     return { type: actionTypes.SERVER_USER_RECEIVED, serverUser }
+}
+
+export function receiveServerVehicleDeletedAck(serverVehicleId) {
+    return { type: actionTypes.SERVER_VEHICLE_DELETED_ACK_RECEIVED, serverVehicleId }
 }
 
 export function receiveServerVehicle(serverVehicle) {
@@ -46,12 +55,20 @@ export function becameReauthenticated() {
     return { type: actionTypes.BECAME_REAUTHENTICATED }
 }
 
+export function passwordResetEmailSent() {
+    return { type: actionTypes.PASSWORD_RESET_EMAIL_SENT }
+}
+
 export function presentedLightLoginForm() {
     return { type: actionTypes.PRESENTED_LIGHT_LOGIN_FORM }
 }
 
 export function receiveServerFuelstation(serverFuelstation) {
     return { type: actionTypes.SERVER_FUELSTATION_RECEIVED, serverFuelstation }
+}
+
+export function receiveServerFuelstationDeletedAck(serverFuelstationId) {
+    return { type: actionTypes.SERVER_FUELSTATION_DELETED_ACK_RECEIVED, serverFuelstationId }
 }
 
 export function receiveServerFuelstationLocation(serverFuelstationId, serverFuelstationLocation) {
@@ -70,6 +87,10 @@ export function receiveServerOdometerLog(serverOdometerLog) {
     return { type: actionTypes.SERVER_ODOMETERLOG_RECEIVED, serverOdometerLog }
 }
 
+export function receiveServerOdometerLogDeletedAck(serverOdometerLogId) {
+    return { type: actionTypes.SERVER_ODOMETERLOG_DELETED_ACK_RECEIVED, serverOdometerLogId }
+}
+
 export function receiveServerOdometerLogLocation(serverOdometerLogId, serverOdometerLogLocation) {
     return { type: actionTypes.SERVER_ODOMETERLOG_LOCATION_RECEIVED,
              serverOdometerLogId: serverOdometerLogId,
@@ -84,6 +105,10 @@ export function receiveServerOdometerLogMediaType(serverOdometerLogId, serverOdo
 
 export function receiveServerGasLog(serverGasLog) {
     return { type: actionTypes.SERVER_GASLOG_RECEIVED, serverGasLog }
+}
+
+export function receiveServerGasLogDeletedAck(serverGasLogId) {
+    return { type: actionTypes.SERVER_GASLOG_DELETED_ACK_RECEIVED, serverGasLogId }
 }
 
 export function receiveServerGasLogLocation(serverGasLogId, serverGasLogLocation) {
@@ -272,7 +297,7 @@ export function attemptLightLogin(operationOnSuccess) {
             .then(response => {
                 dispatch(apiUtils.apiRequestDone())
                 dispatch(receiveAuthenticationToken(response.headers.get(apiUtils.FP_AUTH_TOKEN_HEADER)))
-                dispatch(receiveUserUri(response.headers.get("Location")))
+                //dispatch(receiveUserUri(response.headers.get("Location")))
                 dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
                 if (response.status == 204) {
                     dispatch(toastrActions.clean())
@@ -290,6 +315,38 @@ export function attemptLightLogin(operationOnSuccess) {
             .catch(error => {
                 toastr.clean()
                 dispatch(apiUtils.apiRequestDone())
+            })
+    }
+}
+
+export function attemptSendPasswordResetEmail() {
+    return (dispatch, getState) => {
+        const state = getState()
+        toastr.info('Please wait...', apiUtils.toastConfigWorkingOnIt())
+        dispatch(apiUtils.apiRequestInitiated())
+        const headers = new Headers()
+        apiUtils.appendContentType(headers, userContentType)
+        apiUtils.appendCommonHeaders(headers, userMediaType)
+        const requestPayload = {
+            "user/email": state.form.forgotpassword.email.value
+        };
+        return fetch(SEND_PWD_RESET_EMAIL_URI, apiUtils.postInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiUtils.apiRequestDone())
+                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
+                if (response.status == 204) {
+                    dispatch(toastrActions.clean())
+                    dispatch(passwordResetEmailSent())
+                    toastr.success("Password reset email sent", apiUtils.toastConfigSuccess())
+                } else {
+                    toastr.clean()
+                    dispatch(apiUtils.apiRequestDone())
+                }
+            })
+            .catch(error => {
+                dispatch(apiUtils.apiRequestDone())
+                toastr.clean()
+                toastr.error("There was a problem sending your the password reset email.", toastConfigError())
             })
     }
 }
@@ -416,6 +473,15 @@ export const attemptSaveVehicle = apiUtils.makeAttemptSaveEntityFn(
     urls.vehicleEditUrl,
     receiveServerVehicle)
 
+export const attemptDeleteVehicle = apiUtils.makeAttemptDeleteEntityFn(
+    "vehicle",
+    vehicleMediaType,
+    getVehicleUpdatedAt,
+    getVehicleUri,
+    attemptDownloadVehicle,
+    urls.vehicleDetailUrl,
+    receiveServerVehicleDeletedAck)
+
 export const attemptSaveNewVehicle = apiUtils.makeAttemptSaveNewEntity(
     "vehicle",
     vehicleContentType,
@@ -459,6 +525,15 @@ export const attemptSaveFuelstation = apiUtils.makeAttemptSaveEntityFn(
     attemptDownloadFuelstation,
     urls.fuelstationEditUrl,
     receiveServerFuelstation)
+
+export const attemptDeleteFuelstation = apiUtils.makeAttemptDeleteEntityFn(
+    "fuelstation",
+    fuelstationMediaType,
+    getFuelstationUpdatedAt,
+    getFuelstationUri,
+    attemptDownloadFuelstation,
+    urls.fuelstationDetailUrl,
+    receiveServerFuelstationDeletedAck)
 
 export const attemptSaveNewFuelstation = apiUtils.makeAttemptSaveNewEntity(
     "fuelstation",
@@ -506,6 +581,15 @@ export const attemptSaveOdometerLogFnMaker = vehicles =>
         attemptDownloadOdometerLog,
         urls.odometerLogEditUrl,
         receiveServerOdometerLog)
+
+export const attemptDeleteOdometerLog = apiUtils.makeAttemptDeleteEntityFn(
+    "odometer log",
+    odometerLogMediaType,
+    getOdometerLogUpdatedAt,
+    getOdometerLogUri,
+    attemptDownloadOdometerLog,
+    urls.odometerLogDetailUrl,
+    receiveServerOdometerLogDeletedAck)
 
 export const attemptSaveNewOdometerLogFnMaker = vehicles =>
     apiUtils.makeAttemptSaveNewEntity(
@@ -556,6 +640,15 @@ export const attemptSaveGasLogFnMaker = (vehicles, fuelstations) =>
         attemptDownloadGasLog,
         urls.gasLogEditUrl,
         receiveServerGasLog)
+
+export const attemptDeleteGasLog = apiUtils.makeAttemptDeleteEntityFn(
+    "gas log",
+    gasLogMediaType,
+    getGasLogUpdatedAt,
+    getGasLogUri,
+    attemptDownloadGasLog,
+    urls.gasLogDetailUrl,
+    receiveServerGasLogDeletedAck)
 
 export const attemptSaveNewGasLogFnMaker = (vehicles, fuelstations) =>
     apiUtils.makeAttemptSaveNewEntity(

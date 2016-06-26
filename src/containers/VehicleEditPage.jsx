@@ -4,7 +4,8 @@ import { push } from 'react-router-redux'
 import VehicleForm from "../components/VehicleForm.jsx"
 import { cancelRecordEdit,
          attemptSaveVehicle,
-         attemptDownloadVehicle } from "../actions/actionCreators"
+         attemptDownloadVehicle,
+         clearErrors } from "../actions/actionCreators"
 import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -18,6 +19,7 @@ class VehicleEditPage extends React.Component {
             cancelVehicleEdit,
             handleSubmit,
             api,
+            clearErrors,
             becameUnauthenticated
         } = this.props
         const { requestInProgress, fpErrorMask } = api
@@ -32,6 +34,7 @@ class VehicleEditPage extends React.Component {
                                requestInProgress={requestInProgress}
                                vehicleId={vehicleId}
                                initialValues={toVehicleFormModel(vehiclePayload)}
+                               clearErrors={clearErrors}
                                editMode={true}
                                fpErrorMask={fpErrorMask} />
         return (<EntityEditDetailPage
@@ -61,7 +64,8 @@ const mapDispatchToProps = (dispatch) => {
         handleSubmit: (vehicleId) => {
             toastr.clean()
             dispatch(attemptSaveVehicle(vehicleId))
-        }
+        },
+        clearErrors: () => dispatch(clearErrors())
     }
 }
 

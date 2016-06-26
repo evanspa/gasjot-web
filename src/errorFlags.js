@@ -12,3 +12,5 @@ export const SAVE_ODOMETERLOG_VEHICLE_DOES_NOT_EXIST   = 1 << 5
 
 export const SAVE_GASLOG_VEHICLE_DOES_NOT_EXIST        = 1 << 9
 export const SAVE_GASLOG_FUELSTATION_DOES_NOT_EXIST    = 1 << 10
+
+export const PWD_RESET_UNKNOWN_EMAIL                   = 1 << 1

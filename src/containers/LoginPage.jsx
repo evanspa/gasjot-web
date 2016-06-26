@@ -4,7 +4,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Col, Panel, Label } from "react-bootstrap";
 import LoginForm from "../components/LoginForm.jsx";
 import { connect } from 'react-redux'
-import { attemptLogin } from "../actions/actionCreators"
+import { attemptLogin, clearErrors } from "../actions/actionCreators"
 import GasJotNavbar from "../components/NavBar.jsx"
 import { makeLoginHandler } from "../utils"
 import _ from "lodash"
@@ -21,7 +21,13 @@ class LogInPage extends React.Component {
      * }*/
 
     render() {
-        const { location, handleSubmit, responseStatus, requestInProgress } = this.props
+        const {
+            location,
+            handleSubmit,
+            responseStatus,
+            requestInProgress,
+            clearErrors
+        } = this.props
         return (
             <div>
                 <GasJotHelmet title="Log In" />
@@ -33,10 +39,11 @@ class LogInPage extends React.Component {
                             <LoginForm
                                 onSubmit={ makeLoginHandler(location, handleSubmit) }
                                 requestInProgress={requestInProgress}
+                                clearErrors={clearErrors}
                                 responseStatus={responseStatus} />
                             <hr />
                             <p style={{paddingBottom: 10}}>Don't have an account?  <Link to={urls.SIGNUP_URI}>Sign up.</Link></p>
-                            <Link to="/forgot-password">Forgot Password?</Link>
+                            <Link to={urls.FORGOT_PASSWORD_URI}>Forgot Password?</Link>
                         </Col>
                     </Panel>
                 </Col>
@@ -56,7 +63,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        handleSubmit: (nextSuccessPathname) => { dispatch(attemptLogin(nextSuccessPathname)) }
+        handleSubmit: (nextSuccessPathname) => { dispatch(attemptLogin(nextSuccessPathname)) },
+        clearErrors: () => dispatch(clearErrors())
     }
 }
 

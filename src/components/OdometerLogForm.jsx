@@ -49,11 +49,13 @@ class OdometerLogForm extends React.Component {
             markOdometerLogForEdit,
             cancelOdometerLogEdit,
             downloadOdometerLog,
+            deleteOdometerLog,
             handleSubmit,
             requestInProgress,
             responseStatus,
             editMode,
-            fpErrorMask
+            fpErrorMask,
+            deleteConfirmMessage
         } = this.props
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
@@ -63,7 +65,9 @@ class OdometerLogForm extends React.Component {
                                 requestInProgress={requestInProgress}
                                 markEntityForEdit={markOdometerLogForEdit}
                                 cancelEntityAdd={cancelOdometerLogEdit}
-                                downloadEntity={downloadOdometerLog} />
+                                downloadEntity={downloadOdometerLog}
+                                deleteEntity={deleteOdometerLog}
+                                deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_ODOMETERLOG_VEHICLE_DOES_NOT_EXIST,
               message: "The selected vehicle no longer exists."}

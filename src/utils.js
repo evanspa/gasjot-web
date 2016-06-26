@@ -7,7 +7,6 @@ String.prototype.toTitleCase = function() {
     str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
-
     // Certain minor words should be left lowercase unless
     // they are the first or last words in the string
     lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
@@ -17,13 +16,11 @@ String.prototype.toTitleCase = function() {
                           function(txt) {
                               return txt.toLowerCase();
                           });
-
     // Certain words such as initialisms or acronyms should be left uppercase
     uppers = ['Id', 'Tv'];
     for (i = 0, j = uppers.length; i < j; i++)
         str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'),
                           uppers[i].toUpperCase());
-
     return str;
 }
 
@@ -219,4 +216,15 @@ export const toGasLogFormModel = (gasLogPayload) => {
     gasLogModelToFormModel("carWashPerGallonDiscount", "fplog/car-wash-per-gal-discount")
     gasLogModelToFormModel("numGallons",               "fplog/num-gallons")
     return formModel
+}
+
+export function countDependents(state, childrenKey, parentIdKey, parentId) {
+    let children = _.values(state.serverSnapshot._embedded[childrenKey])
+    let numMatch = 0
+    for (let i = 0; i < children.length; i++) {
+        if (children[i].payload[parentIdKey] == parentId) {
+            numMatch++
+        }
+    }
+    return numMatch
 }

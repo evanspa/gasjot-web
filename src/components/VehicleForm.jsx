@@ -25,35 +25,46 @@ class VehicleForm extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            showModal: false,
-            modalTitle: null,
-            modalContent: null
+            showSmallModal: false,
+            smallModalTitle: null,
+            smallModalContent: null
         };
+    }
+
+    componentWillUnmount() {
+        const { clearErrors } = this.props
+        if (clearErrors != null) {
+            clearErrors()
+        }
     }
 
     render() {
         momentLocalizer(moment)
         // https://github.com/erikras/redux-form/issues/190
-        const { fields: {name,
-                         plate,
-                         vin,
-                         fuelCapacity,
-                         defaultOctane,
-                         takesDiesel,
-                         hasMpgReadout,
-                         hasMphReadout,
-                         hasDteReadout,
-                         hasOutsideTempReadout},
-                vehicleId,
-                markVehicleForEdit,
-                cancelVehicleEdit,
-                downloadVehicle,
-                handleSubmit,
-                requestInProgress,
-                responseStatus,
-                editMode,
-                fpErrorMask } = this.props
-        let modalClose = () => this.setState({ showModal: false })
+        const {
+            fields: {name,
+                     plate,
+                     vin,
+                     fuelCapacity,
+                     defaultOctane,
+                     takesDiesel,
+                     hasMpgReadout,
+                     hasMphReadout,
+                     hasDteReadout,
+                     hasOutsideTempReadout},
+            vehicleId,
+            markVehicleForEdit,
+            cancelVehicleEdit,
+            downloadVehicle,
+            deleteVehicle,
+            handleSubmit,
+            requestInProgress,
+            responseStatus,
+            editMode,
+            fpErrorMask,
+            deleteConfirmMessage
+        } = this.props
+        let smallModalClose = () => this.setState({ showSmallModal: false })
         const actionArray = <ActionsArray
                                 editMode={editMode}
                                 entityId={vehicleId}
@@ -61,7 +72,9 @@ class VehicleForm extends React.Component {
                                 requestInProgress={requestInProgress}
                                 markEntityForEdit={markVehicleForEdit}
                                 cancelEntityAdd={cancelVehicleEdit}
-                                downloadEntity={downloadVehicle} />
+                                downloadEntity={downloadVehicle}
+                                deleteEntity={deleteVehicle}
+                                deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_VEHICLE_CANNOT_BE_BOTH_DIESEL_OCTANE,
               message: "Vehicle cannot have default octane and take diesel."},
@@ -74,7 +87,11 @@ class VehicleForm extends React.Component {
         ]
         return (
         <div>
-            <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+            <SmallModal
+                show={this.state.showSmallModal}
+                onHide={smallModalClose}
+                title={this.state.smallModalTitle}
+                content={this.state.smallModalContent} />
             <ErrorMessages errorMask={fpErrorMask} errors={errors} />
             <form onSubmit={handleSubmit}>
                 { actionArray }
@@ -105,19 +122,19 @@ class VehicleForm extends React.Component {
                     field={takesDiesel}
                     disabled={!editMode} />
                 <GasJotCheckboxFormGroup
-                    label={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_mpg_readout_lbl, modalContent: strs.has_mpg_readout_explanation})}>{strs.has_mpg_readout_lbl}</a>}
+                    label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_mpg_readout_lbl, smallModalContent: strs.has_mpg_readout_explanation})}>{strs.has_mpg_readout_lbl}</a>}
                     field={hasMpgReadout}
                     disabled={!editMode} />
                 <GasJotCheckboxFormGroup
-                    label={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_mph_readout_lbl, modalContent: strs.has_mph_readout_explanation})}>{strs.has_mph_readout_lbl}</a>}
+                    label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_mph_readout_lbl, smallModalContent: strs.has_mph_readout_explanation})}>{strs.has_mph_readout_lbl}</a>}
                     field={hasMphReadout}
                     disabled={!editMode} />
                 <GasJotCheckboxFormGroup
-                    label={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_dte_readout_lbl, modalContent: strs.has_dte_readout_explanation})}>{strs.has_dte_readout_lbl}</a>}
+                    label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_dte_readout_lbl, smallModalContent: strs.has_dte_readout_explanation})}>{strs.has_dte_readout_lbl}</a>}
                     field={hasDteReadout}
                     disabled={!editMode} />
                 <GasJotCheckboxFormGroup
-                    label={<a role="button" onClick={() => this.setState({showModal: true, modalTitle: strs.has_outside_temp_readout_lbl, modalContent: strs.has_outside_temp_readout_explanation})}>{strs.has_outside_temp_readout_lbl}</a>}
+                    label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_outside_temp_readout_lbl, smallModalContent: strs.has_outside_temp_readout_explanation})}>{strs.has_outside_temp_readout_lbl}</a>}
                     field={hasOutsideTempReadout}
                     disabled={!editMode} />
                 <Row><Col xs={12}><hr style={{ marginTop: 0, marginBottom: 15}}/></Col></Row>

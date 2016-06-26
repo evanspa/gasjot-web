@@ -20,6 +20,7 @@ class AuthenticatedHomePage extends React.Component {
                 <GasJotHelmet title="Home" />
                 <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
+                    <h3>Your Records</h3>
                     <ListGroup>
                         <ListGroupItem header="Vehicles" onClick={() => onItemSelect(urls.VEHICLES_URI)}>
                             {vehicleCount} vehicle records.

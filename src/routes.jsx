@@ -26,6 +26,7 @@ import LoggedOutPage from "./containers/LoggedOutPage.jsx"
 import DashboardPage from "./containers/DashboardPage.jsx"
 import NotFoundPage from "./containers/NotFoundPage.jsx"
 import LoginPage from "./containers/LoginPage.jsx"
+import ForgotPasswordPage from "./containers/ForgotPasswordPage.jsx"
 import RedirectPage from "./containers/RedirectPage.jsx"
 import SignUpPage from "./containers/SignUpPage.jsx"
 //import SettingsPage from "./containers/SettingsPage.jsx"
@@ -78,6 +79,7 @@ export default function createRoutes(store, isServer) {
             <Route path={urls.SIGNUP_URI}                     component={SignUpPage} />
             <Route path={urls.ACCOUNT_CREATED_URI}            component={AccountCreatedPage}    onEnter={requiresAuthentication} />
             <Route path={urls.LOGIN_URI}                      component={LoginPage} />
+            <Route path={urls.FORGOT_PASSWORD_URI}            component={ForgotPasswordPage} />
             <Route path={urls.LOGGED_OUT_URI}                 component={LoggedOutPage} />
             <Route path={urls.REDIRECT_URI}                   component={RedirectPage} />
             <Route path="*"                                   component={NotFoundPage} />

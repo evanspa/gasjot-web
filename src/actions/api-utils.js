@@ -22,9 +22,10 @@ const initForFetch = (headers, payload, method) => {
     return init
 }
 
-export const postInitForFetch = (headers, payload) => initForFetch(headers, payload, "POST")
-export const putInitForFetch  = (headers, payload) => initForFetch(headers, payload, "PUT")
-export const getInitForFetch  = (headers)          => initForFetch(headers, null,    "GET")
+export const postInitForFetch   = (headers, payload) => initForFetch(headers, payload, "POST")
+export const putInitForFetch    = (headers, payload) => initForFetch(headers, payload, "PUT")
+export const getInitForFetch    = (headers)          => initForFetch(headers, null,    "GET")
+export const deleteInitForFetch = (headers)          => initForFetch(headers, null,    "DELETE")
 
 export function receiveResponseStatus(responseStatus, fpErrorMask = null) {
     let action = { type: actionTypes.RESPONSE_STATUS_RECEIVED,
@@ -61,12 +62,24 @@ function entitySavingMessage(entityType) {
     return "Saving " + entityType + "..."
 }
 
+function entityDeletingMessage(entityType) {
+    return "Deleting " + entityType + "..."
+}
+
 function entitySavedMessage(entityType) {
     return _.capitalize(entityType) + " saved"
 }
 
+function entityDeletedMessage(entityType) {
+    return _.capitalize(entityType) + " deleted"
+}
+
 function entitySaveFailedMessage(entityType) {
     return _.capitalize(entityType) + " save failed"
+}
+
+function entityDeleteFailedMessage(entityType) {
+    return _.capitalize(entityType) + " delete failed"
 }
 
 function entityConflictMessage(entityType) {
@@ -283,6 +296,53 @@ export function makeAttemptSaveEntityFn(entityType,
                     dispatch(apiRequestDone())
                     toastr.clean()
                     toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
+                })
+        }
+    }
+}
+
+export function makeAttemptDeleteEntityFn(entityType,
+                                          entityMediaType,
+                                          getEntityUpdatedAtFn,
+                                          getEntityUriFn,
+                                          attemptDownloadEntityFn,
+                                          entityDetailUrlFn,
+                                          receiveServerEntityDeletedAckFn) {
+    return (entityId) => {
+        return (dispatch, getState) => {
+            toastr.info(entityDeletingMessage(entityType), toastConfigWorkingOnIt())
+            dispatch(apiRequestInitiated())
+            const state = getState()
+            const headers = new Headers()
+            appendAuthenticatedCommonHeaders(headers, entityMediaType, state.authToken)
+            headers.append(FP_IF_UNMODIFIED_SINCE_HEADER, getEntityUpdatedAtFn(state, entityId))
+            const entityUri = getEntityUriFn(state, entityId)
+            return fetch(entityUri, deleteInitForFetch(headers))
+                .then(response => {
+                    dispatch(apiRequestDone())
+                    dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                    if (!checkBecameUnauthenticated(response, dispatch)) {
+                        if (response.status == 409) {
+                            toastr.clean()
+                            const confirmOptions = {
+                                onOk: () => dispatch(attemptDownloadEntityFn(entityId, entityDetailUrlFn(entityId)))
+                            }
+                            toastr.confirm(entityConflictMessage(entityType), confirmOptions)
+                        } else if (response.status == 204) {
+                            dispatch(toastrActions.clean())
+                            dispatch(receiveServerEntityDeletedAckFn(entityId))
+                            dispatch(goBack())
+                            toastr.success(entityDeletedMessage(entityType), toastConfigSuccess())
+                        } else if (!response.ok) {
+                            toastr.clean()
+                            toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
+                        }
+                    }
+                })
+                .catch(error => {
+                    dispatch(apiRequestDone())
+                    toastr.clean()
+                    toastr.error(entityDeleteFailedMessage(entityType), toastConfigError())
                 })
         }
     }

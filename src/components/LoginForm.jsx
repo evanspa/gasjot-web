@@ -12,6 +12,12 @@ const validate = values => {
 }
 
 class LogInForm extends React.Component {
+
+    componentWillUnmount() {
+        const { clearErrors } = this.props
+        clearErrors()
+    }
+
     render() {
         const { fields: {usernameOrEmail, password}, location, responseStatus, requestInProgress, handleSubmit } = this.props
         var serverErrorMessage = null

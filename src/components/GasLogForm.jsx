@@ -53,11 +53,13 @@ class GasLogForm extends React.Component {
             markGasLogForEdit,
             cancelGasLogEdit,
             downloadGasLog,
+            deleteGasLog,
             handleSubmit,
             requestInProgress,
             responseStatus,
             editMode,
-            fpErrorMask
+            fpErrorMask,
+            deleteConfirmMessage
         } = this.props
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
@@ -67,7 +69,9 @@ class GasLogForm extends React.Component {
                                 requestInProgress={requestInProgress}
                                 markEntityForEdit={markGasLogForEdit}
                                 cancelEntityAdd={cancelGasLogEdit}
-                                downloadEntity={downloadGasLog} />
+                                downloadEntity={downloadGasLog}
+                                deleteEntity={deleteGasLog}
+                                deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_GASLOG_VEHICLE_DOES_NOT_EXIST,
               message: "The selected vehicle no longer exists."},

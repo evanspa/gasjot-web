@@ -1,8 +1,8 @@
 import React from "react"
-import { Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap"
 import { Link } from "react-router"
 import _ from "lodash"
-import GasJotHelmet from "../components/GasJotHelmet.jsx";
+import GasJotHelmet from "../components/GasJotHelmet.jsx"
 import GasJotNavbar from "../components/NavBar.jsx"
 
 export default class EntityDetailPage extends React.Component {

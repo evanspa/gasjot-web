@@ -35,16 +35,20 @@ class FuelstationForm extends React.Component {
 
     render() {
         // https://github.com/erikras/redux-form/issues/190
-        const { fields: {name, typeId, street, city, state, zip, latitude, longitude},
-                fuelstationId,
-                markFuelstationForEdit,
-                cancelFuelstationEdit,
-                downloadFuelstation,
-                handleSubmit,
-                requestInProgress,
-                responseStatus,
-                editMode,
-                fpErrorMask } = this.props
+        const {
+            fields: {name, typeId, street, city, state, zip, latitude, longitude},
+            fuelstationId,
+            markFuelstationForEdit,
+            cancelFuelstationEdit,
+            downloadFuelstation,
+            deleteFuelstation,
+            handleSubmit,
+            requestInProgress,
+            responseStatus,
+            editMode,
+            fpErrorMask,
+            deleteConfirmMessage
+        } = this.props
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
                                 editMode={editMode}
@@ -53,7 +57,9 @@ class FuelstationForm extends React.Component {
                                 requestInProgress={requestInProgress}
                                 markEntityForEdit={markFuelstationForEdit}
                                 cancelEntityAdd={cancelFuelstationEdit}
-                                downloadEntity={downloadFuelstation} />
+                                downloadEntity={downloadFuelstation}
+                                deleteEntity={deleteFuelstation}
+                                deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_FUELSTATION_CANNOT_BE_PURPLEX,
               message: "Gas station name cannot contain 'purplex'."}

@@ -17,6 +17,7 @@ export const EDIT_ACCOUNT_URI     = ACCOUNT_URI + "/edit"
 
 export const LOGIN_URI            = "/login"
 export const SIGNUP_URI           = "/signup"
+export const FORGOT_PASSWORD_URI  = "/forgot-password"
 export const WELCOME_URI          = "/welcome"
 export const LOGGED_OUT_URI       = "/loggedOut"
 export const ACCOUNT_CREATED_URI  = "/accountCreated"

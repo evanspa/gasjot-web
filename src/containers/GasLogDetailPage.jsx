@@ -2,7 +2,9 @@ import React from "react"
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import GasLogForm from "../components/GasLogForm.jsx"
-import { markGasLogForEdit, attemptDownloadGasLog } from "../actions/actionCreators"
+import { markGasLogForEdit,
+         attemptDownloadGasLog,
+         attemptDeleteGasLog } from "../actions/actionCreators"
 import { toGasLogFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -12,12 +14,19 @@ import * as utils from "../utils"
 import * as urls from "../urls"
 
 class GasLogDetailPage extends React.Component {
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextProps.gasLog != null;
+    }
+
     render() {
         const gasLogPayload = this.props.gasLog.payload
         const {
             markGasLogForEdit,
             downloadGasLog,
+            deleteGasLog,
             becameUnauthenticated,
+            deleteConfirmMessage,
             vehicles,
             fuelstations
         } = this.props
@@ -34,8 +43,10 @@ class GasLogDetailPage extends React.Component {
                                fuelstations={fuelstationDropdownValues}
                                markGasLogForEdit={markGasLogForEdit}
                                downloadGasLog={downloadGasLog}
+                               deleteGasLog={deleteGasLog}
                                gasLogId={gasLogId}
                                initialValues={toGasLogFormModel(gasLogPayload)}
+                               deleteConfirmMessage={deleteConfirmMessage}
                                editMode={false} />
         return (<EntityEditDetailPage
                     editMode={false}
@@ -51,7 +62,8 @@ const mapStateToProps = (state, ownProps) => {
         gasLog: state.serverSnapshot._embedded.fplogs[ownProps.params.gasLogId],
         becameUnauthenticated: state.becameUnauthenticated,
         vehicles: state.serverSnapshot._embedded.vehicles,
-        fuelstations: state.serverSnapshot._embedded.fuelstations
+        fuelstations: state.serverSnapshot._embedded.fuelstations,
+        deleteConfirmMessage: "Are you sure you want to delete this gas log?"
     }
 }
 
@@ -64,6 +76,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         downloadGasLog: (gasLogId) => {
             dispatch(attemptDownloadGasLog(gasLogId, urls.gasLogDetailUrl(gasLogId)))
+        },
+        deleteGasLog: (gasLogId) => {
+            dispatch(attemptDeleteGasLog(gasLogId))
         }
     }
 }
