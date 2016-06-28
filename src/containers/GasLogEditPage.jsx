@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import GasLogForm from "../components/GasLogForm.jsx"
 import { toastr } from 'react-redux-toastr'
-import { attemptSaveGasLogFnMaker } from "../actions/actionCreators"
+import { attemptSaveGasLogFnMaker,
+         clearErrors,
+         serverGasLogNotFoundUserAcknowledged } from "../actions/actionCreators"
 import { toGasLogFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
@@ -18,7 +20,10 @@ class GasLogEditPage extends React.Component {
             handleSubmit,
             api,
             becameUnauthenticated,
+            gasLogIdNotFound,
+            userAcknowledgedNotFound,
             vehicles,
+            clearErrors,
             fuelstations
         } = this.props
         const { requestInProgress, fpErrorMask } = api
@@ -29,11 +34,14 @@ class GasLogEditPage extends React.Component {
                                vehicles={vehicleDropdownValues}
                                fuelstations={fuelstationDropdownValues}
                                cancelGasLogEdit={cancelGasLogEdit}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               gasLogIdNotFound={gasLogIdNotFound}
                                onSubmit={() => handleSubmit(vehicles, fuelstations, gasLogId)}
                                requestInProgress={requestInProgress}
                                gasLogId={gasLogId}
                                initialValues={toGasLogFormModel(gasLogPayload)}
                                editMode={true}
+                               clearErrors={clearErrors}
                                fpErrorMask={fpErrorMask} />
         const reauthenticateModal = <ReauthenticateModal
                                         showModal={becameUnauthenticated}
@@ -54,7 +62,8 @@ const mapStateToProps = (state, ownProps) => {
         gasLog: state.serverSnapshot._embedded.fplogs[ownProps.params.gasLogId],
         vehicles: state.serverSnapshot._embedded.vehicles,
         fuelstations: state.serverSnapshot._embedded.fuelstations,
-        becameUnauthenticated: state.becameUnauthenticated
+        becameUnauthenticated: state.becameUnauthenticated,
+        gasLogIdNotFound: state.api.gasLogIdNotFound
     }
 }
 
@@ -67,6 +76,11 @@ const mapDispatchToProps = (dispatch) => {
         handleSubmit: (vehicles, fuelstations, gasLogId) => {
             toastr.clean()
             dispatch(attemptSaveGasLogFnMaker(vehicles, fuelstations)(gasLogId));
+        },
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (gasLogId) => {
+            dispatch(serverGasLogNotFoundUserAcknowledged(gasLogId))
+            dispatch(push(urls.GAS_LOGS_URI))
         }
     }
 }

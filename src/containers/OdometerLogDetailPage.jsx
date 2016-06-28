@@ -4,7 +4,9 @@ import { push } from 'react-router-redux'
 import OdometerLogForm from "../components/OdometerLogForm.jsx"
 import { markOdometerLogForEdit,
          attemptDownloadOdometerLog,
-         attemptDeleteOdometerLog } from "../actions/actionCreators"
+         attemptDeleteOdometerLog,
+         serverOdometerLogNotFoundUserAcknowledged,
+         clearErrors } from "../actions/actionCreators"
 import { toOdometerLogFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -24,8 +26,11 @@ class OdometerLogDetailPage extends React.Component {
         const {
             markOdometerLogForEdit,
             downloadOdometerLog,
+            odometerLogIdNotFound,
+            clearErrors,
             deleteOdometerLog,
             becameUnauthenticated,
+            userAcknowledgedNotFound,
             deleteConfirmMessage,
             vehicles
         } = this.props
@@ -40,8 +45,11 @@ class OdometerLogDetailPage extends React.Component {
                                vehicles={vehicleDropdownValues}
                                markOdometerLogForEdit={markOdometerLogForEdit}
                                downloadOdometerLog={downloadOdometerLog}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               odometerLogIdNotFound={odometerLogIdNotFound}
                                deleteOdometerLog={deleteOdometerLog}
                                odometerLogId={odometerLogId}
+                               clearErrors={clearErrors}
                                initialValues={toOdometerLogFormModel(odometerLogPayload)}
                                deleteConfirmMessage={deleteConfirmMessage}
                                editMode={false} />
@@ -59,7 +67,8 @@ const mapStateToProps = (state, ownProps) => {
         odometerLog: state.serverSnapshot._embedded.envlogs[ownProps.params.odometerLogId],
         becameUnauthenticated: state.becameUnauthenticated,
         vehicles: state.serverSnapshot._embedded.vehicles,
-        deleteConfirmMessage: "Are you sure you want to delete this odometer log?"
+        deleteConfirmMessage: "Are you sure you want to delete this odometer log?",
+        odometerLogIdNotFound: state.api.odometerLogIdNotFound
     }
 }
 
@@ -75,6 +84,11 @@ const mapDispatchToProps = (dispatch) => {
         },
         deleteOdometerLog: (odometerLogId) => {
             dispatch(attemptDeleteOdometerLog(odometerLogId))
+        },
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (odometerLogId) => {
+            dispatch(serverOdometerLogNotFoundUserAcknowledged(odometerLogId))
+            dispatch(push(urls.ODOMETER_LOGS_URI))
         }
     }
 }

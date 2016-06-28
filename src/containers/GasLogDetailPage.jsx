@@ -4,7 +4,9 @@ import { push } from 'react-router-redux'
 import GasLogForm from "../components/GasLogForm.jsx"
 import { markGasLogForEdit,
          attemptDownloadGasLog,
-         attemptDeleteGasLog } from "../actions/actionCreators"
+         attemptDeleteGasLog,
+         clearErrors,
+         serverGasLogNotFoundUserAcknowledged } from "../actions/actionCreators"
 import { toGasLogFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -24,8 +26,11 @@ class GasLogDetailPage extends React.Component {
         const {
             markGasLogForEdit,
             downloadGasLog,
+            gasLogIdNotFound,
+            clearErrors,
             deleteGasLog,
             becameUnauthenticated,
+            userAcknowledgedNotFound,
             deleteConfirmMessage,
             vehicles,
             fuelstations
@@ -43,8 +48,11 @@ class GasLogDetailPage extends React.Component {
                                fuelstations={fuelstationDropdownValues}
                                markGasLogForEdit={markGasLogForEdit}
                                downloadGasLog={downloadGasLog}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               gasLogIdNotFound={gasLogIdNotFound}
                                deleteGasLog={deleteGasLog}
                                gasLogId={gasLogId}
+                               clearErrors={clearErrors}
                                initialValues={toGasLogFormModel(gasLogPayload)}
                                deleteConfirmMessage={deleteConfirmMessage}
                                editMode={false} />
@@ -63,7 +71,8 @@ const mapStateToProps = (state, ownProps) => {
         becameUnauthenticated: state.becameUnauthenticated,
         vehicles: state.serverSnapshot._embedded.vehicles,
         fuelstations: state.serverSnapshot._embedded.fuelstations,
-        deleteConfirmMessage: "Are you sure you want to delete this gas log?"
+        deleteConfirmMessage: "Are you sure you want to delete this gas log?",
+        gasLogIdNotFound: state.api.gasLogIdNotFound
     }
 }
 
@@ -79,6 +88,11 @@ const mapDispatchToProps = (dispatch) => {
         },
         deleteGasLog: (gasLogId) => {
             dispatch(attemptDeleteGasLog(gasLogId))
+        },
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (gasLogId) => {
+            dispatch(serverGasLogNotFoundUserAcknowledged(gasLogId))
+            dispatch(push(urls.GAS_LOGS_URI))
         }
     }
 }

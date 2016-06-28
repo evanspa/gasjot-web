@@ -5,6 +5,7 @@ import { GasJotTextFormGroup } from "./FormInput.jsx"
 import { cannotBeEmptyValidator, mustBeEmailValidator } from "../utils"
 import ErrorMessages from "./ErrorMessages.jsx"
 import * as errFlags from "../errorFlags"
+import { toastr } from 'react-redux-toastr'
 
 const validate = values => {
     const errors = {}
@@ -16,8 +17,11 @@ const validate = values => {
 class ForgotPasswordForm extends React.Component {
 
     componentWillUnmount() {
+        toastr.clean()
         const { clearErrors } = this.props
-        clearErrors()
+        if (clearErrors != null) {
+            clearErrors()
+        }
     }
 
     render() {

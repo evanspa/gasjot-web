@@ -1,7 +1,7 @@
 import React, { createClass } from "react"
 import { Link } from "react-router"
 import { connect } from 'react-redux'
-import { attemptSignUp } from "../actions/actionCreators"
+import { attemptSignUp, clearErrors } from "../actions/actionCreators"
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Col, Panel, Button } from "react-bootstrap";
 import SignUpForm from "../components/SignUpForm.jsx";
@@ -15,6 +15,7 @@ class SignUpPage extends React.Component {
             handleSubmit,
             responseStatus,
             requestInProgress,
+            clearErrors,
             fpErrorMask
         } = this.props
         var nextSuccessPathname = urls.ROOT_URI
@@ -29,6 +30,7 @@ class SignUpPage extends React.Component {
                             <SignUpForm
                                 onSubmit={() => handleSubmit()}
                                 requestInProgress={requestInProgress}
+                                clearErrors={clearErrors}
                                 fpErrorMask={fpErrorMask} />
                             <hr />
                             <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
@@ -51,7 +53,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        handleSubmit: () => { dispatch(attemptSignUp()) }
+        handleSubmit: () => { dispatch(attemptSignUp()) },
+        clearErrors: () => dispatch(clearErrors())
     }
 }
 

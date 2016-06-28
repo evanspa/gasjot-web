@@ -4,6 +4,7 @@ import { reduxForm } from "redux-form"
 import { GasJotTextFormGroup, GasJotFormGroup } from "./FormInput.jsx"
 import { cannotBeEmptyValidator, mustBeEmailValidator } from "../utils"
 import * as errFlags from "../errorFlags"
+import { toastr } from 'react-redux-toastr'
 
 const validate = values => {
     const errors = {}
@@ -15,6 +16,15 @@ const validate = values => {
 }
 
 class SignUpForm extends React.Component {
+
+    componentWillUnmount() {
+        toastr.clean()
+        const { clearErrors } = this.props
+        if (clearErrors != null) {
+            clearErrors()
+        }
+    }
+
     render() {
         const { fields: {name, email, password},
                 requestInProgress,

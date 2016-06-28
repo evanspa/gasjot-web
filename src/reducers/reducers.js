@@ -33,7 +33,20 @@ export const apiReducer = (state = {}, action) => {
     case actionTypes.CANCEL_RECORD_EDIT:
         return Object.assign({}, state, { fpErrorMask: null })
     case actionTypes.CLEAR_ERRORS:
-        return Object.assign({}, state, { fpErrorMask: null,  responseStatus: null })
+        return Object.assign({}, state, { fpErrorMask: null,
+                                          responseStatus: null,
+                                          gasLogIdNotFound: null,
+                                          vehicleIdNotFound: null,
+                                          odometerLogIdNotFound: null,
+                                          fuelstationIdNotFound: null })
+    case actionTypes.SERVER_ODOMETERLOG_NOT_FOUND:
+        return Object.assign({}, state, { odometerLogIdNotFound: action.serverOdometerLogId })
+    case actionTypes.SERVER_GASLOG_NOT_FOUND:
+        return Object.assign({}, state, { gasLogIdNotFound: action.serverGasLogId })
+    case actionTypes.SERVER_VEHICLE_NOT_FOUND:
+        return Object.assign({}, state, { vehicleIdNotFound: action.serverVehicleId })
+    case actionTypes.SERVER_FUELSTATION_NOT_FOUND:
+        return Object.assign({}, state, { fuelstationIdNotFound: action.serverFuelstationId })
     }
     return state
 }
@@ -53,6 +66,7 @@ export const serverSnapshotReducer = (state = {}, action) => {
     case actionTypes.SERVER_VEHICLE_MEDIATYPE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.vehicles[" + action.serverVehicleId + "].media-type", action.serverVehicleMediaType)
     case actionTypes.SERVER_VEHICLE_DELETED_ACK_RECEIVED:
+    case actionTypes.SERVER_VEHICLE_NOT_FOUND_USER_ACK:
         return removeVehicle(state, action.serverVehicleId)
     case actionTypes.SERVER_FUELSTATION_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstation["fpfuelstation/id"] + "].payload", action.serverFuelstation)
@@ -61,6 +75,7 @@ export const serverSnapshotReducer = (state = {}, action) => {
     case actionTypes.SERVER_FUELSTATION_MEDIATYPE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.fuelstations[" + action.serverFuelstationId + "].media-type", action.serverFuelstationMediaType)
     case actionTypes.SERVER_FUELSTATION_DELETED_ACK_RECEIVED:
+    case actionTypes.SERVER_FUELSTATION_NOT_FOUND_USER_ACK:
         return removeFuelstation(state, action.serverFuelstationId)
     case actionTypes.SERVER_ODOMETERLOG_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLog["envlog/id"] + "].payload", action.serverOdometerLog)
@@ -69,6 +84,7 @@ export const serverSnapshotReducer = (state = {}, action) => {
     case actionTypes.SERVER_ODOMETERLOG_MEDIATYPE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.envlogs[" + action.serverOdometerLogId + "].media-type", action.serverOdometerLogMediaType)
     case actionTypes.SERVER_ODOMETERLOG_DELETED_ACK_RECEIVED:
+    case actionTypes.SERVER_ODOMETERLOG_NOT_FOUND_USER_ACK:
         return removeEntity(state, "envlogs", action.serverOdometerLogId)
     case actionTypes.SERVER_GASLOG_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.fplogs[" + action.serverGasLog["fplog/id"] + "].payload", action.serverGasLog)
@@ -77,6 +93,7 @@ export const serverSnapshotReducer = (state = {}, action) => {
     case actionTypes.SERVER_GASLOG_MEDIATYPE_RECEIVED:
         return _.set(Object.assign({}, state), "_embedded.fplogs[" + action.serverGasLogId + "].media-type", action.serverGasLogMediaType)
     case actionTypes.SERVER_GASLOG_DELETED_ACK_RECEIVED:
+    case actionTypes.SERVER_GASLOG_NOT_FOUND_USER_ACK:
         return removeEntity(state, "fplogs", action.serverGasLogId)
     }
     return state;

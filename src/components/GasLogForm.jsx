@@ -39,19 +39,48 @@ class GasLogForm extends React.Component {
         this.state = {
             showModal: false,
             modalTitle: null,
-            modalContent: null
+            modalContent: null,
+            showEntityGoneModal: false,
+            entityGoneModalTitle: "Deleted on other device",
+            entityGoneModalContent: "It appears this gas log record was deleted from another device.  Let's take you back to your logs."
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { gasLogId } = this.props
+        const { gasLogIdNotFound } = nextProps
+        if (gasLogIdNotFound != null && gasLogId == gasLogIdNotFound) {
+            this.setState({showEntityGoneModal: true})
+        }
+    }
+
+    componentWillUnmount() {
+        const { clearErrors } = this.props
+        if (clearErrors != null) {
+            clearErrors()
+        }
     }
 
     render() {
         // https://github.com/erikras/redux-form/issues/190
         const {
-            fields: { vehicleId, fuelstationId, purchaseDate, octane, odometer, pricePerGallon, gotCarWash, carWashPerGallonDiscount, numGallons },
+            fields: {
+                vehicleId,
+                fuelstationId,
+                purchaseDate,
+                octane,
+                odometer,
+                pricePerGallon,
+                gotCarWash,
+                carWashPerGallonDiscount,
+                numGallons
+            },
             vehicles,
             fuelstations,
             gasLogId,
             markGasLogForEdit,
             cancelGasLogEdit,
+            userAcknowledgedNotFound,
             downloadGasLog,
             deleteGasLog,
             handleSubmit,
@@ -70,7 +99,15 @@ class GasLogForm extends React.Component {
                                 markEntityForEdit={markGasLogForEdit}
                                 cancelEntityAdd={cancelGasLogEdit}
                                 downloadEntity={downloadGasLog}
-                                deleteEntity={deleteGasLog}
+                                deleteEntity={
+                                    (gasLogId) => {
+                                        this.setState({
+                                            entityGoneModalTitle: "Already deleted",
+                                            entityGoneModalContent: "It would appear this gas log record was already deleted on another device.  Let's take you back to your logs."
+                                        })
+                                        deleteGasLog(gasLogId)
+                                    }
+                                }
                                 deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_GASLOG_VEHICLE_DOES_NOT_EXIST,
@@ -80,7 +117,21 @@ class GasLogForm extends React.Component {
         ]
         return (
             <div>
-                <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+                <SmallModal
+                    show={this.state.showModal}
+                    buttonTitle="Close"
+                    onHide={modalClose}
+                    title={this.state.modalTitle}
+                    content={this.state.modalContent} />
+                <SmallModal
+                    show={this.state.showEntityGoneModal}
+                    buttonTitle="Okay"
+                    onHide={() => {
+                            this.setState({ showEntityGoneModal: false })
+                            userAcknowledgedNotFound(gasLogId)
+                        }}
+                    title={this.state.entityGoneModalTitle}
+                    content={this.state.entityGoneModalContent} />
                 <ErrorMessages errorMask={fpErrorMask} errors={errors} />
                 <form onSubmit={handleSubmit}>
                     { actionArray }

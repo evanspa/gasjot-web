@@ -11,7 +11,7 @@ export default class ErrorMessages extends React.Component {
             for (let i = 0; i < numErrors; i++) {
                 const { flag, message } = errors[i]
                 if (errorMask & flag) {
-                    computedErrMessages.push(<h4 style={{marginTop: 0, marginBottom: 20}}><Label bsStyle="danger">{message}</Label></h4>)
+                    computedErrMessages.push(<h4 key={i} style={{marginTop: 0, marginBottom: 20}}><Label bsStyle="danger">{message}</Label></h4>)
                 }
             }
             return (<div>{computedErrMessages}</div>)

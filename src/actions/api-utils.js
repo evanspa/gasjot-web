@@ -153,7 +153,8 @@ export function makeAttemptDownloadEntityFn(
     entityMediaType,
     getEntityUpdatedAtFn,
     getEntityUriFn,
-    receiveServerEntityFn) {
+    receiveServerEntityFn,
+    entityIdNotFoundFn) {
     return (entityId, refreshUri) => {
         return (dispatch, getState) => {
             toastr.info(entityDownloadingMessage(entityType), toastConfigWorkingOnIt())
@@ -177,6 +178,9 @@ export function makeAttemptDownloadEntityFn(
                                 dispatch(receiveServerEntityFn(json))
                                 dispatch(push(refreshUri))
                             })
+                        } else if (response.status == 404) {
+                            // entity removed from other device
+                            dispatch(entityIdNotFoundFn(entityId))
                         } else if (!response.ok) {
                             toastr.error(problemDownloadingLatestMessage(entityType), toastConfigError())
                         }
@@ -204,46 +208,45 @@ export function makeAttemptSaveNewEntity(
     receiveServerEntityFn) {
     return (nextPathname) => {
         return (dispatch, getState) => {
-        toastr.info(entitySavingMessage(entityType), toastConfigWorkingOnIt())
-        dispatch(apiRequestInitiated())
-        const state = getState()
-        const headers = new Headers()
-        appendContentType(headers, entityContentType)
-        appendAuthenticatedCommonHeaders(headers, entityMediaType, state.authToken)
-        const entitiesUri = getEntitiesUriFn(state)
-        const requestPayload = entityRequestPayloadFn(state.form[entityFormName])
-        return fetch(entitiesUri, postInitForFetch(headers, requestPayload))
-            .then(response => {
-                dispatch(apiRequestDone())
-                dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
-                if (!checkBecameUnauthenticated(response, dispatch)) {
-                    if (response.status == 201) {
-                        const location = response.headers.get("location")
-                        return response.json().then(json => {
-                            dispatch(toastrActions.clean())
-                            const entityId = json[entityIdKeyName]
-                            dispatch(receiveServerEntityLocationFn(entityId, location))
-                            dispatch(receiveServerEntityMediaTypeFn(entityId, response.headers.get("content-type")))
-                            dispatch(receiveServerEntityFn(json))
-                            if (nextPathname != null) {
-                                dispatch(push(nextPathname))
-                            } else {
-                                dispatch(goBack())
-                            }
-                            toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
-                        })
-                    } else if (!response.ok) {
-                        toastr.clean()
-                        toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
+            toastr.info(entitySavingMessage(entityType), toastConfigWorkingOnIt())
+            dispatch(apiRequestInitiated())
+            const state = getState()
+            const headers = new Headers()
+            appendContentType(headers, entityContentType)
+            appendAuthenticatedCommonHeaders(headers, entityMediaType, state.authToken)
+            const entitiesUri = getEntitiesUriFn(state)
+            const requestPayload = entityRequestPayloadFn(state.form[entityFormName])
+            return fetch(entitiesUri, postInitForFetch(headers, requestPayload))
+                .then(response => {
+                    toastr.clean()
+                    dispatch(apiRequestDone())
+                    dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
+                    if (!checkBecameUnauthenticated(response, dispatch)) {
+                        if (response.status == 201) {
+                            const location = response.headers.get("location")
+                            return response.json().then(json => {
+                                const entityId = json[entityIdKeyName]
+                                dispatch(receiveServerEntityLocationFn(entityId, location))
+                                dispatch(receiveServerEntityMediaTypeFn(entityId, response.headers.get("content-type")))
+                                dispatch(receiveServerEntityFn(json))
+                                if (nextPathname != null) {
+                                    dispatch(push(nextPathname))
+                                } else {
+                                    dispatch(goBack())
+                                }
+                                toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
+                            })
+                        } else if (!response.ok) {
+                            toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
+                        }
                     }
-                }
-            })
-            .catch(error => {
-                dispatch(apiRequestDone())
-                toastr.clean()
-                toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
-            })
-        }
+                })
+                .catch(error => {
+                    toastr.clean()
+                    dispatch(apiRequestDone())
+                    toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
+                })
+          }
     }
 }
 
@@ -256,7 +259,8 @@ export function makeAttemptSaveEntityFn(entityType,
                                         entityFormName,
                                         attemptDownloadEntityFn,
                                         entityEditUrlFn,
-                                        receiveServerEntityFn) {
+                                        receiveServerEntityFn,
+                                        entityIdNotFoundFn) {
     return (entityId) => {
         return (dispatch, getState) => {
             toastr.info(entitySavingMessage(entityType), toastConfigWorkingOnIt())
@@ -270,31 +274,32 @@ export function makeAttemptSaveEntityFn(entityType,
             const requestPayload = entityRequestPayloadFn(state.form[entityFormName])
             return fetch(entityUri, putInitForFetch(headers, requestPayload))
                 .then(response => {
+                    toastr.clean()
                     dispatch(apiRequestDone())
                     dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                     if (!checkBecameUnauthenticated(response, dispatch)) {
                         if (response.status == 409) {
-                            toastr.clean()
                             const confirmOptions = {
                                 onOk: () => dispatch(attemptDownloadEntityFn(entityId, entityEditUrlFn(entityId)))
                             }
                             toastr.confirm(entityConflictMessage(entityType), confirmOptions)
                         } else if (response.status == 200) {
                             return response.json().then(json => {
-                                dispatch(toastrActions.clean())
                                 dispatch(receiveServerEntityFn(json))
                                 dispatch(goBack())
                                 toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
                             })
+                        } else if (response.status == 404) {
+                            // entity removed from other device
+                            dispatch(entityIdNotFoundFn(entityId))
                         } else if (!response.ok) {
-                            toastr.clean()
                             toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
                         }
                     }
                 })
                 .catch(error => {
-                    dispatch(apiRequestDone())
                     toastr.clean()
+                    dispatch(apiRequestDone())
                     toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
                 })
         }
@@ -307,7 +312,8 @@ export function makeAttemptDeleteEntityFn(entityType,
                                           getEntityUriFn,
                                           attemptDownloadEntityFn,
                                           entityDetailUrlFn,
-                                          receiveServerEntityDeletedAckFn) {
+                                          receiveServerEntityDeletedAckFn,
+                                          entityIdNotFoundFn) {
     return (entityId) => {
         return (dispatch, getState) => {
             toastr.info(entityDeletingMessage(entityType), toastConfigWorkingOnIt())
@@ -319,29 +325,30 @@ export function makeAttemptDeleteEntityFn(entityType,
             const entityUri = getEntityUriFn(state, entityId)
             return fetch(entityUri, deleteInitForFetch(headers))
                 .then(response => {
+                    toastr.clean()
                     dispatch(apiRequestDone())
                     dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                     if (!checkBecameUnauthenticated(response, dispatch)) {
                         if (response.status == 409) {
-                            toastr.clean()
                             const confirmOptions = {
                                 onOk: () => dispatch(attemptDownloadEntityFn(entityId, entityDetailUrlFn(entityId)))
                             }
                             toastr.confirm(entityConflictMessage(entityType), confirmOptions)
                         } else if (response.status == 204) {
-                            dispatch(toastrActions.clean())
                             dispatch(receiveServerEntityDeletedAckFn(entityId))
                             dispatch(goBack())
                             toastr.success(entityDeletedMessage(entityType), toastConfigSuccess())
+                        } else if (response.status == 404) {
+                            // entity removed from other device
+                            dispatch(entityIdNotFoundFn(entityId))
                         } else if (!response.ok) {
-                            toastr.clean()
                             toastr.error(entitySaveFailedMessage(entityType), toastConfigError())
                         }
                     }
                 })
                 .catch(error => {
-                    dispatch(apiRequestDone())
                     toastr.clean()
+                    dispatch(apiRequestDone())
                     toastr.error(entityDeleteFailedMessage(entityType), toastConfigError())
                 })
         }

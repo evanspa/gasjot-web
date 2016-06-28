@@ -4,7 +4,9 @@ import { push } from 'react-router-redux'
 import FuelstationForm from "../components/FuelstationForm.jsx"
 import { markFuelstationForEdit,
          attemptDownloadFuelstation,
-         attemptDeleteFuelstation } from "../actions/actionCreators"
+         attemptDeleteFuelstation,
+         serverFuelstationNotFoundUserAcknowledged,
+         clearErrors } from "../actions/actionCreators"
 import { toFuelstationFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -23,6 +25,9 @@ class FuelstationDetailPage extends React.Component {
         const {
             markFuelstationForEdit,
             downloadFuelstation,
+            clearErrors,
+            userAcknowledgedNotFound,
+            fuelstationIdNotFound,
             deleteFuelstation,
             becameUnauthenticated,
             deleteConfirmMessage
@@ -37,6 +42,9 @@ class FuelstationDetailPage extends React.Component {
                                markFuelstationForEdit={markFuelstationForEdit}
                                downloadFuelstation={downloadFuelstation}
                                deleteFuelstation={deleteFuelstation}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               fuelstationIdNotFound={fuelstationIdNotFound}
+                               clearErrors={clearErrors}
                                fuelstationId={fuelstationId}
                                initialValues={toFuelstationFormModel(fuelstationPayload)}
                                deleteConfirmMessage={deleteConfirmMessage}
@@ -68,7 +76,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         fuelstation: state.serverSnapshot._embedded.fuelstations[ownProps.params.fuelstationId],
         becameUnauthenticated: state.becameUnauthenticated,
-        deleteConfirmMessage: deleteConfirmMessage
+        deleteConfirmMessage: deleteConfirmMessage,
+        fuelstationIdNotFound: state.api.fuelstationIdNotFound
     }
 }
 
@@ -84,6 +93,11 @@ const mapDispatchToProps = (dispatch) => {
         },
         deleteFuelstation: (fuelstationId) => {
             dispatch(attemptDeleteFuelstation(fuelstationId))
+        },
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (fuelstationId) => {
+            dispatch(serverFuelstationNotFoundUserAcknowledged(fuelstationId))
+            dispatch(push(urls.FUELSTATIONS_URI))
         }
     }
 }

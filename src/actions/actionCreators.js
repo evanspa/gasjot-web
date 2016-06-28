@@ -51,6 +51,16 @@ export function receiveServerVehicleMediaType(serverVehicleId, serverVehicleMedi
              serverVehicleMediaType }
 }
 
+export function serverVehicleNotFound(serverVehicleId) {
+    return { type: actionTypes.SERVER_VEHICLE_NOT_FOUND,
+             serverVehicleId: serverVehicleId }
+}
+
+export function serverVehicleNotFoundUserAcknowledged(serverVehicleId) {
+    return { type: actionTypes.SERVER_VEHICLE_NOT_FOUND_USER_ACK,
+             serverVehicleId: serverVehicleId }
+}
+
 export function becameReauthenticated() {
     return { type: actionTypes.BECAME_REAUTHENTICATED }
 }
@@ -83,6 +93,16 @@ export function receiveServerFuelstationMediaType(serverFuelstationId, serverFue
              serverFuelstationMediaType }
 }
 
+export function serverFuelstationNotFound(serverFuelstationId) {
+    return { type: actionTypes.SERVER_FUELSTATION_NOT_FOUND,
+             serverFuelstationId: serverFuelstationId }
+}
+
+export function serverFuelstationNotFoundUserAcknowledged(serverFuelstationId) {
+    return { type: actionTypes.SERVER_FUELSTATION_NOT_FOUND_USER_ACK,
+             serverFuelstationId: serverFuelstationId }
+}
+
 export function receiveServerOdometerLog(serverOdometerLog) {
     return { type: actionTypes.SERVER_ODOMETERLOG_RECEIVED, serverOdometerLog }
 }
@@ -103,6 +123,16 @@ export function receiveServerOdometerLogMediaType(serverOdometerLogId, serverOdo
              serverOdometerLogMediaType }
 }
 
+export function serverOdometerLogNotFound(serverOdometerLogId) {
+    return { type: actionTypes.SERVER_ODOMETERLOG_NOT_FOUND,
+             serverOdometerLogId: serverOdometerLogId }
+}
+
+export function serverOdometerLogNotFoundUserAcknowledged(serverOdometerLogId) {
+    return { type: actionTypes.SERVER_ODOMETERLOG_NOT_FOUND_USER_ACK,
+             serverOdometerLogId: serverOdometerLogId }
+}
+
 export function receiveServerGasLog(serverGasLog) {
     return { type: actionTypes.SERVER_GASLOG_RECEIVED, serverGasLog }
 }
@@ -121,6 +151,16 @@ export function receiveServerGasLogMediaType(serverGasLogId, serverGasLogMediaTy
     return { type: actionTypes.SERVER_GASLOG_MEDIATYPE_RECEIVED,
              serverGasLogId: serverGasLogId,
              serverGasLogMediaType }
+}
+
+export function serverGasLogNotFound(serverGasLogId) {
+    return { type: actionTypes.SERVER_GASLOG_NOT_FOUND,
+             serverGasLogId: serverGasLogId }
+}
+
+export function serverGasLogNotFoundUserAcknowledged(serverGasLogId) {
+    return { type: actionTypes.SERVER_GASLOG_NOT_FOUND_USER_ACK,
+             serverGasLogId: serverGasLogId }
 }
 
 export function receiveAuthenticationToken(authToken) {
@@ -459,7 +499,8 @@ export const attemptDownloadVehicle = apiUtils.makeAttemptDownloadEntityFn(
     vehicleMediaType,
     getVehicleUpdatedAt,
     getVehicleUri,
-    receiveServerVehicle)
+    receiveServerVehicle,
+    serverVehicleNotFound)
 
 export const attemptSaveVehicle = apiUtils.makeAttemptSaveEntityFn(
     "vehicle",
@@ -471,7 +512,8 @@ export const attemptSaveVehicle = apiUtils.makeAttemptSaveEntityFn(
     "vehicle",
     attemptDownloadVehicle,
     urls.vehicleEditUrl,
-    receiveServerVehicle)
+    receiveServerVehicle,
+    serverVehicleNotFound)
 
 export const attemptDeleteVehicle = apiUtils.makeAttemptDeleteEntityFn(
     "vehicle",
@@ -480,7 +522,8 @@ export const attemptDeleteVehicle = apiUtils.makeAttemptDeleteEntityFn(
     getVehicleUri,
     attemptDownloadVehicle,
     urls.vehicleDetailUrl,
-    receiveServerVehicleDeletedAck)
+    receiveServerVehicleDeletedAck,
+    serverVehicleNotFound)
 
 export const attemptSaveNewVehicle = apiUtils.makeAttemptSaveNewEntity(
     "vehicle",
@@ -512,7 +555,8 @@ export const attemptDownloadFuelstation = apiUtils.makeAttemptDownloadEntityFn(
     fuelstationMediaType,
     getFuelstationUpdatedAt,
     getFuelstationUri,
-    receiveServerFuelstation)
+    receiveServerFuelstation,
+    serverFuelstationNotFound)
 
 export const attemptSaveFuelstation = apiUtils.makeAttemptSaveEntityFn(
     "gas station",
@@ -524,7 +568,8 @@ export const attemptSaveFuelstation = apiUtils.makeAttemptSaveEntityFn(
     "fuelstation",
     attemptDownloadFuelstation,
     urls.fuelstationEditUrl,
-    receiveServerFuelstation)
+    receiveServerFuelstation,
+    serverFuelstationNotFound)
 
 export const attemptDeleteFuelstation = apiUtils.makeAttemptDeleteEntityFn(
     "fuelstation",
@@ -533,7 +578,8 @@ export const attemptDeleteFuelstation = apiUtils.makeAttemptDeleteEntityFn(
     getFuelstationUri,
     attemptDownloadFuelstation,
     urls.fuelstationDetailUrl,
-    receiveServerFuelstationDeletedAck)
+    receiveServerFuelstationDeletedAck,
+    serverFuelstationNotFound)
 
 export const attemptSaveNewFuelstation = apiUtils.makeAttemptSaveNewEntity(
     "fuelstation",
@@ -567,7 +613,8 @@ export const attemptDownloadOdometerLog = apiUtils.makeAttemptDownloadEntityFn(
     odometerLogMediaType,
     getOdometerLogUpdatedAt,
     getOdometerLogUri,
-    receiveServerOdometerLog)
+    receiveServerOdometerLog,
+    serverOdometerLogNotFound)
 
 export const attemptSaveOdometerLogFnMaker = vehicles =>
     apiUtils.makeAttemptSaveEntityFn(
@@ -580,7 +627,8 @@ export const attemptSaveOdometerLogFnMaker = vehicles =>
         "odometerlog",
         attemptDownloadOdometerLog,
         urls.odometerLogEditUrl,
-        receiveServerOdometerLog)
+        receiveServerOdometerLog,
+        serverOdometerLogNotFound)
 
 export const attemptDeleteOdometerLog = apiUtils.makeAttemptDeleteEntityFn(
     "odometer log",
@@ -589,7 +637,8 @@ export const attemptDeleteOdometerLog = apiUtils.makeAttemptDeleteEntityFn(
     getOdometerLogUri,
     attemptDownloadOdometerLog,
     urls.odometerLogDetailUrl,
-    receiveServerOdometerLogDeletedAck)
+    receiveServerOdometerLogDeletedAck,
+    serverOdometerLogNotFound)
 
 export const attemptSaveNewOdometerLogFnMaker = vehicles =>
     apiUtils.makeAttemptSaveNewEntity(
@@ -626,7 +675,8 @@ export const attemptDownloadGasLog = apiUtils.makeAttemptDownloadEntityFn(
     gasLogMediaType,
     getGasLogUpdatedAt,
     getGasLogUri,
-    receiveServerGasLog)
+    receiveServerGasLog,
+    serverGasLogNotFound)
 
 export const attemptSaveGasLogFnMaker = (vehicles, fuelstations) =>
     apiUtils.makeAttemptSaveEntityFn(
@@ -639,7 +689,8 @@ export const attemptSaveGasLogFnMaker = (vehicles, fuelstations) =>
         "gaslog",
         attemptDownloadGasLog,
         urls.gasLogEditUrl,
-        receiveServerGasLog)
+        receiveServerGasLog,
+        serverGasLogNotFound)
 
 export const attemptDeleteGasLog = apiUtils.makeAttemptDeleteEntityFn(
     "gas log",
@@ -648,7 +699,8 @@ export const attemptDeleteGasLog = apiUtils.makeAttemptDeleteEntityFn(
     getGasLogUri,
     attemptDownloadGasLog,
     urls.gasLogDetailUrl,
-    receiveServerGasLogDeletedAck)
+    receiveServerGasLogDeletedAck,
+    serverGasLogNotFound)
 
 export const attemptSaveNewGasLogFnMaker = (vehicles, fuelstations) =>
     apiUtils.makeAttemptSaveNewEntity(

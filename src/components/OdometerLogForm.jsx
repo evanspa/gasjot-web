@@ -36,18 +36,44 @@ class OdometerLogForm extends React.Component {
         this.state = {
             showModal: false,
             modalTitle: null,
-            modalContent: null
+            modalContent: null,
+            showEntityGoneModal: false,
+            entityGoneModalTitle: "Deleted on other device",
+            entityGoneModalContent: "It appears this odometer log record was deleted from another device.  Let's take you back to your logs."
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { odometerLogId } = this.props
+        const { odometerLogIdNotFound } = nextProps
+        if (odometerLogIdNotFound != null && odometerLogId == odometerLogIdNotFound) {
+            this.setState({showEntityGoneModal: true})
+        }
+    }
+
+    componentWillUnmount() {
+        const { clearErrors } = this.props
+        if (clearErrors != null) {
+            clearErrors()
+        }
     }
 
     render() {
         // https://github.com/erikras/redux-form/issues/190
         const {
-            fields: { vehicleId, logDate, odometer, avgMpgReadout, rangeReadout, avgMphReadout, outsideTempReadout },
+            fields: {
+                vehicleId,
+                logDate,
+                odometer,
+                avgMpgReadout,
+                rangeReadout,
+                avgMphReadout,
+                outsideTempReadout },
             vehicles,
             odometerLogId,
             markOdometerLogForEdit,
             cancelOdometerLogEdit,
+            userAcknowledgedNotFound,
             downloadOdometerLog,
             deleteOdometerLog,
             handleSubmit,
@@ -66,15 +92,37 @@ class OdometerLogForm extends React.Component {
                                 markEntityForEdit={markOdometerLogForEdit}
                                 cancelEntityAdd={cancelOdometerLogEdit}
                                 downloadEntity={downloadOdometerLog}
-                                deleteEntity={deleteOdometerLog}
+                                deleteEntity={
+                                    (odometerLogId) => {
+                                        this.setState({
+                                            entityGoneModalTitle: "Already deleted",
+                                            entityGoneModalContent: "It would appear this odometer log record was already deleted on another device.  Let's take you back to your logs."
+                                        })
+                                        deleteOdometerLog(odometerLogId)
+                                    }
+                                }
                                 deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_ODOMETERLOG_VEHICLE_DOES_NOT_EXIST,
-              message: "The selected vehicle no longer exists."}
+              message: "The selected vehicle no longer exists." }
         ]
         return (
             <div>
-                <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+                <SmallModal
+                    show={this.state.showModal}
+                    buttonTitle="Close"
+                    onHide={modalClose}
+                    title={this.state.modalTitle}
+                    content={this.state.modalContent} />
+                <SmallModal
+                    show={this.state.showEntityGoneModal}
+                    buttonTitle="Okay"
+                    onHide={() => {
+                            this.setState({ showEntityGoneModal: false })
+                            userAcknowledgedNotFound(odometerLogId)
+                        }}
+                    title={this.state.entityGoneModalTitle}
+                    content={this.state.entityGoneModalContent} />
                 <ErrorMessages errorMask={fpErrorMask} errors={errors} />
                 <form onSubmit={handleSubmit}>
                     { actionArray }

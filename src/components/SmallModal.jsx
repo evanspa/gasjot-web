@@ -12,7 +12,7 @@ export default class SmallModal extends React.Component {
                     <p>{this.props.content}</p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={this.props.onHide}>Close</Button>
+                    <Button onClick={this.props.onHide}>{this.props.buttonTitle}</Button>
                 </Modal.Footer>
             </Modal>
         )

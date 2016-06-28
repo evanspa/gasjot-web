@@ -29,17 +29,45 @@ class FuelstationForm extends React.Component {
         this.state = {
             showModal: false,
             modalTitle: null,
-            modalContent: null
+            modalContent: null,
+            showEntityGoneModal: false,
+            entityGoneModalTitle: "Deleted on other device",
+            entityGoneModalContent: "It appears this gas station record was deleted from another device.  Let's take you back to your gas station list."
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { fuelstationId } = this.props
+        const { fuelstationIdNotFound } = nextProps
+        if (fuelstationIdNotFound != null && fuelstationId == fuelstationIdNotFound) {
+            this.setState({showEntityGoneModal: true})
+        }
+    }
+
+    componentWillUnmount() {
+        const { clearErrors } = this.props
+        if (clearErrors != null) {
+            clearErrors()
+        }
     }
 
     render() {
         // https://github.com/erikras/redux-form/issues/190
         const {
-            fields: {name, typeId, street, city, state, zip, latitude, longitude},
+            fields: {
+                name,
+                typeId,
+                street,
+                city,
+                state,
+                zip,
+                latitude,
+                longitude
+            },
             fuelstationId,
             markFuelstationForEdit,
             cancelFuelstationEdit,
+            userAcknowledgedNotFound,
             downloadFuelstation,
             deleteFuelstation,
             handleSubmit,
@@ -58,7 +86,15 @@ class FuelstationForm extends React.Component {
                                 markEntityForEdit={markFuelstationForEdit}
                                 cancelEntityAdd={cancelFuelstationEdit}
                                 downloadEntity={downloadFuelstation}
-                                deleteEntity={deleteFuelstation}
+                                deleteEntity={
+                                    (fuelstationId) => {
+                                        this.setState({
+                                            entityGoneModalTitle: "Already deleted",
+                                            entityGoneModalContent: "It would appear this gas station record was already deleted on another device.  Let's take you back to your gas station list."
+                                        })
+                                        deleteFuelstation(fuelstationId)
+                                    }
+                                }
                                 deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_FUELSTATION_CANNOT_BE_PURPLEX,
@@ -66,7 +102,21 @@ class FuelstationForm extends React.Component {
         ]
         return (
             <div>
-                <SmallModal show={this.state.showModal} onHide={modalClose} title={this.state.modalTitle} content={this.state.modalContent} />
+                <SmallModal
+                    show={this.state.showModal}
+                    buttonTitle="Close"
+                    onHide={modalClose}
+                    title={this.state.modalTitle}
+                    content={this.state.modalContent} />
+                <SmallModal
+                    show={this.state.showEntityGoneModal}
+                    buttonTitle="Okay"
+                    onHide={() => {
+                            this.setState({ showEntityGoneModal: false })
+                            userAcknowledgedNotFound(fuelstationId)
+                        }}
+                    title={this.state.entityGoneModalTitle}
+                    content={this.state.entityGoneModalContent} />
                 <ErrorMessages errorMask={fpErrorMask} errors={errors} />
                 <form onSubmit={handleSubmit}>
                     { actionArray }

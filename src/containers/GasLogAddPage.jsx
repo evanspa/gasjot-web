@@ -2,7 +2,9 @@ import React from "react"
 import { connect } from 'react-redux'
 import { push, goBack } from 'react-router-redux'
 import GasLogForm from "../components/GasLogForm.jsx"
-import { cancelRecordEdit, attemptSaveNewGasLogFnMaker } from "../actions/actionCreators"
+import { cancelRecordEdit,
+         attemptSaveNewGasLogFnMaker,
+         clearErrors } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { toastr } from 'react-redux-toastr'
@@ -17,6 +19,7 @@ class GasLogAddPage extends React.Component {
             api,
             vehicles,
             fuelstations,
+            clearErrors,
             backLink
         } = this.props
         const { requestInProgress, fpErrorMask } = api
@@ -29,6 +32,7 @@ class GasLogAddPage extends React.Component {
                                 onSubmit={() => handleSubmit(vehicles, fuelstations)}
                                 requestInProgress={requestInProgress}
                                 editMode={true}
+                                clearErrors={clearErrors}
                                 fpErrorMask={fpErrorMask} />)
         const reauthenticateModal = <ReauthenticateModal
                                         showModal={becameUnauthenticated}
@@ -70,7 +74,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         handleSubmit: (vehicles, fuelstations) => {
             toastr.clean()
             dispatch(attemptSaveNewGasLogFnMaker(vehicles, fuelstations)(nextPathname))
-        }
+        },
+        clearErrors: () => dispatch(clearErrors())
     }
 }
 

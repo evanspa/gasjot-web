@@ -2,7 +2,9 @@ import React from "react"
 import { connect } from 'react-redux'
 import { push, goBack } from 'react-router-redux'
 import VehicleForm from "../components/VehicleForm.jsx"
-import { cancelRecordEdit, attemptSaveNewVehicle } from "../actions/actionCreators"
+import { cancelRecordEdit,
+         attemptSaveNewVehicle,
+         clearErrors } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { toastr } from 'react-redux-toastr'
@@ -14,6 +16,7 @@ class VehicleAddPage extends React.Component {
             handleSubmit,
             becameUnauthenticated,
             api,
+            clearErrors,
             backLink
         } = this.props
         const { requestInProgress, fpErrorMask } = api
@@ -22,6 +25,7 @@ class VehicleAddPage extends React.Component {
                                  onSubmit={() => handleSubmit()}
                                  requestInProgress={requestInProgress}
                                  editMode={true}
+                                 clearErrors={clearErrors}
                                  fpErrorMask={fpErrorMask} />)
         const reauthenticateModal = <ReauthenticateModal
                                         showModal={becameUnauthenticated}
@@ -63,7 +67,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         handleSubmit: () => {
             toastr.clean()
             dispatch(attemptSaveNewVehicle(nextPathname))
-        }
+        },
+        clearErrors: () => dispatch(clearErrors())
     }
 }
 

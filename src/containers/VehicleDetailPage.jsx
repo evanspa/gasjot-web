@@ -6,7 +6,9 @@ import { push } from 'react-router-redux'
 import VehicleForm from "../components/VehicleForm.jsx"
 import { markVehicleForEdit,
          attemptDownloadVehicle,
-         attemptDeleteVehicle } from "../actions/actionCreators"
+         attemptDeleteVehicle,
+         clearErrors,
+         serverVehicleNotFoundUserAcknowledged } from "../actions/actionCreators"
 import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -24,6 +26,9 @@ class VehicleDetailPage extends React.Component {
         const vehiclePayload = this.props.vehicle.payload
         const { markVehicleForEdit,
                 downloadVehicle,
+                clearErrors,
+                userAcknowledgedNotFound,
+                vehicleIdNotFound,
                 deleteVehicle,
                 becameUnauthenticated,
                 deleteConfirmMessage
@@ -36,6 +41,9 @@ class VehicleDetailPage extends React.Component {
         const entityForm = <VehicleForm
                                markVehicleForEdit={markVehicleForEdit}
                                downloadVehicle={downloadVehicle}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               vehicleIdNotFound={vehicleIdNotFound}
+                               clearErrors={clearErrors}
                                deleteVehicle={deleteVehicle}
                                vehicleId={vehicleId}
                                initialValues={toVehicleFormModel(vehiclePayload)}
@@ -91,7 +99,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         vehicle: state.serverSnapshot._embedded.vehicles[ownProps.params.vehicleId],
         becameUnauthenticated: state.becameUnauthenticated,
-        deleteConfirmMessage: deleteConfirmMessage
+        deleteConfirmMessage: deleteConfirmMessage,
+        vehicleIdNotFound: state.api.vehicleIdNotFound
     }
 }
 
@@ -107,6 +116,11 @@ const mapDispatchToProps = (dispatch) => {
         },
         deleteVehicle: (vehicleId) => {
             dispatch(attemptDeleteVehicle(vehicleId))
+        },
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (vehicleId) => {
+            dispatch(serverVehicleNotFoundUserAcknowledged(vehicleId))
+            dispatch(push(urls.VEHICLES_URI))
         }
     }
 }

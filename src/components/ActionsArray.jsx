@@ -1,13 +1,16 @@
 import React from "react"
 import { Button } from "react-bootstrap";
 import ConfirmModal from "./ConfirmModal.jsx"
+import SmallModal from "./SmallModal.jsx"
+import { toastr } from 'react-redux-toastr'
 
 export default class ActionsArray extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            showConfirmModal: false
+            showConfirmModal: false,
+            showEntityGoneModal: false
         };
     }
 
@@ -29,8 +32,6 @@ export default class ActionsArray extends React.Component {
         let editButton = null
         let deleteButton = null
         let downloadButton = null
-
-        let confirmModalNoCancel = () => this.setState({ showConfirmModal: false })
         let actions = []
 
         if (entityId != null) {
@@ -45,7 +46,7 @@ export default class ActionsArray extends React.Component {
                 actions.push(editButton)
                 actions.push(downloadButton)
                 if (deleteEntity != null) {
-                    deleteButton = <Button key="deleteButton" bsStyle="danger" style={{marginBottom: 0, marginTop: 3}} onClick={() => this.setState({showConfirmModal: true})}>Delete</Button>
+                    deleteButton = <Button key="deleteButton" bsStyle="danger" style={{marginBottom: 0, marginTop: 3}} onClick={() => { toastr.clean(); this.setState({showConfirmModal: true}) }}>Delete</Button>
                     actions.push(deleteButton)
                 }
             }
@@ -59,7 +60,7 @@ export default class ActionsArray extends React.Component {
                 <div>
                     <ConfirmModal
                         show={this.state.showConfirmModal}
-                        onHide={confirmModalNoCancel}
+                        onHide={() => this.setState({ showConfirmModal: false })}
                         noCancelButtonTitle="Nah, forget it"
                         yesDoItButtonStyle="danger"
                         yesDoItButtonTitle="Yes, delete it"

@@ -27,8 +27,19 @@ class VehicleForm extends React.Component {
         this.state = {
             showSmallModal: false,
             smallModalTitle: null,
-            smallModalContent: null
+            smallModalContent: null,
+            showEntityGoneModal: false,
+            entityGoneModalTitle: "Deleted on other device",
+            entityGoneModalContent: "It appears this vehicle record was deleted from another device.  Let's take you back to your vehicle list."
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { vehicleId } = this.props
+        const { vehicleIdNotFound } = nextProps
+        if (vehicleIdNotFound != null && vehicleId == vehicleIdNotFound) {
+            this.setState({showEntityGoneModal: true})
+        }
     }
 
     componentWillUnmount() {
@@ -51,10 +62,12 @@ class VehicleForm extends React.Component {
                      hasMpgReadout,
                      hasMphReadout,
                      hasDteReadout,
-                     hasOutsideTempReadout},
+                     hasOutsideTempReadout
+            },
             vehicleId,
             markVehicleForEdit,
             cancelVehicleEdit,
+            userAcknowledgedNotFound,
             downloadVehicle,
             deleteVehicle,
             handleSubmit,
@@ -73,7 +86,15 @@ class VehicleForm extends React.Component {
                                 markEntityForEdit={markVehicleForEdit}
                                 cancelEntityAdd={cancelVehicleEdit}
                                 downloadEntity={downloadVehicle}
-                                deleteEntity={deleteVehicle}
+                                deleteEntity={
+                                    (vehicleId) => {
+                                        this.setState({
+                                            entityGoneModalTitle: "Already deleted",
+                                            entityGoneModalContent: "It would appear this vehicle record was already deleted on another device.  Let's take you back to your vehicle list."
+                                        })
+                                        deleteVehicle(vehicleId)
+                                    }
+                                }
                                 deleteEntityConfirmMessage={deleteConfirmMessage} />
         const errors = [
             { flag: errFlags.SAVE_VEHICLE_CANNOT_BE_BOTH_DIESEL_OCTANE,
@@ -89,9 +110,19 @@ class VehicleForm extends React.Component {
         <div>
             <SmallModal
                 show={this.state.showSmallModal}
+                buttonTitle="Close"
                 onHide={smallModalClose}
                 title={this.state.smallModalTitle}
                 content={this.state.smallModalContent} />
+            <SmallModal
+                show={this.state.showEntityGoneModal}
+                buttonTitle="Okay"
+                onHide={() => {
+                        this.setState({ showEntityGoneModal: false })
+                        userAcknowledgedNotFound(vehicleId)
+                    }}
+                title={this.state.entityGoneModalTitle}
+                content={this.state.entityGoneModalContent} />
             <ErrorMessages errorMask={fpErrorMask} errors={errors} />
             <form onSubmit={handleSubmit}>
                 { actionArray }

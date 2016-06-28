@@ -5,7 +5,8 @@ import VehicleForm from "../components/VehicleForm.jsx"
 import { cancelRecordEdit,
          attemptSaveVehicle,
          attemptDownloadVehicle,
-         clearErrors } from "../actions/actionCreators"
+         clearErrors,
+         serverVehicleNotFoundUserAcknowledged } from "../actions/actionCreators"
 import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
@@ -20,6 +21,8 @@ class VehicleEditPage extends React.Component {
             handleSubmit,
             api,
             clearErrors,
+            userAcknowledgedNotFound,
+            vehicleIdNotFound,
             becameUnauthenticated
         } = this.props
         const { requestInProgress, fpErrorMask } = api
@@ -33,6 +36,8 @@ class VehicleEditPage extends React.Component {
                                onSubmit={() => handleSubmit(vehicleId)}
                                requestInProgress={requestInProgress}
                                vehicleId={vehicleId}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               vehicleIdNotFound={vehicleIdNotFound}
                                initialValues={toVehicleFormModel(vehiclePayload)}
                                clearErrors={clearErrors}
                                editMode={true}
@@ -50,7 +55,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         api: state.api,
         vehicle: state.serverSnapshot._embedded.vehicles[ownProps.params.vehicleId],
-        becameUnauthenticated: state.becameUnauthenticated
+        becameUnauthenticated: state.becameUnauthenticated,
+        vehicleIdNotFound: state.api.vehicleIdNotFound
     }
 }
 
@@ -65,7 +71,11 @@ const mapDispatchToProps = (dispatch) => {
             toastr.clean()
             dispatch(attemptSaveVehicle(vehicleId))
         },
-        clearErrors: () => dispatch(clearErrors())
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (vehicleId) => {
+            dispatch(serverVehicleNotFoundUserAcknowledged(vehicleId))
+            dispatch(push(urls.VEHICLES_URI))
+        }
     }
 }
 

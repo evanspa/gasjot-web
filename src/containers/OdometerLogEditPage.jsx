@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import OdometerLogForm from "../components/OdometerLogForm.jsx"
 import { toastr } from 'react-redux-toastr'
-import { attemptSaveOdometerLogFnMaker } from "../actions/actionCreators"
+import { attemptSaveOdometerLogFnMaker,
+         serverOdometerLogNotFoundUserAcknowledged } from "../actions/actionCreators"
 import { toOdometerLogFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
@@ -18,6 +19,8 @@ class OdometerLogEditPage extends React.Component {
             handleSubmit,
             api,
             becameUnauthenticated,
+            userAcknowledgedNotFound,
+            odometerLogIdNotFound,
             vehicles
         } = this.props
         const { requestInProgress, fpErrorMask } = api
@@ -26,6 +29,8 @@ class OdometerLogEditPage extends React.Component {
         const entityForm = <OdometerLogForm
                                vehicles={vehicleDropdownValues}
                                cancelOdometerLogEdit={cancelOdometerLogEdit}
+                               userAcknowledgedNotFound={userAcknowledgedNotFound}
+                               odometerLogIdNotFound={odometerLogIdNotFound}
                                onSubmit={() => handleSubmit(vehicles, odometerLogId)}
                                requestInProgress={requestInProgress}
                                odometerLogId={odometerLogId}
@@ -50,7 +55,8 @@ const mapStateToProps = (state, ownProps) => {
         api: state.api,
         odometerLog: state.serverSnapshot._embedded.envlogs[ownProps.params.odometerLogId],
         vehicles: state.serverSnapshot._embedded.vehicles,
-        becameUnauthenticated: state.becameUnauthenticated
+        becameUnauthenticated: state.becameUnauthenticated,
+        odometerLogIdNotFound: state.api.odometerLogIdNotFound
     }
 }
 
@@ -63,6 +69,11 @@ const mapDispatchToProps = (dispatch) => {
         handleSubmit: (vehicles, odometerLogId) => {
             toastr.clean()
             dispatch(attemptSaveOdometerLogFnMaker(vehicles)(odometerLogId));
+        },
+        clearErrors: () => dispatch(clearErrors()),
+        userAcknowledgedNotFound: (odometerLogId) => {
+            dispatch(serverOdometerLogNotFoundUserAcknowledged(odometerLogId))
+            dispatch(push(urls.ODOMETER_LOGS_URI))
         }
     }
 }
