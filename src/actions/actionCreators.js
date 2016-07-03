@@ -14,6 +14,11 @@ const LIGHT_LOGIN_URI          = "http://www.jotyourself.com/gasjot/d/light-logi
 const LOGIN_URI                = "http://www.jotyourself.com/gasjot/d/login"
 const SIGNUP_URI               = "http://www.jotyourself.com/gasjot/d/users"
 const SEND_PWD_RESET_EMAIL_URI = "http://www.jotyourself.com/gasjot/d/send-password-reset-email"
+const PASSWORD_RESET_URI       = "http://www.jotyourself.com/gasjot/d/password-reset"
+
+function resendVerificationEmailUri(userUri) {
+    return userUri + "/send-verification-email"
+}
 
 export function cancelRecordEdit() {
     return { type: actionTypes.CANCEL_RECORD_EDIT }
@@ -29,6 +34,18 @@ export function receiveServerSnapshot(serverSnapshot) {
 
 export function receiveServerUser(serverUser) {
     return { type: actionTypes.SERVER_USER_RECEIVED, serverUser }
+}
+
+export function serverUserNotFound() {
+    return { type: actionTypes.SERVER_USER_NOT_FOUND }
+}
+
+export function serverUserNotFound(userId) {
+    return { type: actionTypes.SERVER_USER_NOT_FOUND }
+}
+
+export function serverUserNotFoundUserAcknowledged() {
+    return { type: actionTypes.SERVER_USER_NOT_FOUND_USER_ACK }
 }
 
 export function receiveServerVehicleDeletedAck(serverVehicleId) {
@@ -230,7 +247,7 @@ export function logout(logoutUri, authToken) {
             .then(response => {
                 dispatch(apiUtils.apiRequestDone())
                 dispatch(logoutRequestDone())
-                dispatch(push("/loggedOut"))
+                dispatch(push(urls.LOGGED_OUT_URI))
                 toastr.clean()
             })
             .catch(error => {
@@ -239,7 +256,7 @@ export function logout(logoutUri, authToken) {
                 // token, we're pretty much good
                 dispatch(apiUtils.apiRequestDone())
                 dispatch(logoutRequestDone())
-                dispatch(push("/loggedOut"))
+                dispatch(push(urls.LOGGED_OUT_URI))
                 toastr.clean()
             })
     }
@@ -262,21 +279,91 @@ export function attemptSignUp() {
         };
         return fetch(SIGNUP_URI, apiUtils.postInitForFetch(headers, requestPayload))
             .then(response => {
-                dispatch(apiUtils.apiRequestDone())
-                dispatch(receiveAuthenticationToken(response.headers.get(apiUtils.FP_AUTH_TOKEN_HEADER)))
-                dispatch(receiveUserUri(response.headers.get("Location")))
-                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
-                return response.json()
-            })
-            .then(json => {
-                dispatch(receiveServerSnapshot(json))
                 dispatch(toastrActions.clean())
-                dispatch(push("/accountCreated"))
-                toastr.success("Account created successfully!", apiUtils.toastConfigSuccess())
+                dispatch(apiUtils.apiRequestDone())
+                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
+                if (response.status == 201) {
+                    dispatch(receiveAuthenticationToken(response.headers.get(apiUtils.FP_AUTH_TOKEN_HEADER)))
+                    dispatch(receiveUserUri(response.headers.get("Location")))
+                    return response.json().then(json => {
+                        dispatch(receiveServerSnapshot(json))
+                        dispatch(toastrActions.clean())
+                        dispatch(push(urls.ACCOUNT_CREATED_URI))
+                        toastr.success("Account created successfully!", apiUtils.toastConfigSuccess())
+                    })
+                } else if (!response.ok) {
+                    toastr.error("We're sorry, but there was a problem creating your account.  Please try again later.", apiUtils.toastConfigError())
+                }
             })
             .catch(error => {
-                dispatch(apiUtils.apiRequestDone())
+                toastr.error("We're sorry, but there was a problem creating your account.  Please try again later.", apiUtils.toastConfigError())
+            })
+    }
+}
+
+export function attemptResendVerificationEmail() {
+    return (dispatch, getState) => {
+        toastr.info("Sending verification email...", apiUtils.toastConfigWorkingOnIt())
+        dispatch(apiUtils.apiRequestInitiated())
+        const state = getState()
+        const headers = new Headers()
+        apiUtils.appendContentType(headers, userContentType)
+        apiUtils.appendAuthenticatedCommonHeaders(headers, userMediaType, state.authToken)
+        let init = {}
+        init.method = "POST"
+        init.headers = headers
+        init.body = JSON.stringify({})
+        return fetch(resendVerificationEmailUri(state.userUri), init)
+            .then(response => {
                 toastr.clean()
+                dispatch(apiUtils.apiRequestDone())
+                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
+                if (!apiUtils.checkBecameUnauthenticated(response, dispatch)) {
+                    if (response.status == 204) {
+                        toastr.success("Verificaton email sent to you at: " + state.serverSnapshot['user/email'], apiUtils.toastConfigSuccess())
+                    } else if (!response.ok) {
+                        toastr.error("Oops.  There was a problem.  Try this again a bit later.", apiUtils.toastConfigError())
+                    }
+                }
+            })
+            .catch(error => {
+                toastr.clean()
+                dispatch(apiUtils.apiRequestDone())
+                toastr.error("Oops.  There was a problem.  Try this again a bit later.", apiUtils.toastConfigError())
+            })
+    }
+}
+
+export function attemptResetPassword(email, resetToken) {
+    return (dispatch, getState) => {
+        toastr.info("Resetting your password...", apiUtils.toastConfigWorkingOnIt())
+        dispatch(apiUtils.apiRequestInitiated())
+        const state = getState()
+        const headers = new Headers()
+        apiUtils.appendContentType(headers, userContentType)
+        let init = {}
+        init.method = "POST"
+        init.headers = headers
+        let requestPayload = { email: email }
+        requestPayload["password-reset-token"] = resetToken
+        requestPayload["new-password"] = state.form.resetpassword.password.value
+        init.body = JSON.stringify(requestPayload)
+        return fetch(PASSWORD_RESET_URI, init)
+            .then(response => {
+                toastr.clean()
+                dispatch(apiUtils.apiRequestDone())
+                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
+                if (response.status == 204) {
+                    dispatch(push(urls.PASSWORD_RESET_SUCCESS_URI))
+                    toastr.success("Password reset successful!", apiUtils.toastConfigSuccess())
+                } else if (!response.ok) {
+                    toastr.error("Oops.  There was a problem.  Try this again a bit later.", apiUtils.toastConfigError())
+                }
+            })
+            .catch(error => {
+                toastr.clean()
+                dispatch(apiUtils.apiRequestDone())
+                toastr.error("Oops.  There was a problem.  Try this again a bit later.", apiUtils.toastConfigError())
             })
     }
 }
@@ -337,7 +424,6 @@ export function attemptLightLogin(operationOnSuccess) {
             .then(response => {
                 dispatch(apiUtils.apiRequestDone())
                 dispatch(receiveAuthenticationToken(response.headers.get(apiUtils.FP_AUTH_TOKEN_HEADER)))
-                //dispatch(receiveUserUri(response.headers.get("Location")))
                 dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
                 if (response.status == 204) {
                     dispatch(toastrActions.clean())
@@ -377,6 +463,7 @@ export function attemptSendPasswordResetEmail() {
                 if (response.status == 204) {
                     dispatch(toastrActions.clean())
                     dispatch(passwordResetEmailSent())
+                    dispatch(push(urls.PASSWORD_RESET_EMAIL_SENT_URI))
                     toastr.success("Password reset email sent", apiUtils.toastConfigSuccess())
                 } else {
                     toastr.clean()
@@ -416,34 +503,12 @@ const userRequestPayload = form => {
     return payload
 }
 
-export function attemptSaveUser() {
-    return (dispatch, getState) => {
-        toastr.info('Saving user account...', apiUtils.toastConfigWorkingOnIt())
-        dispatch(apiUtils.apiRequestInitiated())
-        const state = getState()
-        const headers = new Headers()
-        apiUtils.appendContentType(headers, userContentType)
-        apiUtils.appendAuthenticatedCommonHeaders(headers, userMediaType, state.authToken)
-        const userUri = state.userUri
-        const requestPayload = userRequestPayload(state.form.userAccountEdit)
-        return fetch(userUri, apiUtils.putInitForFetch(headers, requestPayload))
-            .then(response => {
-                dispatch(apiUtils.apiRequestDone())
-                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
-                return response.json()
-            })
-            .then(json => {
-                dispatch(toastrActions.clean())
-                dispatch(receiveServerUser(json))
-                dispatch(goBack())
-                toastr.success("User account saved.", apiUtils.toastConfigSuccess())
-            })
-            .catch(error => {
-                dispatch(apiUtils.apiRequestDone())
-                toastr.clean()
-                toastr.error("User account save failed.")
-            })
-    }
+function getUserAccountUri(state, userId) {
+    return state.userUri
+}
+
+function getUserAccountUpdatedAt(state, userId) {
+    return state.serverSnapshot["user/updated-at"]
 }
 
 function getVehiclesUri(state) {
@@ -494,6 +559,59 @@ function getGasLogUpdatedAt(state, gasLogId) {
     return state.serverSnapshot._embedded.fplogs[gasLogId].payload["fplog/updated-at"]
 }
 
+export function attemptSaveUser_orig() {
+    return (dispatch, getState) => {
+        toastr.info('Saving user account...', apiUtils.toastConfigWorkingOnIt())
+        dispatch(apiUtils.apiRequestInitiated())
+        const state = getState()
+        const headers = new Headers()
+        apiUtils.appendContentType(headers, userContentType)
+        apiUtils.appendAuthenticatedCommonHeaders(headers, userMediaType, state.authToken)
+        const userUri = state.userUri
+        const requestPayload = userRequestPayload(state.form.userAccountEdit)
+        return fetch(userUri, apiUtils.putInitForFetch(headers, requestPayload))
+            .then(response => {
+                dispatch(apiUtils.apiRequestDone())
+                dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
+                return response.json()
+            })
+            .then(json => {
+                dispatch(toastrActions.clean())
+                dispatch(receiveServerUser(json))
+                dispatch(goBack())
+                toastr.success("User account saved.", apiUtils.toastConfigSuccess())
+            })
+            .catch(error => {
+                dispatch(apiUtils.apiRequestDone())
+                toastr.clean()
+                toastr.error("User account save failedd.")
+            })
+    }
+}
+
+export const attemptDownloadUserAccount = apiUtils.makeAttemptDownloadEntityFn(
+    "user account",
+    userMediaType,
+    getUserAccountUpdatedAt,
+    getUserAccountUri,
+    receiveServerUser,
+    serverUserNotFound,
+    "You're good.  There have been no updates to your user account information since your last login.",
+    "Your latest user account information has been updated.")
+
+export const attemptSaveUserAccount = apiUtils.makeAttemptSaveEntityFn(
+    "user account",
+    userContentType,
+    userMediaType,
+    getUserAccountUpdatedAt,
+    getUserAccountUri,
+    userRequestPayload,
+    "userAccountEdit",
+    attemptDownloadUserAccount,
+    (userId) => urls.EDIT_ACCOUNT_URI,
+    receiveServerUser,
+    serverUserNotFound)
+
 export const attemptDownloadVehicle = apiUtils.makeAttemptDownloadEntityFn(
     "vehicle",
     vehicleMediaType,
@@ -523,7 +641,8 @@ export const attemptDeleteVehicle = apiUtils.makeAttemptDeleteEntityFn(
     attemptDownloadVehicle,
     urls.vehicleDetailUrl,
     receiveServerVehicleDeletedAck,
-    serverVehicleNotFound)
+    serverVehicleNotFound,
+    urls.VEHICLES_URI)
 
 export const attemptSaveNewVehicle = apiUtils.makeAttemptSaveNewEntity(
     "vehicle",
@@ -579,7 +698,8 @@ export const attemptDeleteFuelstation = apiUtils.makeAttemptDeleteEntityFn(
     attemptDownloadFuelstation,
     urls.fuelstationDetailUrl,
     receiveServerFuelstationDeletedAck,
-    serverFuelstationNotFound)
+    serverFuelstationNotFound,
+    urls.FUELSTATIONS_URI)
 
 export const attemptSaveNewFuelstation = apiUtils.makeAttemptSaveNewEntity(
     "fuelstation",
@@ -638,7 +758,8 @@ export const attemptDeleteOdometerLog = apiUtils.makeAttemptDeleteEntityFn(
     attemptDownloadOdometerLog,
     urls.odometerLogDetailUrl,
     receiveServerOdometerLogDeletedAck,
-    serverOdometerLogNotFound)
+    serverOdometerLogNotFound,
+    urls.ODOMETER_LOGS_URI)
 
 export const attemptSaveNewOdometerLogFnMaker = vehicles =>
     apiUtils.makeAttemptSaveNewEntity(
@@ -700,7 +821,8 @@ export const attemptDeleteGasLog = apiUtils.makeAttemptDeleteEntityFn(
     attemptDownloadGasLog,
     urls.gasLogDetailUrl,
     receiveServerGasLogDeletedAck,
-    serverGasLogNotFound)
+    serverGasLogNotFound,
+    urls.GAS_LOGS_URI)
 
 export const attemptSaveNewGasLogFnMaker = (vehicles, fuelstations) =>
     apiUtils.makeAttemptSaveNewEntity(

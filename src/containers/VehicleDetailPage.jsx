@@ -112,9 +112,11 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(push(urls.vehicleEditUrl(vehicleId)))
         },
         downloadVehicle: (vehicleId) => {
+            toastr.clean()
             dispatch(attemptDownloadVehicle(vehicleId, urls.vehicleDetailUrl(vehicleId)))
         },
         deleteVehicle: (vehicleId) => {
+            toastr.clean()
             dispatch(attemptDeleteVehicle(vehicleId))
         },
         clearErrors: () => dispatch(clearErrors()),

@@ -3,6 +3,7 @@ import { toastr } from 'react-redux-toastr'
 import { actions as toastrActions } from 'react-redux-toastr'
 import { push, goBack } from 'react-router-redux'
 import * as actionTypes from "./actionTypes"
+import _ from "lodash"
 
 export const FP_AUTH_TOKEN_HEADER = "fp-auth-token"
 export const FP_ERR_MASK_HEADER = "fp-error-mask"
@@ -30,7 +31,7 @@ export const deleteInitForFetch = (headers)          => initForFetch(headers, nu
 export function receiveResponseStatus(responseStatus, fpErrorMask = null) {
     let action = { type: actionTypes.RESPONSE_STATUS_RECEIVED,
                    responseStatus: responseStatus }
-    if (fpErrorMask != null) {
+    if (!_.isEmpty(fpErrorMask)) {
         action.fpErrorMask = _.toNumber(fpErrorMask)
     }
     return action
@@ -83,7 +84,7 @@ function entityDeleteFailedMessage(entityType) {
 }
 
 function entityConflictMessage(entityType) {
-    return "The remote copy of this " + entityType + " has been modified since you last downloaded it.  Would you like to download the latest copy?"
+    return "The server copy of this " + entityType + " has been modified since you last refreshed it.  Would you like to refresh it from the server?"
 }
 
 function entityDownloadingMessage(entityType) {
@@ -95,14 +96,14 @@ function toastAlreadyHaveLatest(entityType) {
 }
 
 function toastDownloadedSuccess(entityType) {
-    toastr.success(_.capitalize(entityType) + " downloaded", "The latest version of this " + entityType + " record has been downloaded.", toastConfigLatestDownloaded())
+    toastr.success(_.capitalize(entityType) + " refreshed", "The latest version of this " + entityType + " record has been refreshed from the server.", toastConfigLatestDownloaded())
 }
 
 function problemDownloadingLatestMessage(entityType) {
-    return "There was a problem attempting to download the latest version of this " + entityType + " record."
+    return "There was a problem attempting to refresh this " + entityType + " record from the server."
 }
 
-function checkBecameUnauthenticated(response, dispatch) {
+export function checkBecameUnauthenticated(response, dispatch) {
     if (response.status == 401) {
         dispatch(becameUnauthenticated())
         return true
@@ -154,8 +155,10 @@ export function makeAttemptDownloadEntityFn(
     getEntityUpdatedAtFn,
     getEntityUriFn,
     receiveServerEntityFn,
-    entityIdNotFoundFn) {
-    return (entityId, refreshUri) => {
+    entityIdNotFoundFn,
+    alreadyHaveLatestMessage = null,
+    latestDownloadedMessage = null) {
+    return (entityId, refreshUri, suppressToasts = false) => {
         return (dispatch, getState) => {
             toastr.info(entityDownloadingMessage(entityType), toastConfigWorkingOnIt())
             dispatch(apiRequestInitiated())
@@ -171,9 +174,21 @@ export function makeAttemptDownloadEntityFn(
                     dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                     if (!checkBecameUnauthenticated(response, dispatch)) {
                         if (response.status == 304) {
-                            toastAlreadyHaveLatest(entityType)
+                            if (!suppressToasts) {
+                                if (alreadyHaveLatestMessage != null) {
+                                    toastr.info("Already have latest", alreadyHaveLatestMessage, toastConfigAlreadyHaveLatest())
+                                } else {
+                                    toastAlreadyHaveLatest(entityType)
+                                }
+                            }
                         } else if (response.status == 200) {
-                            toastDownloadedSuccess(entityType)
+                            if (!suppressToasts) {
+                                if (latestDownloadedMessage != null) {
+                                    toastr.success(_.capitalize(entityType) + " downloaded", latestDownloadedMessage, toastConfigLatestDownloaded())
+                                } else {
+                                    toastDownloadedSuccess(entityType)
+                                }
+                            }
                             return response.json().then(json => {
                                 dispatch(receiveServerEntityFn(json))
                                 dispatch(push(refreshUri))
@@ -182,14 +197,18 @@ export function makeAttemptDownloadEntityFn(
                             // entity removed from other device
                             dispatch(entityIdNotFoundFn(entityId))
                         } else if (!response.ok) {
-                            toastr.error(problemDownloadingLatestMessage(entityType), toastConfigError())
+                            if (!suppressToasts) {
+                                toastr.error(problemDownloadingLatestMessage(entityType), toastConfigError())
+                            }
                         }
                     }
                 })
                 .catch(error => {
                     dispatch(apiRequestDone())
                     dispatch(toastrActions.clean())
-                    toastr.error(problemDownloadingLatestMessage(entityType), toastConfigError())
+                    if (!suppressToasts) {
+                        toastr.error(problemDownloadingLatestMessage(entityType), toastConfigError())
+                    }
                 })
         }
     }
@@ -313,7 +332,8 @@ export function makeAttemptDeleteEntityFn(entityType,
                                           attemptDownloadEntityFn,
                                           entityDetailUrlFn,
                                           receiveServerEntityDeletedAckFn,
-                                          entityIdNotFoundFn) {
+                                          entityIdNotFoundFn,
+                                          nextUriOnSuccess) {
     return (entityId) => {
         return (dispatch, getState) => {
             toastr.info(entityDeletingMessage(entityType), toastConfigWorkingOnIt())
@@ -336,7 +356,8 @@ export function makeAttemptDeleteEntityFn(entityType,
                             toastr.confirm(entityConflictMessage(entityType), confirmOptions)
                         } else if (response.status == 204) {
                             dispatch(receiveServerEntityDeletedAckFn(entityId))
-                            dispatch(goBack())
+                            //dispatch(goBack()) // TODO - fix; can't assume 'goBack' is valid dest
+                            dispatch(push(nextUriOnSuccess))
                             toastr.success(entityDeletedMessage(entityType), toastConfigSuccess())
                         } else if (response.status == 404) {
                             // entity removed from other device

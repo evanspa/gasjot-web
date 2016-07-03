@@ -4,6 +4,7 @@ import { reduxForm } from "redux-form"
 import { GasJotTextFormGroup, GasJotFormGroup } from "./FormInput.jsx"
 import { cannotBeEmptyValidator } from "../utils"
 import { toastr } from 'react-redux-toastr'
+import _ from "lodash"
 
 const validate = values => {
     const errors = {}

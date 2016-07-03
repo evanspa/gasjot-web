@@ -1,14 +1,13 @@
 import React from "react"
 import { Button, Row, Col, Panel, Well } from "react-bootstrap";
-import momentLocalizer from "react-widgets/lib/localizers/moment"
-import DateTimePicker from "react-widgets/lib/DateTimePicker"
-import moment from "moment"
 import { reduxForm } from "redux-form"
-import * as strs from "../strings"
 import SmallModal from "./SmallModal.jsx"
 import { GasJotTextFormGroup, GasJotCheckboxFormGroup } from "./FormInput.jsx"
 import { cannotBeEmptyValidator, mustBeNumberValidator } from "../utils"
 import _ from "lodash"
+import * as errFlags from "../errorFlags"
+import ActionsArray from "./ActionsArray.jsx"
+import ErrorMessages from "./ErrorMessages.jsx"
 
 const validate = values => {
     const errors = {}
@@ -33,32 +32,85 @@ const validate = values => {
 
 class UserAccountForm extends React.Component {
 
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            showSmallModal: false,
+            smallModalTitle: null,
+            smallModalContent: null,
+            showEntityGoneModal: false,
+            entityGoneModalTitle: "Account deactivated on other device",
+            entityGoneModalContent: "It appears your Gas Jot account has been deactivated."
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { userId } = this.props
+        const { userIdNotFound } = nextProps
+        if (userIdNotFound != null && userId == userIdNotFound) {
+            this.setState({showEntityGoneModal: true})
+        }
+    }
+
+    componentWillUnmount() {
+        const { clearErrors } = this.props
+        if (clearErrors != null) {
+            clearErrors()
+        }
+    }
+
     render() {
         // https://github.com/erikras/redux-form/issues/190
-        const { fields: {name,
-                         email,
-                         password,
-                         confirmPassword},
-                userVerifiedAt,
-                markUserForEdit,
-                cancelUserEdit,
-                handleSubmit,
-                requestInProgress,
-                editMode } = this.props
-        let cancelButton = null
-        let saveButton = null
-        let editButton = null
-        let actionArray;
-        if (editMode) {
-            cancelButton = <Button style={{marginBottom: 0, marginRight: 10}} onClick={() => cancelUserEdit()} disabled={requestInProgress}>Cancel</Button>
-            saveButton = <Button type="submit" style={{marginBottom: 0}} bsStyle="success" disabled={requestInProgress}>Save</Button>
-            actionArray = <div>{cancelButton}{saveButton}</div>
-        } else {
-            editButton = <Button bsStyle="primary" onClick={() => markUserForEdit()}>Edit</Button>
-            actionArray = editButton
-        }
+        const {
+            fields: {
+                name,
+                email,
+                password,
+                confirmPassword
+            },
+            userId,
+            userVerifiedAt,
+            markUserAccountForEdit,
+            cancelUserAccountEdit,
+            userAcknowledgedNotFound,
+            downloadUserAccount,
+            resendVerificationEmail,
+            handleSubmit,
+            requestInProgress,
+            responseStatus,
+            editMode,
+            fpErrorMask
+        } = this.props
+        let smallModalClose = () => this.setState({ showSmallModal: false })
+        const actionArray = <ActionsArray
+                                editMode={editMode}
+                                entityId={userId}
+                                cancelEntityEdit={cancelUserAccountEdit}
+                                requestInProgress={requestInProgress}
+                                markEntityForEdit={markUserAccountForEdit}
+                                downloadEntity={downloadUserAccount} />
+        const errors = [
+            { flag: errFlags.SAVE_USER_EMAIL_AlREADY_REGISTERED,
+              message: "This email is already in use by another account."}
+        ]
         return (
         <div>
+            <SmallModal
+                show={this.state.showSmallModal}
+                buttonTitle="Close"
+                onHide={smallModalClose}
+                title={this.state.smallModalTitle}
+                content={this.state.smallModalContent} />
+            <SmallModal
+                show={this.state.showEntityGoneModal}
+                buttonTitle="Okay"
+                onHide={() => {
+                        this.setState({ showEntityGoneModal: false })
+                        userAcknowledgedNotFound(userId)
+                    }}
+                title={this.state.entityGoneModalTitle}
+                content={this.state.entityGoneModalContent} />
+            <ErrorMessages errorMask={fpErrorMask} errors={errors} />
             <form onSubmit={handleSubmit}>
                 { actionArray }
                 <Row><Col xs={12}><hr /></Col></Row>
@@ -100,7 +152,7 @@ class UserAccountForm extends React.Component {
                          } else {
                              accountVerifiedPanel = (
                                  <Panel header="Not Verified" bsStyle="warning">
-                                     Your account is not verified.
+                                     <span style={{marginRight: 10}}>Your account is not verified.</span><Button style={{marginTop: 5, marginBottom: 5}} onClick={resendVerificationEmail} bsSize="small">re-send verification email</Button>
                                  </Panel>
                              )
                          }

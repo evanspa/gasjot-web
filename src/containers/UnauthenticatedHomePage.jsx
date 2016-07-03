@@ -8,7 +8,7 @@ import * as urls from "../urls"
 export default (props) =>
     <div>
         <GasJotHelmet title="Home" />
-        <div class="container"><GasJotNavbar /></div>
+        <div className="container"><GasJotNavbar /></div>
         <Col md={6} mdOffset={3}>
             <Jumbotron>
                 <h1>Welcome to Gas Jot</h1>

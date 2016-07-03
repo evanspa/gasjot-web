@@ -4,7 +4,6 @@ import { push } from 'react-router-redux'
 import VehicleForm from "../components/VehicleForm.jsx"
 import { cancelRecordEdit,
          attemptSaveVehicle,
-         attemptDownloadVehicle,
          clearErrors,
          serverVehicleNotFoundUserAcknowledged } from "../actions/actionCreators"
 import { toVehicleFormModel } from "../utils"

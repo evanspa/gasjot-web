@@ -1,13 +1,13 @@
 import "intl"
 import "intl/locale-data/jsonp/en.js"
 import React, { Component, PropTypes } from "react"
-import { Provider } from "react-redux"
+import { connect, Provider } from "react-redux"
 import { Router } from "react-router"
 import {IntlProvider} from 'react-intl';
 import createRoutes from "../Routes.jsx"
 import ReduxToastr from 'react-redux-toastr'
 
-export default class Root extends Component {
+class Root extends Component {
     render() {
         const { store, history } = this.props
         return (
@@ -27,3 +27,13 @@ Root.propTypes = {
     store: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {}
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Root)

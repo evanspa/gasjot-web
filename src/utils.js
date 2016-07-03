@@ -1,6 +1,7 @@
 import _ from "lodash"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
+import * as errFlags from "./errorFlags"
 
 String.prototype.toTitleCase = function() {
     var i, j, str, lowers, uppers;
@@ -26,6 +27,19 @@ String.prototype.toTitleCase = function() {
 
 export const DATE_DISPLAY_FORMAT = "dddd, MMMM Do YYYY"
 export const DATE_EDIT_FORMAT    = "MM/DD/YYYY"
+
+export const PWD_RESET_ERRORS = [
+    { flag: errFlags.PWD_RESET_TOKEN_NOT_FOUND,
+      message: "Invalid password reset link."},
+    { flag: errFlags.PWD_RESET_TOKEN_FLAGGED,
+      message: "Invalid (flagged) password reset link."},
+    { flag: errFlags.PWD_RESET_TOKEN_EXPIRED,
+      message: "Expired password reset link."},
+    { flag: errFlags.PWD_RESET_TOKEN_ALREADY_USED,
+      message: "Password reset link already used."},
+    { flag: errFlags.PWD_RESET_TOKEN_NOT_PREPARED,
+      message: "Invalid password reset link."}
+]
 
 export function formatDate(moment, dateAsLongSince1970) {
     return moment(dateAsLongSince1970).format(DATE_DISPLAY_FORMAT)

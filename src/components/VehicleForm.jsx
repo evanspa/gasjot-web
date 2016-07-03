@@ -1,7 +1,5 @@
 import React from "react"
 import { Label, Button, Row, Col } from "react-bootstrap";
-import momentLocalizer from "react-widgets/lib/localizers/moment"
-import moment from "moment"
 import { reduxForm } from "redux-form"
 import * as strs from "../strings"
 import SmallModal from "./SmallModal.jsx"
@@ -50,19 +48,19 @@ class VehicleForm extends React.Component {
     }
 
     render() {
-        momentLocalizer(moment)
         // https://github.com/erikras/redux-form/issues/190
         const {
-            fields: {name,
-                     plate,
-                     vin,
-                     fuelCapacity,
-                     defaultOctane,
-                     takesDiesel,
-                     hasMpgReadout,
-                     hasMphReadout,
-                     hasDteReadout,
-                     hasOutsideTempReadout
+            fields: {
+                name,
+                plate,
+                vin,
+                fuelCapacity,
+                defaultOctane,
+                takesDiesel,
+                hasMpgReadout,
+                hasMphReadout,
+                hasDteReadout,
+                hasOutsideTempReadout
             },
             vehicleId,
             markVehicleForEdit,

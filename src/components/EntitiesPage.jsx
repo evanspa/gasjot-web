@@ -7,6 +7,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import EntityList from "../components/EntityList.jsx"
 import _ from "lodash"
+import * as urls from "../urls"
 
 export default class EntitiesPage extends React.Component {
     render() {
@@ -26,7 +27,7 @@ export default class EntitiesPage extends React.Component {
                 <GasJotHelmet title={"Your " + capitalizedEntityType + "s"} />
                 <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <Link to="/">&#8592; back</Link>
+                    <Link to={urls.ROOT_URI}>&#8592; back</Link>
                     <h3 style={{paddingBottom: 5}}>{"Your " + capitalizedEntityType + "s"}</h3>
                     <EntityList
                         entityType={entityType}

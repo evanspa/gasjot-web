@@ -15,6 +15,7 @@ load(store)
         store.dispatch(acs.receiveAuthenticationToken(loadedState.authToken))
         store.dispatch(acs.receiveUserUri(loadedState.userUri))
         store.dispatch(acs.receiveServerSnapshot(loadedState.serverSnapshot))
+
         const history = syncHistoryWithStore(hashHistory, store)
         //const history = syncHistoryWithStore(browserHistory, store)
         render(

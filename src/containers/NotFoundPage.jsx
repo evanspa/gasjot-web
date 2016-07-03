@@ -8,7 +8,7 @@ export default class NotFoundPage extends React.Component {
         return (
             <div>
                 <GasJotHelmet title="Not Found" />
-                <div class="container"><GasJotNavbar /></div>
+                <div className="container"><GasJotNavbar /></div>
                 <Col md={6} mdOffset={3}>
                     <p>Page not found.</p>
                 </Col>
