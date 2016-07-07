@@ -9,6 +9,8 @@ import { attemptSaveGasLogFnMaker,
 import { toGasLogFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { destroy } from "redux-form"
+import { GAS_LOG_FORM } from "../forms"
 import * as utils from "../utils"
 import * as urls from "../urls"
 
@@ -71,6 +73,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         cancelGasLogEdit: (gasLogId) => {
             toastr.clean()
+            dispatch(destroy(GAS_LOG_FORM))
             dispatch(push(urls.gasLogDetailUrl(gasLogId)))
         },
         handleSubmit: (vehicles, fuelstations, gasLogId) => {

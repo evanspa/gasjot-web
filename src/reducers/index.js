@@ -35,7 +35,25 @@ export const rootReducer = combineReducers({
     api: apiReducer,
     serverSnapshot: serverSnapshotReducer,
     routing: routerReducer,
-    form: formReducer
+    form: formReducer.plugin(
+        {
+            "odometerlogform": (state, action) => {
+                switch (action.type) {
+                case actionTypes.SERVER_VEHICLE_RECEIVED:
+                    return { ...state, vehicleId: { value: action.serverVehicle } }
+                    return state
+                }
+            },
+            "gaslog": (state, action) => {
+                switch (action.type) {
+                case actionTypes.SERVER_VEHICLE_RECEIVED:
+                    return { ...state, vehicleId: { value: action.serverVehicle } }
+                case actionTypes.SERVER_FUELSTATION_RECEIVED:
+                    return { ...state, fuelstationId: { value: action.serverFuelstation } }
+                }
+                return state
+            }
+        })
 })
 
 export default rootReducer

@@ -3,12 +3,19 @@ import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
 import { Image } from "react-bootstrap"
 import EntitiesPage from "../components/EntitiesPage.jsx"
+import { destroy } from "redux-form"
+import { GAS_STATION_FORM } from "../forms"
 import _ from "lodash"
 import * as urls from "../urls"
 
 class FuelstationsPage extends React.Component {
     render() {
-        const { fuelstations, fuelstationRowOnClick, handleAddFuelstation } = this.props
+        const {
+            fuelstations,
+            fuelstationRowOnClick,
+            handleAddFuelstation,
+            goBackFn
+        } = this.props
         const fields = [
             { label: "Gas Station Name", valueKey: "fpfuelstation/name" },
             { label: "Brand",
@@ -46,8 +53,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fuelstationRowOnClick: (fuelstationId) => { dispatch(push(urls.fuelstationDetailUrl(fuelstationId))) },
-        handleAddFuelstation: () => { dispatch(push(urls.ADD_FUELSTATION_URI)) }
+        fuelstationRowOnClick: (fuelstationId) => {
+            dispatch(destroy(GAS_STATION_FORM))
+            dispatch(push(urls.fuelstationDetailUrl(fuelstationId)))
+        },
+        handleAddFuelstation: () => {
+            dispatch(destroy(GAS_STATION_FORM))
+            dispatch(push(urls.ADD_FUELSTATION_URI))
+        }
     }
 }
 

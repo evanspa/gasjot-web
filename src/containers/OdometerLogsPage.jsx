@@ -6,6 +6,8 @@ import * as utils from "../utils"
 import _ from "lodash"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
+import { destroy } from "redux-form"
+import { ODOMETER_LOG_FORM } from "../forms"
 import * as urls from "../urls"
 
 class OdometerLogsPage extends React.Component {
@@ -52,8 +54,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        odometerLogRowOnClick: (odometerLogId) => { dispatch(push(urls.odometerLogDetailUrl(odometerLogId))) },
-        handleAddOdometerLog: () => { dispatch(push(urls.ADD_ODOMETER_LOG_URI)) }
+        odometerLogRowOnClick: (odometerLogId) => {
+            dispatch(destroy(ODOMETER_LOG_FORM))
+            dispatch(push(urls.odometerLogDetailUrl(odometerLogId)))
+        },
+        handleAddOdometerLog: () => {
+            dispatch(destroy(ODOMETER_LOG_FORM))
+            dispatch(push(urls.ADD_ODOMETER_LOG_URI))
+        }
     }
 }
 

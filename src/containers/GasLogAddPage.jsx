@@ -7,6 +7,8 @@ import { cancelRecordEdit,
          clearErrors } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { destroy } from "redux-form"
+import { GAS_LOG_FORM } from "../forms"
 import { toastr } from 'react-redux-toastr'
 import * as utils from "../utils"
 
@@ -64,6 +66,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         cancelGasLogAdd: () => {
             toastr.clean()
+            dispatch(destroy(GAS_LOG_FORM))
             dispatch(cancelRecordEdit())
             if (nextPathname != null) {
                 dispatch(push(nextPathname))

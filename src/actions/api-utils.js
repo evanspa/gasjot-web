@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { toastr } from 'react-redux-toastr'
 import { actions as toastrActions } from 'react-redux-toastr'
 import { push, goBack } from 'react-router-redux'
+import { destroy } from "redux-form"
 import * as actionTypes from "./actionTypes"
 import _ from "lodash"
 
@@ -253,6 +254,7 @@ export function makeAttemptSaveNewEntity(
                                 } else {
                                     dispatch(goBack())
                                 }
+                                dispatch(destroy(entityFormName))
                                 toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
                             })
                         } else if (!response.ok) {
@@ -306,6 +308,7 @@ export function makeAttemptSaveEntityFn(entityType,
                             return response.json().then(json => {
                                 dispatch(receiveServerEntityFn(json))
                                 dispatch(goBack())
+                                dispatch(destroy(entityFormName))
                                 toastr.success(entitySavedMessage(entityType), toastConfigSuccess())
                             })
                         } else if (response.status == 404) {

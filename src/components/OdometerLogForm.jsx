@@ -13,6 +13,9 @@ import { cannotBeEmptyValidator,
          mustBeNumberValidator } from "../utils"
 import _ from "lodash"
 import * as errFlags from "../errorFlags"
+import * as urls from "../urls"
+import * as utils from "../utils"
+import { ODOMETER_LOG_FORM } from "../forms"
 import ActionsArray from "./ActionsArray.jsx"
 import ErrorMessages from "./ErrorMessages.jsx"
 
@@ -81,7 +84,8 @@ class OdometerLogForm extends React.Component {
             responseStatus,
             editMode,
             fpErrorMask,
-            deleteConfirmMessage
+            deleteConfirmMessage,
+            handleAddVehicle
         } = this.props
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
@@ -133,6 +137,9 @@ class OdometerLogForm extends React.Component {
                         disabled={!editMode}
                         valueField="fpvehicle/id"
                         textField="fpvehicle/name"
+                        addRecordButtonTitle="Add Vehicle"
+                        addRecordButtonOnClick={handleAddVehicle}
+                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add your vehicle?", urls.ADD_VEHICLE_URI)}
                         data={vehicles} />
                     <GasJotDateFormGroup
                         label="Log date"
@@ -167,7 +174,8 @@ class OdometerLogForm extends React.Component {
 }
 
 export default reduxForm({
-    form: "odometerlog",
+    form: ODOMETER_LOG_FORM,
     fields: ["vehicleId", "logDate", "odometer", "avgMpgReadout", "rangeReadout", "avgMphReadout", "outsideTempReadout"],
+    destroyOnUnmount: false,
     validate
 })(OdometerLogForm)

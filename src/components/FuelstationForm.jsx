@@ -1,6 +1,6 @@
 import React from "react"
 import { Button, Row, Col } from "react-bootstrap";
-import { reduxForm } from "redux-form"
+import { reduxForm, Field } from "redux-form"
 import * as strs from "../strings"
 import SmallModal from "./SmallModal.jsx"
 import { GasJotTextFormGroup,
@@ -9,6 +9,7 @@ import { GasJotTextFormGroup,
 import { cannotBeEmptyValidator, cannotBeUnselectedValidator, mustBeNumberValidator } from "../utils"
 import { FSTYPES_ARRAY } from "../fstypes"
 import _ from "lodash"
+import { GAS_STATION_FORM } from "../forms"
 import * as errFlags from "../errorFlags"
 import ActionsArray from "./ActionsArray.jsx"
 import ErrorMessages from "./ErrorMessages.jsx"
@@ -166,7 +167,8 @@ class FuelstationForm extends React.Component {
 }
 
 export default reduxForm({
-    form: "fuelstation",
+    form: GAS_STATION_FORM,
     fields: ["name", "typeId", "street", "city", "state", "zip", "latitude", "longitude"],
+    destroyOnUnmount: false,
     validate
 })(FuelstationForm)

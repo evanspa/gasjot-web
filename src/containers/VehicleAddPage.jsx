@@ -7,6 +7,8 @@ import { cancelRecordEdit,
          clearErrors } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { destroy } from "redux-form"
+import { VEHICLE_FORM } from "../forms"
 import { toastr } from 'react-redux-toastr'
 
 class VehicleAddPage extends React.Component {
@@ -57,6 +59,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         cancelVehicleAdd: () => {
             toastr.clean()
+            dispatch(destroy(VEHICLE_FORM))
             dispatch(cancelRecordEdit())
             if (nextPathname != null) {
                 dispatch(push(nextPathname))

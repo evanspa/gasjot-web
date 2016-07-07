@@ -1,6 +1,7 @@
 import React, { createClass } from "react"
 import DateTimePicker from "react-widgets/lib/DateTimePicker"
-import { FormGroup, FormControl, ControlLabel, Checkbox, HelpBlock } from "react-bootstrap";
+import { Link } from "react-router"
+import { Button, FormGroup, FormControl, ControlLabel, Checkbox, HelpBlock } from "react-bootstrap";
 import { DropdownList } from "react-widgets"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
@@ -11,7 +12,7 @@ export class GasJotFormGroup extends React.Component {
         momentLocalizer(moment)
         const { field, type } = this.props
         const formGroupOpts = {} // http://stackoverflow.com/a/29103727/1034895
-        const areErrors = !this.props.disabled && field.touched && (field.error != null) && (field.error.length > 0);
+        const areErrors = !this.props.disabled && field != null && field.touched && (field.error != null) && (field.error.length > 0);
         if (areErrors) {
             formGroupOpts['validationState'] = "error"
         }
@@ -27,17 +28,17 @@ export class GasJotFormGroup extends React.Component {
                                          editFormat={utils.DATE_EDIT_FORMAT}
                                          parse={str => moment(str, utils.DATE_EDIT_FORMAT).toDate()}
                                          format={utils.DATE_DISPLAY_FORMAT}
-                                         value={moment(field.value, utils.DATE_DISPLAY_FORMAT).toDate()}
-                                         onChange={(name, value) => field.onChange(value)}
-                                         name={field.name}
+                                         value={moment(field.input.value, utils.DATE_DISPLAY_FORMAT).toDate()}
+                                         onChange={(name, value) => field.input.onChange(value)}
+                                         name={field.input.name}
                                          disabled={this.props.disabled}
                                          autoFocus={this.props.autoFocus} />)
                          } else {
                              return (<FormControl
                                          type={type}
-                                         value={field.value}
-                                         onChange={field.onChange}
-                                         name={field.name}
+                                         value={field.input.value}
+                                         onChange={field.input.onChange}
+                                         name={field.input.name}
                                          disabled={this.props.disabled}
                                          autoFocus={this.props.autoFocus} />)
                          }
@@ -69,9 +70,9 @@ export class GasJotCheckboxFormGroup extends React.Component {
             <FormGroup>
                 <Checkbox
                     inline={true}
-                    checked={field.value}
-                    onChange={field.onChange}
-                    name={field.name}
+                    checked={field.input.value}
+                    onChange={field.input.onChange}
+                    name={field.input.name}
                     disabled={this.props.disabled}>
                     <ControlLabel type="text">{this.props.label}</ControlLabel>
                 </Checkbox>
@@ -82,9 +83,16 @@ export class GasJotCheckboxFormGroup extends React.Component {
 
 export class GasJotDropdownFormGroup extends React.Component {
     render() {
-        const { field, defaultValue, disabled, data, valueField, textField } = this.props
+        const {
+            field,
+            defaultValue,
+            disabled, data,
+            valueField,
+            textField,
+            needToAddTextLinkObj
+        } = this.props
         const formGroupOpts = {} // http://stackoverflow.com/a/29103727/1034895
-        const areErrors = !this.props.disabled && field.touched && (field.error != null) && (field.error.length > 0);
+        const areErrors = !this.props.disabled && field != null && field.touched && (field.error != null) && (field.error.length > 0);
         if (areErrors) {
             formGroupOpts['validationState'] = "error"
         }
@@ -92,13 +100,22 @@ export class GasJotDropdownFormGroup extends React.Component {
             <FormGroup {...formGroupOpts}>
                 <ControlLabel type="text">{this.props.label}</ControlLabel>
                 <DropdownList
-                    onChange={field.onChange}
-                    name={field.name}
-                    value={field.value}
+                    onChange={field.input.onChange}
+                    name={field.input.name}
+                    value={field.input.value}
                     valueField={valueField}
                     textField={textField}
                     data={data}
                     disabled={disabled} />
+                {(() => {
+                     if (needToAddTextLinkObj != null) {
+                         return (<div style={{marginTop: 5}}>{needToAddTextLinkObj.question}  <Link to={needToAddTextLinkObj.url}>Click here</Link></div>)
+                     } else {
+                         return ""
+                     }
+                 }
+                 )()
+                }
                 <HelpBlock>{areErrors ? field.error : ""}</HelpBlock>
             </FormGroup>
         )

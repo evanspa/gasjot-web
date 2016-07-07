@@ -19,7 +19,8 @@ export default class EntitiesPage extends React.Component {
             entityRowOnClick,
             entitiesSortFn,
             handleAddEntity,
-            entityLinkToFn
+            entityLinkToFn,
+            goBackFn
         } = this.props
         const capitalizedEntityType = entityType.toTitleCase()
         return (
@@ -27,7 +28,6 @@ export default class EntitiesPage extends React.Component {
                 <GasJotHelmet title={"Your " + capitalizedEntityType + "s"} />
                 <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <Link to={urls.ROOT_URI}>&#8592; back</Link>
                     <h3 style={{paddingBottom: 5}}>{"Your " + capitalizedEntityType + "s"}</h3>
                     <EntityList
                         entityType={entityType}

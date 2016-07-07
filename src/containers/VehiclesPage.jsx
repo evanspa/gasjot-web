@@ -3,11 +3,17 @@ import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
 import EntitiesPage from "../components/EntitiesPage.jsx"
 import _ from "lodash"
+import { destroy } from "redux-form"
+import { VEHICLE_FORM } from "../forms"
 import * as urls from "../urls"
 
 class VehiclesPage extends React.Component {
     render() {
-        const { vehicles, vehicleRowOnClick, handleAddVehicle } = this.props
+        const {
+            vehicles,
+            vehicleRowOnClick,
+            handleAddVehicle
+        } = this.props
         const fields = [
             { label: "Vehicle Name", valueKey: "fpvehicle/name" },
             { label: "Plate #",      valueKey: "fpvehicle/plate" }
@@ -41,8 +47,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        vehicleRowOnClick: (vehicleId) => { dispatch(push(urls.vehicleDetailUrl(vehicleId))) },
-        handleAddVehicle : () => { dispatch(push(urls.ADD_VEHICLE_URI)) }
+        vehicleRowOnClick: (vehicleId) => {
+            dispatch(destroy(VEHICLE_FORM))
+            dispatch(push(urls.vehicleDetailUrl(vehicleId)))
+        },
+        handleAddVehicle : () => {
+            dispatch(destroy(VEHICLE_FORM))
+            dispatch(push(urls.ADD_VEHICLE_URI))
+        }
     }
 }
 

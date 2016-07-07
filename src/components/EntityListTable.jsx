@@ -8,7 +8,6 @@ import * as utils from "../utils"
 
 export default class EntityListTable extends React.Component {
     render() {
-
         const { fields,
                 entities,
                 entityRowOnClick,
@@ -16,7 +15,6 @@ export default class EntityListTable extends React.Component {
                 entityIdKey,
                 entityLinkToFn
         } = this.props
-
         momentLocalizer(moment)
         return (
             <Table responsive striped hover>
@@ -35,7 +33,6 @@ export default class EntityListTable extends React.Component {
                 </thead>
                 <tbody>
                 { (() => {
-
                       function tableCell(i, field, id, payload, formatter, rowOnClickFn, makeAsLink) {
                           let entityValue = payload[field.valueKey]
                           if (formatter != null) {

@@ -6,12 +6,20 @@ import * as utils from "../utils"
 import _ from "lodash"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
+import { destroy } from "redux-form"
+import { GAS_LOG_FORM } from "../forms"
 import * as urls from "../urls"
 
 class GasLogsPage extends React.Component {
     render() {
         momentLocalizer(moment)
-        const { gasLogs, vehicles, fuelstations, gasLogRowOnClick, handleAddGasLog } = this.props
+        const {
+            gasLogs,
+            vehicles,
+            fuelstations,
+            gasLogRowOnClick,
+            handleAddGasLog
+        } = this.props
         const fields = [
             { label: "Purchase Date",
               valueKey: "fplog/purchased-at",
@@ -58,8 +66,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        gasLogRowOnClick: (gasLogId) => { dispatch(push(urls.gasLogDetailUrl(gasLogId))) },
-        handleAddGasLog: () => { dispatch(push(urls.ADD_GAS_LOG_URI)) }
+        gasLogRowOnClick: (gasLogId) => {
+            dispatch(destroy(GAS_LOG_FORM))
+            dispatch(push(urls.gasLogDetailUrl(gasLogId)))
+        },
+        handleAddGasLog: () => {
+            dispatch(destroy(GAS_LOG_FORM))
+            dispatch(push(urls.ADD_GAS_LOG_URI))
+        }
     }
 }
 

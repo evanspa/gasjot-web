@@ -7,6 +7,8 @@ import { cancelRecordEdit,
          clearErrors } from "../actions/actionCreators"
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { destroy } from "redux-form"
+import { GAS_STATION_FORM } from "../forms"
 import { toastr } from 'react-redux-toastr'
 
 class FuelstationAddPage extends React.Component {
@@ -57,6 +59,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         cancelFuelstationAdd: () => {
             toastr.clean()
+            dispatch(destroy(GAS_STATION_FORM))
             dispatch(cancelRecordEdit())
             if (nextPathname != null) {
                 dispatch(push(nextPathname))

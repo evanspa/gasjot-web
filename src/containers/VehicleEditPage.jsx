@@ -10,6 +10,8 @@ import { toVehicleFormModel } from "../utils"
 import { toastr } from 'react-redux-toastr'
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { destroy } from "redux-form"
+import { VEHICLE_FORM } from "../forms"
 import * as urls from "../urls"
 
 class VehicleEditPage extends React.Component {
@@ -63,6 +65,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         cancelVehicleEdit: (vehicleId) => {
             toastr.clean()
+            dispatch(destroy(VEHICLE_FORM))
             dispatch(cancelRecordEdit())
             dispatch(push(urls.vehicleDetailUrl(vehicleId)))
         },

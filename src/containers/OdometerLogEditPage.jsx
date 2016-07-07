@@ -8,6 +8,8 @@ import { attemptSaveOdometerLogFnMaker,
 import { toOdometerLogFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import { destroy } from "redux-form"
+import { ODOMETER_LOG_FORM } from "../forms"
 import * as utils from "../utils"
 import * as urls from "../urls"
 
@@ -64,6 +66,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         cancelOdometerLogEdit: (odometerLogId) => {
             toastr.clean()
+            dispatch(destroy(ODOMETER_LOG_FORM))
             dispatch(push(urls.odometerLogDetailUrl(odometerLogId)))
         },
         handleSubmit: (vehicles, odometerLogId) => {

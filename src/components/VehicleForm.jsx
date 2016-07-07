@@ -1,11 +1,12 @@
 import React from "react"
 import { Label, Button, Row, Col } from "react-bootstrap";
-import { reduxForm } from "redux-form"
+import { reduxForm, Field } from "redux-form"
 import * as strs from "../strings"
 import SmallModal from "./SmallModal.jsx"
 import { GasJotTextFormGroup, GasJotCheckboxFormGroup } from "./FormInput.jsx"
 import { cannotBeEmptyValidator, mustBePositiveNumberValidator } from "../utils"
 import _ from "lodash"
+import { VEHICLE_FORM } from "../forms"
 import * as errFlags from "../errorFlags"
 import ActionsArray from "./ActionsArray.jsx"
 import ErrorMessages from "./ErrorMessages.jsx"
@@ -50,18 +51,6 @@ class VehicleForm extends React.Component {
     render() {
         // https://github.com/erikras/redux-form/issues/190
         const {
-            fields: {
-                name,
-                plate,
-                vin,
-                fuelCapacity,
-                defaultOctane,
-                takesDiesel,
-                hasMpgReadout,
-                hasMphReadout,
-                hasDteReadout,
-                hasOutsideTempReadout
-            },
             vehicleId,
             markVehicleForEdit,
             cancelVehicleEdit,
@@ -125,47 +114,77 @@ class VehicleForm extends React.Component {
             <form onSubmit={handleSubmit}>
                 { actionArray }
                 <Row><Col xs={12}><hr /></Col></Row>
+                <Field
+                    name="name"
+                    component={name =>
                 <GasJotTextFormGroup
                     label="Vehicle name"
                     field={name}
                     disabled={!editMode}
-                    autoFocus={true} />
+                    autoFocus={true} /> } />
+                <Field
+                    name="plate"
+                    component={plate =>
                 <GasJotTextFormGroup
                     label="Plate #"
                     field={plate}
-                    disabled={!editMode} />
+                    disabled={!editMode} /> } />
+                <Field
+                    name="vin"
+                    component={vin =>
                 <GasJotTextFormGroup
                     label="VIN"
                     field={vin}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="fuelCapacity"
+                    component={fuelCapacity =>
                 <GasJotTextFormGroup
                     label="Fuel capacity"
                     field={fuelCapacity}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="defaultOctane"
+                    component={defaultOctane =>
                 <GasJotTextFormGroup
                     label="Default octane"
                     field={defaultOctane}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="takesDiesel"
+                    component={takesDiesel =>
                 <GasJotCheckboxFormGroup
                     label="Takes diesel?"
                     field={takesDiesel}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="hasMpgReadout"
+                    component={hasMpgReadout =>
                 <GasJotCheckboxFormGroup
                     label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_mpg_readout_lbl, smallModalContent: strs.has_mpg_readout_explanation})}>{strs.has_mpg_readout_lbl}</a>}
                     field={hasMpgReadout}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="hasMphReadout"
+                    component={hasMphReadout =>
                 <GasJotCheckboxFormGroup
                     label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_mph_readout_lbl, smallModalContent: strs.has_mph_readout_explanation})}>{strs.has_mph_readout_lbl}</a>}
                     field={hasMphReadout}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="hasDteReadout"
+                    component={hasDteReadout =>
                 <GasJotCheckboxFormGroup
                     label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_dte_readout_lbl, smallModalContent: strs.has_dte_readout_explanation})}>{strs.has_dte_readout_lbl}</a>}
                     field={hasDteReadout}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
+                <Field
+                    name="hasOutsideTempReadout"
+                    component={hasOutsideTempReadout =>
                 <GasJotCheckboxFormGroup
                     label={<a role="button" onClick={() => this.setState({showSmallModal: true, smallModalTitle: strs.has_outside_temp_readout_lbl, smallModalContent: strs.has_outside_temp_readout_explanation})}>{strs.has_outside_temp_readout_lbl}</a>}
                     field={hasOutsideTempReadout}
-                    disabled={!editMode} />
+                    disabled={!editMode} />} />
                 <Row><Col xs={12}><hr style={{ marginTop: 0, marginBottom: 15}}/></Col></Row>
                 { actionArray }
             </form>
@@ -175,7 +194,7 @@ class VehicleForm extends React.Component {
 }
 
 export default reduxForm({
-    form: "vehicle",
-    fields: ["name", "plate", "vin", "fuelCapacity", "defaultOctane", "takesDiesel", "hasMpgReadout", "hasMphReadout", "hasDteReadout", "hasOutsideTempReadout"],
+    form: VEHICLE_FORM,
+    destroyOnUnmount: false,
     validate
 })(VehicleForm)

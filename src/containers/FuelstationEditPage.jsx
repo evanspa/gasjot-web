@@ -10,6 +10,8 @@ import { toFuelstationFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import * as urls from "../urls"
+import { destroy } from "redux-form"
+import { GAS_STATION_FORM } from "../forms"
 
 class FuelstationEditPage extends React.Component {
     render() {
@@ -62,6 +64,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         cancelFuelstationEdit: (fuelstationId) => {
             toastr.clean()
+            dispatch(destroy(GAS_STATION_FORM))
             dispatch(push(urls.fuelstationDetailUrl(fuelstationId)))
         },
         handleSubmit: (fuelstationId) => {

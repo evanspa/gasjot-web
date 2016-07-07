@@ -6,7 +6,10 @@ import { cancelRecordEdit, attemptSaveNewOdometerLogFnMaker } from "../actions/a
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { toastr } from 'react-redux-toastr'
+import { destroy } from "redux-form"
+import { ODOMETER_LOG_FORM } from "../forms"
 import * as utils from "../utils"
+import * as urls from "../urls"
 
 class OdometerLogAddPage extends React.Component {
     render() {
@@ -16,7 +19,8 @@ class OdometerLogAddPage extends React.Component {
             becameUnauthenticated,
             api,
             vehicles,
-            backLink
+            backLink,
+            handleAddVehicle
         } = this.props
         const { requestInProgress, fpErrorMask } = api
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
@@ -56,6 +60,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         cancelOdometerLogAdd: () => {
             toastr.clean()
+            dispatch(destroy(ODOMETER_LOG_FORM))
             dispatch(cancelRecordEdit())
             if (nextPathname != null) {
                 dispatch(push(nextPathname))

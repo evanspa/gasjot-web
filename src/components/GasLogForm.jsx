@@ -13,6 +13,9 @@ import { cannotBeEmptyValidator,
          mustBeNumberValidator } from "../utils"
 import _ from "lodash"
 import * as errFlags from "../errorFlags"
+import * as urls from "../urls"
+import * as utils from "../utils"
+import { GAS_LOG_FORM } from "../forms"
 import ActionsArray from "./ActionsArray.jsx"
 import ErrorMessages from "./ErrorMessages.jsx"
 
@@ -140,6 +143,7 @@ class GasLogForm extends React.Component {
                         label="Vehicle"
                         field={vehicleId}
                         disabled={!editMode}
+                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add your vehicle?", urls.ADD_VEHICLE_URI)}
                         valueField="fpvehicle/id"
                         textField="fpvehicle/name"
                         data={vehicles} />
@@ -147,6 +151,7 @@ class GasLogForm extends React.Component {
                         label="Gas station"
                         field={fuelstationId}
                         disabled={!editMode}
+                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add a gas station?", urls.ADD_FUELSTATION_URI)}
                         valueField="fpfuelstation/id"
                         textField="fpfuelstation/name"
                         data={fuelstations} />
@@ -187,7 +192,8 @@ class GasLogForm extends React.Component {
 }
 
 export default reduxForm({
-    form: "gaslog",
+    form: GAS_LOG_FORM,
     fields: ["vehicleId", "fuelstationId", "purchaseDate", "octane", "odometer", "pricePerGallon", "gotCarWash", "carWashPerGallonDiscount", "numGallons"],
+    destroyOnUnmount: false,
     validate
 })(GasLogForm)

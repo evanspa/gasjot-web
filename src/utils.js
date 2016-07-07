@@ -3,6 +3,25 @@ import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 import * as errFlags from "./errorFlags"
 
+export function toXY(fpEmbeddedObj,
+                     srcXKeyName,
+                     srcYKeyName,
+                     includeFn) {
+    let data = []
+    const embeddedValues = _.values(fpEmbeddedObj)
+    for (let i = 0; i < embeddedValues.length; i++) {
+        if (includeFn(embeddedValues[i].payload)) {
+            const yValue = embeddedValues[i].payload[srcYKeyName]
+            if (yValue != null) {
+                data.push({x: embeddedValues[i].payload[srcXKeyName],
+                           y: yValue})
+            }
+        }
+    }
+    data.sort((o1, o2) => { return o2.x - o1.x })
+    return data
+}
+
 String.prototype.toTitleCase = function() {
     var i, j, str, lowers, uppers;
     str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
@@ -25,6 +44,13 @@ String.prototype.toTitleCase = function() {
     return str;
 }
 
+export const CURRENCY_FORMAT = "$0,0.00"
+
+export const CHARTJS_POINT_BG_COLOR = "#71a0ec"
+export const CHARTJS_FILL_BG_COLOR  = "#BEEDFF"
+export const CHARTJS_POINT_RADIUS = 2
+
+export const CHARTJS_QUARTER_DATE_DISPLAY_FORMAT = "MMM YYYY"
 export const DATE_DISPLAY_FORMAT = "dddd, MMMM Do YYYY"
 export const DATE_EDIT_FORMAT    = "MM/DD/YYYY"
 
@@ -103,6 +129,32 @@ export const mustBeEmailValidator = (values, errors, fieldName) => {
 }
 
 export const formToModelIfNotNull = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
+    if (form.values[formKey] != null) {
+        if (form.fields[formKey].touched != null && form.fields[formKey].touched) {
+            let formValue = null
+            if (tailKey != null) {
+                if (form[formKey].value[tailKey] != null) {
+                    formValue = form[formKey].value[tailKey]
+                }
+            } else {
+                formValue = form.values[formKey]
+            }
+            if (formValue != null) {
+                if (!_.isEmpty(_.trim(formValue))) {
+                    if (transformer != null) {
+                        target[targetKey] = transformer(formValue)
+                    } else {
+                        target[targetKey] = formValue
+                    }
+                } else {
+                    target[targetKey] = null
+                }
+            }
+        }
+    }
+}
+
+export const formToModelIfNotNull_orig = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
     if (form[formKey].value != null) {
         if (form[formKey].touched != null && form[formKey].touched) {
             let formValue = null
@@ -241,4 +293,19 @@ export function countDependents(state, childrenKey, parentIdKey, parentId) {
         }
     }
     return numMatch
+}
+
+export function makeNeedToAddTextLinkObj(editMode, question, url) {
+    return editMode ? {question: question, url: url} : null
+}
+
+export function uniqueOctanes(gasLogs) {
+    let octanes = {}
+    const gasLogsArray = _.values(gasLogs)
+    for (let i = 0; i < gasLogsArray.length; i++) {
+        if (gasLogsArray[i].payload["fplog/gallon-price"] != null) {
+            octanes[gasLogsArray[i].payload["fplog/octane"]] = 1;
+        }
+    }
+    return _.keys(octanes)
 }

@@ -7,6 +7,7 @@ import { actions as toastrActions } from 'react-redux-toastr'
 import * as utils from "../utils"
 import * as apiUtils from "./api-utils"
 import * as urls from "../urls"
+import * as forms from "../forms"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 
@@ -479,6 +480,7 @@ export function attemptSendPasswordResetEmail() {
 }
 
 const vehicleRequestPayload = form => {
+    //console.log("in vehicleRequestPayload, form: " + JSON.stringify(form))
     let payload = {}
     utils.formToModelIfNotNull(form, "name",                  payload, "fpvehicle/name");
     utils.formToModelIfNotNull(form, "plate",                 payload, "fpvehicle/plate");
@@ -627,7 +629,7 @@ export const attemptSaveVehicle = apiUtils.makeAttemptSaveEntityFn(
     getVehicleUpdatedAt,
     getVehicleUri,
     vehicleRequestPayload,
-    "vehicle",
+    forms.VEHICLE_FORM,
     attemptDownloadVehicle,
     urls.vehicleEditUrl,
     receiveServerVehicle,
@@ -650,7 +652,7 @@ export const attemptSaveNewVehicle = apiUtils.makeAttemptSaveNewEntity(
     vehicleMediaType,
     getVehiclesUri,
     vehicleRequestPayload,
-    "vehicle",
+    forms.VEHICLE_FORM,
     "fpvehicle/id",
     receiveServerVehicleLocation,
     receiveServerVehicleMediaType,
@@ -684,7 +686,7 @@ export const attemptSaveFuelstation = apiUtils.makeAttemptSaveEntityFn(
     getFuelstationUpdatedAt,
     getFuelstationUri,
     fuelstationRequestPayload,
-    "fuelstation",
+    forms.GAS_STATION_FORM,
     attemptDownloadFuelstation,
     urls.fuelstationEditUrl,
     receiveServerFuelstation,
@@ -707,7 +709,7 @@ export const attemptSaveNewFuelstation = apiUtils.makeAttemptSaveNewEntity(
     fuelstationMediaType,
     getFuelstationsUri,
     fuelstationRequestPayload,
-    "fuelstation",
+    forms.GAS_STATION_FORM,
     "fpfuelstation/id",
     receiveServerFuelstationLocation,
     receiveServerFuelstationMediaType,
@@ -744,7 +746,7 @@ export const attemptSaveOdometerLogFnMaker = vehicles =>
         getOdometerLogUpdatedAt,
         getOdometerLogUri,
         odometerLogRequestPayloadFnMaker(vehicles),
-        "odometerlog",
+        forms.ODOMETER_LOG_FORM,
         attemptDownloadOdometerLog,
         urls.odometerLogEditUrl,
         receiveServerOdometerLog,
@@ -768,7 +770,7 @@ export const attemptSaveNewOdometerLogFnMaker = vehicles =>
         odometerLogMediaType,
         getOdometerLogsUri,
         odometerLogRequestPayloadFnMaker(vehicles),
-        "odometerlog",
+        forms.ODOMETER_LOG_FORM,
         "envlog/id",
         receiveServerOdometerLogLocation,
         receiveServerOdometerLogMediaType,
@@ -807,7 +809,7 @@ export const attemptSaveGasLogFnMaker = (vehicles, fuelstations) =>
         getGasLogUpdatedAt,
         getGasLogUri,
         gasLogRequestPayloadFnMaker(vehicles, fuelstations),
-        "gaslog",
+        forms.GAS_LOG_FORM,
         attemptDownloadGasLog,
         urls.gasLogEditUrl,
         receiveServerGasLog,
@@ -831,7 +833,7 @@ export const attemptSaveNewGasLogFnMaker = (vehicles, fuelstations) =>
         gasLogMediaType,
         getGasLogsUri,
         gasLogRequestPayloadFnMaker(vehicles, fuelstations),
-        "gaslog",
+        forms.GAS_LOG_FORM,
         "fplog/id",
         receiveServerGasLogLocation,
         receiveServerGasLogMediaType,

@@ -33,6 +33,7 @@ import ResetPasswordSuccessPage from "./containers/ResetPasswordSuccessPage.jsx"
 import RedirectPage from "./containers/RedirectPage.jsx"
 import SignUpPage from "./containers/SignUpPage.jsx"
 import SettingsPage from "./containers/SettingsPage.jsx"
+import RecordsPage from "./containers/RecordsPage.jsx"
 import AccountCreatedPage from "./containers/AccountCreatedPage.jsx"
 import AccountVerifiedPage from "./containers/AccountVerifiedPage.jsx"
 import PasswordResetPrepareErrorPage from "./containers/PasswordResetPrepareErrorPage.jsx"
@@ -62,6 +63,7 @@ export default function createRoutes(store, isServer) {
             <IndexRoute component={HomePage} />
             <Route path="/dashboard"                            component={DashboardPage}         onEnter={requiresAuthentication} />
             <Route path={urls.SETTINGS_URI}                     component={SettingsPage}          onEnter={requiresAuthentication} />
+            <Route path={urls.RECORDS_URI}                      component={RecordsPage}           onEnter={requiresAuthentication} />
             <Route path={urls.ACCOUNT_URI}                      component={UserAccountPage}       onEnter={requiresAuthentication} />
             <Route path={urls.EDIT_ACCOUNT_URI}                 component={UserAccountEditPage}   onEnter={requiresAuthentication} />
             <Route path={urls.VEHICLES_URI}                     component={VehiclesPage}          onEnter={requiresAuthentication} />
