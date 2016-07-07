@@ -27,23 +27,23 @@ The following technologies are used to build the Gas Jot web application:
 + [React Router](https://github.com/reactjs/react-router)
 + [React Bootstrap](https://react-bootstrap.github.io/)
 + [React Chartjs](https://github.com/jhudson8/react-chartjs) (React wrapper for [chart.js](http://www.chartjs.org/))
-+ React Helmet
-+ React Widgets
-+ Redux (and React Redux)
-+ Redux Form
-+ Redux Storage
-+ React Redux Toastr
-+ Isomorphic Fetch
-+ Babel Polyfill
-+ Moment
-+ Lodash
-+ Numeral
++ [React Helmet](https://github.com/nfl/react-helmet)
++ [React Widgets](https://jquense.github.io/react-widgets/docs/#/?_k=p3l577)
++ [Redux](http://redux.js.org/) (and [React Redux](https://github.com/reactjs/react-redux))
++ [Redux Form](https://github.com/erikras/redux-form)
++ [Redux Storage](https://github.com/michaelcontento/redux-storage)
++ [React Redux Toastr](https://github.com/diegoddox/react-redux-toastr)
++ [Isomorphic Fetch](https://github.com/matthew-andrews/isomorphic-fetch)
++ [Babel Polyfill](https://babeljs.io/docs/usage/polyfill/)
++ [Moment](http://momentjs.com/)
++ [Lodash](https://lodash.com/)
++ [Numeral](http://numeraljs.com/)
 
 And for development tooling:
 
-+ Browserify
-+ Babel
-+ Gulp
++ [Browserify](http://browserify.org/)
++ [Babel](https://babeljs.io/)
++ [Gulp](http://gulpjs.com/)
 
 ### Server-side Application
 
