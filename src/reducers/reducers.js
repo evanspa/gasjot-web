@@ -1,4 +1,6 @@
 import * as actionTypes from "../actions/actionTypes"
+import { reducer as formReducer } from "redux-form"
+import * as forms from "../forms"
 import _ from "lodash"
 
 export const initialServerSnapshotState = {
@@ -15,6 +17,27 @@ export const initialApiState = {
     responseStatus: null,
     fpErrorMask: null,
     requestInProgress: false
+}
+
+function formWithEntity(formName, entity, idKey) {
+    let form = {}
+    let entityIdObj = {}
+    entityIdObj[idKey] = {value: entity}
+    form[formName] = entityIdObj
+    return form
+}
+
+export const gasjotFormReducer = (state = {}, action) => {
+    switch (action.type) {
+    case actionTypes.SERVER_VEHICLE_RECEIVED:
+        return _.merge(_.merge(Object.assign({}, state),
+                               formWithEntity(forms.ODOMETER_LOG_FORM, action.serverVehicle, "vehicleId")),
+                       formWithEntity(forms.GAS_LOG_FORM, action.serverVehicle, "vehicleId"))
+    case actionTypes.SERVER_FUELSTATION_RECEIVED:
+        return _.merge(Object.assign({}, state),
+                       formWithEntity(forms.GAS_LOG_FORM, action.serverFuelstation, "fuelstationId"))
+    }
+    return formReducer(state, action)
 }
 
 export const apiReducer = (state = {}, action) => {

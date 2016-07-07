@@ -28,17 +28,17 @@ export class GasJotFormGroup extends React.Component {
                                          editFormat={utils.DATE_EDIT_FORMAT}
                                          parse={str => moment(str, utils.DATE_EDIT_FORMAT).toDate()}
                                          format={utils.DATE_DISPLAY_FORMAT}
-                                         value={moment(field.input.value, utils.DATE_DISPLAY_FORMAT).toDate()}
-                                         onChange={(name, value) => field.input.onChange(value)}
-                                         name={field.input.name}
+                                         value={moment(field.value, utils.DATE_DISPLAY_FORMAT).toDate()}
+                                         onChange={(name, value) => field.onChange(value)}
+                                         name={field.name}
                                          disabled={this.props.disabled}
                                          autoFocus={this.props.autoFocus} />)
                          } else {
                              return (<FormControl
                                          type={type}
-                                         value={field.input.value}
-                                         onChange={field.input.onChange}
-                                         name={field.input.name}
+                                         value={field.value}
+                                         onChange={field.onChange}
+                                         name={field.name}
                                          disabled={this.props.disabled}
                                          autoFocus={this.props.autoFocus} />)
                          }
@@ -70,9 +70,9 @@ export class GasJotCheckboxFormGroup extends React.Component {
             <FormGroup>
                 <Checkbox
                     inline={true}
-                    checked={field.input.value}
-                    onChange={field.input.onChange}
-                    name={field.input.name}
+                    checked={field.value}
+                    onChange={field.onChange}
+                    name={field.name}
                     disabled={this.props.disabled}>
                     <ControlLabel type="text">{this.props.label}</ControlLabel>
                 </Checkbox>
@@ -85,8 +85,8 @@ export class GasJotDropdownFormGroup extends React.Component {
     render() {
         const {
             field,
-            defaultValue,
-            disabled, data,
+            disabled,
+            data,
             valueField,
             textField,
             needToAddTextLinkObj
@@ -100,16 +100,20 @@ export class GasJotDropdownFormGroup extends React.Component {
             <FormGroup {...formGroupOpts}>
                 <ControlLabel type="text">{this.props.label}</ControlLabel>
                 <DropdownList
-                    onChange={field.input.onChange}
-                    name={field.input.name}
-                    value={field.input.value}
+                    onChange={field.onChange}
+                    name={field.name}
+                    value={field.value}
                     valueField={valueField}
                     textField={textField}
                     data={data}
                     disabled={disabled} />
                 {(() => {
                      if (needToAddTextLinkObj != null) {
-                         return (<div style={{marginTop: 5}}>{needToAddTextLinkObj.question}  <Link to={needToAddTextLinkObj.url}>Click here</Link></div>)
+                         let initFn = needToAddTextLinkObj.initFn
+                         if (initFn == null) {
+                             initFn = () => {}
+                         }
+                         return (<div style={{marginTop: 5}}>{needToAddTextLinkObj.question}  <Link onClick={initFn} to={needToAddTextLinkObj.url}>Click here</Link></div>)
                      } else {
                          return ""
                      }

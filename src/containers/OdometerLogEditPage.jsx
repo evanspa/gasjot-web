@@ -9,7 +9,7 @@ import { toOdometerLogFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { destroy } from "redux-form"
-import { ODOMETER_LOG_FORM } from "../forms"
+import { ODOMETER_LOG_FORM, VEHICLE_FORM } from "../forms"
 import * as utils from "../utils"
 import * as urls from "../urls"
 
@@ -23,12 +23,14 @@ class OdometerLogEditPage extends React.Component {
             becameUnauthenticated,
             userAcknowledgedNotFound,
             odometerLogIdNotFound,
-            vehicles
+            vehicles,
+            destroyVehicleForm
         } = this.props
         const { requestInProgress, fpErrorMask } = api
         const odometerLogId = odometerLogPayload["envlog/id"]
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
         const entityForm = <OdometerLogForm
+                               destroyVehicleForm={destroyVehicleForm}
                                vehicles={vehicleDropdownValues}
                                cancelOdometerLogEdit={cancelOdometerLogEdit}
                                userAcknowledgedNotFound={userAcknowledgedNotFound}
@@ -77,7 +79,8 @@ const mapDispatchToProps = (dispatch) => {
         userAcknowledgedNotFound: (odometerLogId) => {
             dispatch(serverOdometerLogNotFoundUserAcknowledged(odometerLogId))
             dispatch(push(urls.ODOMETER_LOGS_URI))
-        }
+        },
+        destroyVehicleForm: () => dispatch(destroy(VEHICLE_FORM))
     }
 }
 

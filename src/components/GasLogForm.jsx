@@ -30,6 +30,7 @@ const validate = values => {
     mustBePositiveNumberValidator(values, errors, "octane")
     cannotBeEmptyValidator(values, errors, "odometer")
     mustBePositiveNumberValidator(values, errors, "odometer")
+    cannotBeEmptyValidator(values, errors, "pricePerGallon")
     mustBePositiveNumberValidator(values, errors, "pricePerGallon")
     mustBePositiveNumberValidator(values, errors, "carWashPerGallonDiscount")
     return errors
@@ -91,7 +92,9 @@ class GasLogForm extends React.Component {
             responseStatus,
             editMode,
             fpErrorMask,
-            deleteConfirmMessage
+            deleteConfirmMessage,
+            destroyVehicleForm,
+            destroyFuelstationForm
         } = this.props
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
@@ -143,7 +146,7 @@ class GasLogForm extends React.Component {
                         label="Vehicle"
                         field={vehicleId}
                         disabled={!editMode}
-                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add your vehicle?", urls.ADD_VEHICLE_URI)}
+                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add your vehicle?", urls.ADD_VEHICLE_URI, destroyVehicleForm)}
                         valueField="fpvehicle/id"
                         textField="fpvehicle/name"
                         data={vehicles} />
@@ -151,7 +154,7 @@ class GasLogForm extends React.Component {
                         label="Gas station"
                         field={fuelstationId}
                         disabled={!editMode}
-                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add a gas station?", urls.ADD_FUELSTATION_URI)}
+                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add a gas station?", urls.ADD_FUELSTATION_URI, destroyFuelstationForm)}
                         valueField="fpfuelstation/id"
                         textField="fpfuelstation/name"
                         data={fuelstations} />

@@ -129,32 +129,6 @@ export const mustBeEmailValidator = (values, errors, fieldName) => {
 }
 
 export const formToModelIfNotNull = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
-    if (form.values[formKey] != null) {
-        if (form.fields[formKey].touched != null && form.fields[formKey].touched) {
-            let formValue = null
-            if (tailKey != null) {
-                if (form[formKey].value[tailKey] != null) {
-                    formValue = form[formKey].value[tailKey]
-                }
-            } else {
-                formValue = form.values[formKey]
-            }
-            if (formValue != null) {
-                if (!_.isEmpty(_.trim(formValue))) {
-                    if (transformer != null) {
-                        target[targetKey] = transformer(formValue)
-                    } else {
-                        target[targetKey] = formValue
-                    }
-                } else {
-                    target[targetKey] = null
-                }
-            }
-        }
-    }
-}
-
-export const formToModelIfNotNull_orig = (form, formKey, target, targetKey, tailKey = null, transformer = null) => {
     if (form[formKey].value != null) {
         if (form[formKey].touched != null && form[formKey].touched) {
             let formValue = null
@@ -197,13 +171,19 @@ export const toDropdownValues = (entities, valueKey, displayKey) => {
     let dropdownValues = []
     let values = _.values(entities)
     for (let i = 0; i < values.length; i++) {
-        let dropdownValue = {}
-        let payload = values[i]["payload"]
-        dropdownValue[valueKey] = payload[valueKey]
-        dropdownValue[displayKey] = payload[displayKey]
-        dropdownValues.push(dropdownValue)
+        dropdownValues.push(toDropdownValue(values[i]["payload"], valueKey, displayKey))
     }
     return dropdownValues
+}
+
+export const toDropdownValue = (entityPayload, valueKey, displayKey) => {
+    let dropdownValue = null
+    if (entityPayload != null) {
+        dropdownValue = {}
+        dropdownValue[valueKey] = entityPayload[valueKey]
+        dropdownValue[displayKey] = entityPayload[displayKey]
+    }
+    return dropdownValue
 }
 
 export const toUserFormModel = (userPayload) => {
@@ -295,8 +275,10 @@ export function countDependents(state, childrenKey, parentIdKey, parentId) {
     return numMatch
 }
 
-export function makeNeedToAddTextLinkObj(editMode, question, url) {
-    return editMode ? {question: question, url: url} : null
+export function makeNeedToAddTextLinkObj(editMode, question, url, initFn = null) {
+    return editMode ? { question: question,
+                        url: url,
+                        initFn: initFn } : null
 }
 
 export function uniqueOctanes(gasLogs) {

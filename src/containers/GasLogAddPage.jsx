@@ -8,7 +8,7 @@ import { cancelRecordEdit,
 import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { destroy } from "redux-form"
-import { GAS_LOG_FORM } from "../forms"
+import { GAS_LOG_FORM, VEHICLE_FORM, GAS_STATION_FORM } from "../forms"
 import { toastr } from 'react-redux-toastr'
 import * as utils from "../utils"
 
@@ -22,12 +22,16 @@ class GasLogAddPage extends React.Component {
             vehicles,
             fuelstations,
             clearErrors,
-            backLink
+            backLink,
+            destroyVehicleForm,
+            destroyFuelstationForm
         } = this.props
         const { requestInProgress, fpErrorMask } = api
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
         const fuelstationDropdownValues = utils.toDropdownValues(fuelstations, "fpfuelstation/id", "fpfuelstation/name")
         const gasLogForm = (<GasLogForm
+                                destroyVehicleForm={destroyVehicleForm}
+                                destroyFuelstationForm={destroyFuelstationForm}
                                 vehicles={vehicleDropdownValues}
                                 fuelstations={fuelstationDropdownValues}
                                 cancelGasLogEdit={cancelGasLogAdd}
@@ -78,7 +82,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             toastr.clean()
             dispatch(attemptSaveNewGasLogFnMaker(vehicles, fuelstations)(nextPathname))
         },
-        clearErrors: () => dispatch(clearErrors())
+        clearErrors: () => dispatch(clearErrors()),
+        destroyVehicleForm: () => dispatch(destroy(VEHICLE_FORM)),
+        destroyFuelstationForm: () => dispatch(destroy(GAS_STATION_FORM))
     }
 }
 

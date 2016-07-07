@@ -7,7 +7,7 @@ import EntityAddPage from "../components/EntityAddPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { toastr } from 'react-redux-toastr'
 import { destroy } from "redux-form"
-import { ODOMETER_LOG_FORM } from "../forms"
+import { ODOMETER_LOG_FORM, VEHICLE_FORM } from "../forms"
 import * as utils from "../utils"
 import * as urls from "../urls"
 
@@ -20,11 +20,14 @@ class OdometerLogAddPage extends React.Component {
             api,
             vehicles,
             backLink,
-            handleAddVehicle
+            handleAddVehicle,
+            recentlyAddedVehicle,
+            destroyVehicleForm
         } = this.props
         const { requestInProgress, fpErrorMask } = api
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
         const odometerLogForm = (<OdometerLogForm
+                                     destroyVehicleForm={destroyVehicleForm}
                                      vehicles={vehicleDropdownValues}
                                      cancelOdometerLogEdit={cancelOdometerLogAdd}
                                      onSubmit={() => handleSubmit(vehicles)}
@@ -71,7 +74,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         handleSubmit: (vehicles) => {
             toastr.clean()
             dispatch(attemptSaveNewOdometerLogFnMaker(vehicles)(nextPathname))
-        }
+        },
+        destroyVehicleForm: () => dispatch(destroy(VEHICLE_FORM))
     }
 }
 

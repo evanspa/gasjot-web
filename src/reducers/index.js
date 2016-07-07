@@ -1,7 +1,12 @@
 import {reducer as toastrReducer} from 'react-redux-toastr'
 import { routerReducer } from 'react-router-redux'
 import { combineReducers } from 'redux'
-import { authTokenReducer, apiReducer, serverSnapshotReducer, entityIdInContextReducer } from "./Reducers"
+import {
+    authTokenReducer,
+    apiReducer,
+    serverSnapshotReducer,
+    gasjotFormReducer
+} from "./Reducers"
 import * as actionTypes from "../actions/actionTypes"
 import { reducer as formReducer } from "redux-form"
 import _ from "lodash"
@@ -35,25 +40,7 @@ export const rootReducer = combineReducers({
     api: apiReducer,
     serverSnapshot: serverSnapshotReducer,
     routing: routerReducer,
-    form: formReducer.plugin(
-        {
-            "odometerlogform": (state, action) => {
-                switch (action.type) {
-                case actionTypes.SERVER_VEHICLE_RECEIVED:
-                    return { ...state, vehicleId: { value: action.serverVehicle } }
-                    return state
-                }
-            },
-            "gaslog": (state, action) => {
-                switch (action.type) {
-                case actionTypes.SERVER_VEHICLE_RECEIVED:
-                    return { ...state, vehicleId: { value: action.serverVehicle } }
-                case actionTypes.SERVER_FUELSTATION_RECEIVED:
-                    return { ...state, fuelstationId: { value: action.serverFuelstation } }
-                }
-                return state
-            }
-        })
+    form: gasjotFormReducer
 })
 
 export default rootReducer

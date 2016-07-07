@@ -71,7 +71,9 @@ class OdometerLogForm extends React.Component {
                 avgMpgReadout,
                 rangeReadout,
                 avgMphReadout,
-                outsideTempReadout },
+                outsideTempReadout
+            },
+            defaultVehicle,
             vehicles,
             odometerLogId,
             markOdometerLogForEdit,
@@ -85,7 +87,7 @@ class OdometerLogForm extends React.Component {
             editMode,
             fpErrorMask,
             deleteConfirmMessage,
-            handleAddVehicle
+            destroyVehicleForm
         } = this.props
         let modalClose = () => this.setState({ showModal: false })
         const actionArray = <ActionsArray
@@ -133,13 +135,12 @@ class OdometerLogForm extends React.Component {
                     <Row><Col xs={12}><hr /></Col></Row>
                     <GasJotDropdownFormGroup
                         label="Vehicle"
+                        defaultValue={defaultVehicle}
                         field={vehicleId}
                         disabled={!editMode}
                         valueField="fpvehicle/id"
                         textField="fpvehicle/name"
-                        addRecordButtonTitle="Add Vehicle"
-                        addRecordButtonOnClick={handleAddVehicle}
-                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add your vehicle?", urls.ADD_VEHICLE_URI)}
+                        needToAddTextLinkObj={utils.makeNeedToAddTextLinkObj(editMode, "Need to add your vehicle?", urls.ADD_VEHICLE_URI, destroyVehicleForm)}
                         data={vehicles} />
                     <GasJotDateFormGroup
                         label="Log date"

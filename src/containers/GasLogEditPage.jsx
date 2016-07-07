@@ -10,7 +10,7 @@ import { toGasLogFormModel } from "../utils"
 import EntityEditDetailPage from "../components/EntityEditDetailPage.jsx"
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
 import { destroy } from "redux-form"
-import { GAS_LOG_FORM } from "../forms"
+import { GAS_LOG_FORM, VEHICLE_FORM, GAS_STATION_FORM } from "../forms"
 import * as utils from "../utils"
 import * as urls from "../urls"
 
@@ -26,13 +26,17 @@ class GasLogEditPage extends React.Component {
             userAcknowledgedNotFound,
             vehicles,
             clearErrors,
-            fuelstations
+            fuelstations,
+            destroyVehicleForm,
+            destroyFuelstationForm
         } = this.props
         const { requestInProgress, fpErrorMask } = api
         const gasLogId = gasLogPayload["fplog/id"]
         const vehicleDropdownValues = utils.toDropdownValues(vehicles, "fpvehicle/id", "fpvehicle/name")
         const fuelstationDropdownValues = utils.toDropdownValues(fuelstations, "fpfuelstation/id", "fpfuelstation/name")
         const entityForm = <GasLogForm
+                               destroyVehicleForm={destroyVehicleForm}
+                               destroyFuelstationForm={destroyFuelstationForm}
                                vehicles={vehicleDropdownValues}
                                fuelstations={fuelstationDropdownValues}
                                cancelGasLogEdit={cancelGasLogEdit}
@@ -84,7 +88,9 @@ const mapDispatchToProps = (dispatch) => {
         userAcknowledgedNotFound: (gasLogId) => {
             dispatch(serverGasLogNotFoundUserAcknowledged(gasLogId))
             dispatch(push(urls.GAS_LOGS_URI))
-        }
+        },
+        destroyVehicleForm: () => dispatch(destroy(VEHICLE_FORM)),
+        destroyFuelstationForm: () => dispatch(destroy(GAS_STATION_FORM))
     }
 }
 

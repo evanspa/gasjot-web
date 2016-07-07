@@ -10,8 +10,7 @@ export const initialState = {
     authToken: null,
     userUri: null,
     api: initialApiState,
-    serverSnapshot: initialServerSnapshotState,
-    entityIdInContext: null
+    serverSnapshot: initialServerSnapshotState
 }
 
 export default function configureStore(history) {

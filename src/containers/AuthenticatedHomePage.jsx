@@ -79,10 +79,9 @@ class AuthenticatedHomePage extends React.Component {
                                          (() => {
                                              let octaneCharts = []
                                              let uniqueOctanes = utils.uniqueOctanes(gasLogs)
-                                             console.log("uniqueOctanes: " + JSON.stringify(uniqueOctanes))
                                              for (let i = 0; i < uniqueOctanes.length; i++) {
                                                  octaneCharts.push(
-                                                     <div style={{marginTop: 15}}>
+                                                     <div key={i} style={{marginTop: 15}}>
                                                          <PriceByOctaneChart gasLogs={gasLogs} octane={uniqueOctanes[i]} />
                                                      </div>
                                                  )
