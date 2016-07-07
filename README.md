@@ -4,6 +4,9 @@ gasjot-web is a web application for collecting gas purchase and other data about
 your vehicle.  It's a fun application to use to track your gas purchase and
 utilization history.
 
+It is implemented as an isomorphic Javascript application using React and
+Redux.  The [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to communicate with GasJot's REST API.
+
 **Table of Contents**
 
 - [About the Gas Jot System](#about-the-gas-jot-system)
@@ -20,10 +23,10 @@ the Gas Jot system.  There is also an iOS client application:
 
 The following technologies are used to build the Gas Jot web application:
 
-+ React
-+ React Router
-+ React Bootstrap
-+ React Chartjs
++ [React](https://facebook.github.io/react/)
++ [React Router](https://github.com/reactjs/react-router)
++ [React Bootstrap](https://react-bootstrap.github.io/)
++ [React Chartjs](https://github.com/jhudson8/react-chartjs) (React wrapper for [chart.js](http://www.chartjs.org/))
 + React Helmet
 + React Widgets
 + Redux (and React Redux)
