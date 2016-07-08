@@ -1,7 +1,9 @@
 import * as actionTypes from "../actions/actionTypes"
 import { reducer as formReducer } from "redux-form"
 import * as forms from "../forms"
+import * as utils from "../utils"
 import _ from "lodash"
+import * as mtparts from "../mediaTypeParts"
 
 export const initialServerSnapshotState = {
     _links: {},
@@ -74,12 +76,28 @@ export const apiReducer = (state = {}, action) => {
     return state
 }
 
+export const mostRecentUpdatedAtReducer = (state = {}, action) => {
+    switch (action.type) {
+    case actionTypes.SERVER_SNAPSHOT_RECEIVED:
+        return utils.mostRecentUpdatedAt(action.serverSnapshot["user/updated-at"],
+                                         _.values(action.serverSnapshot._embedded.vehicles),
+                                         _.values(action.serverSnapshot._embedded.fuelstations),
+                                         _.values(action.serverSnapshot._embedded.fplogs),
+                                         _.values(action.serverSnapshot._embedded.envlogs))
+    case actionTypes.SERVER_CHANGELOG_RECEIVED:
+        return action.serverChangelog["changelog/updated-at"]
+    }
+    return state
+}
+
 export const serverSnapshotReducer = (state = {}, action) => {
     switch (action.type) {
     case actionTypes.SERVER_SNAPSHOT_RECEIVED:
         return _.isEmpty(action.serverSnapshot) ? state : action.serverSnapshot;
     case actionTypes.LOGOUT_REQUEST_DONE:
         return initialServerSnapshotState
+    case actionTypes.SERVER_CHANGELOG_RECEIVED:
+        return processChangelog(state, action.serverChangelog)
     case actionTypes.SERVER_USER_RECEIVED:
         return Object.assign(Object.assign({}, state), action.serverUser)
     case actionTypes.SERVER_VEHICLE_RECEIVED:
@@ -120,6 +138,54 @@ export const serverSnapshotReducer = (state = {}, action) => {
         return removeEntity(state, "fplogs", action.serverGasLogId)
     }
     return state;
+}
+
+function processChangelogEntity(newState, mediaType, entityPayload, mtPart, deletedAtKey, entitiesKey, entityIdKey) {
+    if (mediaType.includes(mtPart)) {
+        if (entityPayload[deletedAtKey] != null) {
+            _.unset(newState, ["_embedded", entitiesKey, _.toString(entityPayload[entityIdKey])])
+        } else {
+            _.set(newState, ["_embedded", entitiesKey, _.toString(entityPayload[entityIdKey]), "payload"], entityPayload)
+        }
+    }
+}
+
+function processChangelog(state, changelog) {
+    let newState = _.cloneDeep(state)
+    const changedEntities = changelog._embedded
+    for (let i = 0; i < changedEntities.length; i++) {
+        const mediaType = changedEntities[i]["media-type"]
+        const entityPayload = changedEntities[i]["payload"]
+        processChangelogEntity(newState,
+                               mediaType,
+                               entityPayload,
+                               mtparts.VEHICLE_MT_PART,
+                               "fpvehicle/deleted-at",
+                               "vehicles",
+                               "fpvehicle/id")
+        processChangelogEntity(newState,
+                               mediaType,
+                               entityPayload,
+                               mtparts.FUELSTATION_MT_PART,
+                               "fpfuelstation/deleted-at",
+                               "fuelstations",
+                               "fpfuelstation/id")
+        processChangelogEntity(newState,
+                               mediaType,
+                               entityPayload,
+                               mtparts.ENVLOG_MT_PART,
+                               "envlog/deleted-at",
+                               "envlogs",
+                               "envlog/id")
+        processChangelogEntity(newState,
+                               mediaType,
+                               entityPayload,
+                               mtparts.FPLOG_MT_PART,
+                               "fplog/deleted-at",
+                               "fplogs",
+                               "fplog/id")
+    }
+    return newState
 }
 
 function removeFuelstation(state, fuelstationId) {

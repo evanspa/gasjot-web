@@ -5,7 +5,8 @@ import {
     authTokenReducer,
     apiReducer,
     serverSnapshotReducer,
-    gasjotFormReducer
+    gasjotFormReducer,
+    mostRecentUpdatedAtReducer
 } from "./Reducers"
 import * as actionTypes from "../actions/actionTypes"
 import { reducer as formReducer } from "redux-form"
@@ -40,7 +41,8 @@ export const rootReducer = combineReducers({
     api: apiReducer,
     serverSnapshot: serverSnapshotReducer,
     routing: routerReducer,
-    form: gasjotFormReducer
+    form: gasjotFormReducer,
+    mostRecentUpdatedAt: mostRecentUpdatedAtReducer
 })
 
 export default rootReducer

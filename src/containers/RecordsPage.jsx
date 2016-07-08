@@ -5,23 +5,39 @@ import { connect } from 'react-redux'
 import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import Records from "../components/Records.jsx"
+import { destroy } from "redux-form"
 import _ from "lodash"
+import * as forms from "../forms"
 import * as urls from "../urls"
+import AddRecordButton from "../components/AddRecordButton.jsx"
 
 class RecordsPage extends React.Component {
     render() {
-        const { onItemSelect,
-                vehicleCount,
-                fuelstationCount,
-                odometerLogCount,
-                gasLogCount
+        const {
+            onItemSelect,
+            vehicleCount,
+            fuelstationCount,
+            odometerLogCount,
+            gasLogCount,
+            handleAddVehicle,
+            handleAddFuelstation,
+            handleAddGasLog,
+            handleAddOdometerLog
         } = this.props
         return (
             <div>
                 <GasJotHelmet title="Home" />
                 <GasJotNavbar />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <h3>Your Records</h3>
+                    <div>
+                        <AddRecordButton
+                            handleAddVehicle={handleAddVehicle}
+                            handleAddFuelstation={handleAddFuelstation}
+                            handleAddGasLog={handleAddGasLog}
+                            handleAddOdometerLog={handleAddOdometerLog} />
+                    </div>
+                    <h3 style={{marginTop: 20}}>Your Records</h3>
+                    <p>From here you can drill into all of your Gas Jot data records.</p>
                     <Records
                         onItemSelect={onItemSelect}
                         vehicleCount={vehicleCount}
@@ -44,13 +60,29 @@ const mapStateToProps = (state) => {
         vehicleCount: _.size(state.serverSnapshot._embedded.vehicles),
         fuelstationCount: _.size(state.serverSnapshot._embedded.fuelstations),
         odometerLogCount: _.size(state.serverSnapshot._embedded.envlogs),
-        gasLogCount: _.size(state.serverSnapshot._embedded.fplogs),
+        gasLogCount: _.size(state.serverSnapshot._embedded.fplogs)
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onItemSelect: uri => dispatch(push(uri))
+        onItemSelect: uri => dispatch(push(uri)),
+        handleAddVehicle: () => {
+            dispatch(destroy(forms.VEHICLE_FORM))
+            dispatch(push(urls.ADD_VEHICLE_URI))
+        },
+        handleAddFuelstation: () => {
+            dispatch(destroy(forms.GAS_STATION_FORM))
+            dispatch(push(urls.ADD_FUELSTATION_URI))
+        },
+        handleAddOdometerLog: () => {
+            dispatch(destroy(forms.ODOMETER_LOG_FORM))
+            dispatch(push(urls.ADD_ODOMETER_LOG_URI))
+        },
+        handleAddGasLog: () => {
+            dispatch(destroy(forms.GAS_LOG_FORM))
+            dispatch(push(urls.ADD_GAS_LOG_URI))
+        }
     }
 }
 

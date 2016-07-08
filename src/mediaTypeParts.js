@@ -1,0 +1,6 @@
+export const USER_MT_PART        = "user"
+export const CHANGELOG_MT_PART   = "changelog"
+export const VEHICLE_MT_PART     = "vehicle"
+export const FUELSTATION_MT_PART = "fuelstation"
+export const ENVLOG_MT_PART      = "envlog"
+export const FPLOG_MT_PART       = "fplog"

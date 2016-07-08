@@ -158,7 +158,9 @@ export function makeAttemptDownloadEntityFn(
     receiveServerEntityFn,
     entityIdNotFoundFn,
     alreadyHaveLatestMessage = null,
-    latestDownloadedMessage = null) {
+    changeCompareFn = null,
+    areActualEditsDownloadedFn = null,
+    latestDownloadedMessageFn = null) {
     return (entityId, refreshUri, suppressToasts = false) => {
         return (dispatch, getState) => {
             toastr.info(entityDownloadingMessage(entityType), toastConfigWorkingOnIt())
@@ -168,6 +170,24 @@ export function makeAttemptDownloadEntityFn(
             appendAuthenticatedCommonHeaders(headers, entityMediaType, state.authToken)
             headers.append(FP_IF_MODIFIED_SINCE_HEADER, getEntityUpdatedAtFn(state, entityId))
             const entityUri = getEntityUriFn(state, entityId)
+            const alreadyHaveLatestHandler = () => {
+                if (!suppressToasts) {
+                    if (alreadyHaveLatestMessage != null) {
+                        toastr.info("Already have latest", alreadyHaveLatestMessage, toastConfigAlreadyHaveLatest())
+                    } else {
+                        toastAlreadyHaveLatest(entityType)
+                    }
+                }
+            }
+            const editsDownloadedHandler = (changeCompareResult) => {
+                if (!suppressToasts) {
+                    if (latestDownloadedMessageFn != null) {
+                        toastr.success(_.capitalize(entityType) + " downloaded", latestDownloadedMessageFn(changeCompareResult), toastConfigLatestDownloaded())
+                    } else {
+                        toastDownloadedSuccess(entityType)
+                    }
+                }
+            }
             return fetch(entityUri, getInitForFetch(headers))
                 .then(response => {
                     dispatch(toastrActions.clean())
@@ -175,28 +195,33 @@ export function makeAttemptDownloadEntityFn(
                     dispatch(receiveResponseStatus(response.status, response.headers.get(FP_ERR_MASK_HEADER)))
                     if (!checkBecameUnauthenticated(response, dispatch)) {
                         if (response.status == 304) {
-                            if (!suppressToasts) {
-                                if (alreadyHaveLatestMessage != null) {
-                                    toastr.info("Already have latest", alreadyHaveLatestMessage, toastConfigAlreadyHaveLatest())
-                                } else {
-                                    toastAlreadyHaveLatest(entityType)
-                                }
-                            }
+                            alreadyHaveLatestHandler()
                         } else if (response.status == 200) {
-                            if (!suppressToasts) {
-                                if (latestDownloadedMessage != null) {
-                                    toastr.success(_.capitalize(entityType) + " downloaded", latestDownloadedMessage, toastConfigLatestDownloaded())
-                                } else {
-                                    toastDownloadedSuccess(entityType)
-                                }
-                            }
                             return response.json().then(json => {
+                                if (changeCompareFn != null) {
+                                    const changeCompareResult = changeCompareFn(state.serverSnapshot, json)
+                                    if (areActualEditsDownloadedFn != null) {
+                                        if (areActualEditsDownloadedFn(changeCompareResult)) {
+                                            editsDownloadedHandler(changeCompareResult)
+                                        } else {
+                                            alreadyHaveLatestHandler()
+                                        }
+                                    } else {
+                                        editsDownloadedHandler(changeCompareResult)
+                                    }
+                                } else {
+                                    editsDownloadedHandler(null)
+                                }
                                 dispatch(receiveServerEntityFn(json))
-                                dispatch(push(refreshUri))
+                                if (refreshUri != null) {
+                                    dispatch(push(refreshUri))
+                                }
                             })
                         } else if (response.status == 404) {
                             // entity removed from other device
-                            dispatch(entityIdNotFoundFn(entityId))
+                            if (entityIdNotFoundFn != null) {
+                                dispatch(entityIdNotFoundFn(entityId))
+                            }
                         } else if (!response.ok) {
                             if (!suppressToasts) {
                                 toastr.error(problemDownloadingLatestMessage(entityType), toastConfigError())
@@ -205,6 +230,7 @@ export function makeAttemptDownloadEntityFn(
                     }
                 })
                 .catch(error => {
+                    console.log("error: " + JSON.stringify(error))
                     dispatch(apiRequestDone())
                     dispatch(toastrActions.clean())
                     if (!suppressToasts) {

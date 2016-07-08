@@ -291,3 +291,20 @@ export function uniqueOctanes(gasLogs) {
     }
     return _.keys(octanes)
 }
+
+export function mostRecentUpdatedAtEntity(entities, updatedAtKey) {
+    const mostRecentlyUpdatedEntity = _.maxBy(entities, entity => {
+        return entity.payload[updatedAtKey]
+    })
+    return mostRecentlyUpdatedEntity.payload[updatedAtKey]
+}
+
+export function mostRecentUpdatedAt(userUpdatedAt, vehicles, fuelstations, fplogs, envlogs) {
+    let dates = []
+    dates.push(userUpdatedAt)
+    dates.push(mostRecentUpdatedAtEntity(vehicles,     "fpvehicle/updated-at"))
+    dates.push(mostRecentUpdatedAtEntity(fuelstations, "fpfuelstation/updated-at"))
+    dates.push(mostRecentUpdatedAtEntity(fplogs,       "fplog/updated-at"))
+    dates.push(mostRecentUpdatedAtEntity(envlogs,      "envlog/updated-at"))
+    return _.max(dates)
+}

@@ -1,6 +1,7 @@
 import React from "react"
 import { push } from 'react-router-redux'
 import { ButtonToolbar,
+         Button,
          DropdownButton,
          MenuItem,
          Panel,
@@ -18,6 +19,7 @@ import { destroy } from "redux-form"
 import * as forms from "../forms"
 import numeral from "numeral"
 import PriceByOctaneChart from "../components/PriceByOctaneChart.jsx"
+import AddRecordButton from "../components/AddRecordButton.jsx"
 
 class AuthenticatedHomePage extends React.Component {
     render() {
@@ -65,13 +67,11 @@ class AuthenticatedHomePage extends React.Component {
                              return (
                                  <div>
                                      <div>
-                                         <DropdownButton bsSize="large" title="Add Record" id="dropdown-size-large">
-                                             <MenuItem eventKey="1" onClick={handleAddGasLog}>Gas Purchase Log</MenuItem>
-                                             <MenuItem eventKey="2" onClick={handleAddOdometerLog}>Odometer Log</MenuItem>
-                                             <MenuItem divider />
-                                             <MenuItem eventKey="3" onClick={handleAddVehicle}>Vehicle</MenuItem>
-                                             <MenuItem eventKey="4" onClick={handleAddFuelstation}>Gas Station</MenuItem>
-                                         </DropdownButton>
+                                         <AddRecordButton
+                                             handleAddVehicle={handleAddVehicle}
+                                             handleAddFuelstation={handleAddFuelstation}
+                                             handleAddGasLog={handleAddGasLog}
+                                             handleAddOdometerLog={handleAddOdometerLog} />
                                      </div>
                                      <h3>Price of Gas</h3>
                                      <p style={{marginBottom: 10}}>The following are a set of charts plotting the price of gas for the set of octanes that you've purchased over your set of vehicles.</p>
@@ -119,7 +119,11 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         handleAddVehicle: () => {
-            //dispatch(destroy(forms.VEHICLE_FORM))
+            dispatch(destroy(forms.VEHICLE_FORM))
+            // the '?nextPathname' part isn't really needed, but leaving here to
+            // serve as an example of how to achieve controlling what page to
+            // navigate to in the event the user cancels from the 'add vehicle'
+            // page, or is successful in creating a vehicle
             dispatch(push(urls.ADD_VEHICLE_URI + "?nextPathname=" + urls.ROOT_URI))
         },
         handleAddFuelstation: () => {

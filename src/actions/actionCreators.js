@@ -10,6 +10,7 @@ import * as urls from "../urls"
 import * as forms from "../forms"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
+import * as mtparts from "../mediaTypeParts"
 
 const LIGHT_LOGIN_URI          = "http://www.jotyourself.com/gasjot/d/light-login"
 const LOGIN_URI                = "http://www.jotyourself.com/gasjot/d/login"
@@ -47,6 +48,10 @@ export function serverUserNotFound(userId) {
 
 export function serverUserNotFoundUserAcknowledged() {
     return { type: actionTypes.SERVER_USER_NOT_FOUND_USER_ACK }
+}
+
+export function receiveServerChangelog(serverChangelog) {
+    return { type: actionTypes.SERVER_CHANGELOG_RECEIVED, serverChangelog }
 }
 
 export function receiveServerVehicleDeletedAck(serverVehicleId) {
@@ -222,19 +227,21 @@ const makeContentType = (mediaType, charset) => mediaType + ";charset=" + charse
 
 const charset = "UTF-8"
 
-const userMediaType = makeMediaType("user")
+const userMediaType = makeMediaType(mtparts.USER_MT_PART)
 const userContentType = makeContentType(userMediaType, charset)
 
-const vehicleMediaType = makeMediaType("vehicle")
+const changelogMediaType = makeMediaType(mtparts.CHANGELOG_MT_PART)
+
+const vehicleMediaType = makeMediaType(mtparts.VEHICLE_MT_PART)
 const vehicleContentType = makeContentType(vehicleMediaType, charset)
 
-const fuelstationMediaType = makeMediaType("fuelstation")
+const fuelstationMediaType = makeMediaType(mtparts.FUELSTATION_MT_PART)
 const fuelstationContentType = makeContentType(fuelstationMediaType, charset)
 
-const odometerLogMediaType = makeMediaType("envlog")
+const odometerLogMediaType = makeMediaType(mtparts.ENVLOG_MT_PART)
 const odometerLogContentType = makeContentType(odometerLogMediaType, charset)
 
-const gasLogMediaType = makeMediaType("fplog")
+const gasLogMediaType = makeMediaType(mtparts.FPLOG_MT_PART)
 const gasLogContentType = makeContentType(gasLogMediaType, charset)
 
 export function logout(logoutUri, authToken) {
@@ -513,6 +520,14 @@ function getUserAccountUpdatedAt(state, userId) {
     return state.serverSnapshot["user/updated-at"]
 }
 
+function getChangelogUri(state, NOT_USED) {
+    return state.serverSnapshot._links.changelog.href
+}
+
+function getChangelogUpdatedAt(state, NOT_USED) {
+    return state.mostRecentUpdatedAt
+}
+
 function getVehiclesUri(state) {
     return state.serverSnapshot._links.vehicles.href
 }
@@ -599,7 +614,9 @@ export const attemptDownloadUserAccount = apiUtils.makeAttemptDownloadEntityFn(
     receiveServerUser,
     serverUserNotFound,
     "You're good.  There have been no updates to your user account information since your last login.",
-    "Your latest user account information has been updated.")
+    null,
+    null,
+    NOT_USED => "Your latest user account information has been updated.")
 
 export const attemptSaveUserAccount = apiUtils.makeAttemptSaveEntityFn(
     "user account",
@@ -613,6 +630,54 @@ export const attemptSaveUserAccount = apiUtils.makeAttemptSaveEntityFn(
     (userId) => urls.EDIT_ACCOUNT_URI,
     receiveServerUser,
     serverUserNotFound)
+
+function changeCountsFromChangelog(currentServerSnapshot, changelog) {
+    let changeCounts = {deleted: 0, updated: 0, added: 0}
+    const changedEntities = changelog._embedded
+    for (let i = 0; i < changedEntities.length; i++) {
+        const changelogEntityMediaType = changedEntities[i]["media-type"]
+        const changelogEntityPayload = changedEntities[i]["payload"]
+
+
+        if (changelogEntityMediaType.includes(mtparts.VEHICLE_MT_PART)) {
+            const matchingEntity = currentServerSnapshot._embedded["vehicles"][changelogEntityPayload["fpvehicle/id"]]
+            if (matchingEntity != null) {
+                if (changelogEntityPayload["fpvehicle/deleted-at"] != null) {
+                    _.update(changeCounts, "deleted", currentCount => currentCount + 1)
+                } else if (changelogEntityPayload["fpvehicle/updated-at"] != matchingEntity.payload["fpvehicle/updated-at"]) {
+                    _.update(changeCounts, "updated", currentCount => currentCount + 1)
+                } else {
+                    // the changelog entity downloaded was due to edits made to it in the user's browser
+                }
+            } else {
+                if (changelogEntityPayload["fpvehicle/deleted-at"] != null) {
+                    // the entity was created and deleted before it was ever downloaded to the user's browser
+                } else {
+                    _.update(changeCounts, "added", currentCount => currentCount + 1)
+                }
+            }
+        }
+
+
+    }
+    return changeCounts
+}
+
+export const attemptDownloadChangelog = apiUtils.makeAttemptDownloadEntityFn(
+    "change log",
+    changelogMediaType,
+    getChangelogUpdatedAt,
+    getChangelogUri,
+    receiveServerChangelog,
+    null, // 404 handler
+    "You're good.  There have been no updates to your account on other devices since you last checked or logged in.",
+    changeCountsFromChangelog,
+    (changeCounts) => {
+        return changeCounts.deleted > 0 || changeCounts.added > 0 || changeCounts.updated > 0
+    },
+    (changeCounts) => {
+        return "Your data records have been updated.  Deleted: " + changeCounts.deleted + ", Added: " + changeCounts.added + ", Updated: " + changeCounts.updated
+    })
 
 export const attemptDownloadVehicle = apiUtils.makeAttemptDownloadEntityFn(
     "vehicle",
