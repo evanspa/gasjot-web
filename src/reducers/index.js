@@ -7,7 +7,7 @@ import {
     serverSnapshotReducer,
     gasjotFormReducer,
     mostRecentUpdatedAtReducer
-} from "./Reducers"
+} from "./reducers"
 import * as actionTypes from "../actions/actionTypes"
 import { reducer as formReducer } from "redux-form"
 import _ from "lodash"
