@@ -1,3 +1,5 @@
+import "intl"
+import "intl/locale-data/jsonp/en.js"
 import express from "express";
 import React from "react";
 import { browserHistory } from 'react-router'
