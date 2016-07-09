@@ -1,5 +1,5 @@
-import "intl"
-import "intl/locale-data/jsonp/en.js"
+//import "intl"
+//import "intl/locale-data/jsonp/en.js"
 import express from "express";
 import React from "react";
 import { browserHistory } from 'react-router'
@@ -12,7 +12,7 @@ import rootReducer from "./reducers/index"
 import thunk from 'redux-thunk'
 import Helmet from "react-helmet";
 import { initialState } from "./store/configureStore"
-import createRoutes from "./routes.jsx";
+import createRoutes from "./Routes.jsx";
 import {IntlProvider} from 'react-intl';
 import ReduxToastr from 'react-redux-toastr'
 
