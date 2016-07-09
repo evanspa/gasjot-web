@@ -14,6 +14,8 @@ import createRoutes from "./Routes.jsx";
 import {IntlProvider} from 'react-intl';
 import ReduxToastr from 'react-redux-toastr'
 
+console.log("inside server.js!")
+
 const app = express();
 
 app.set("views", "./dist/server");
