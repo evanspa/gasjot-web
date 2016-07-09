@@ -79,13 +79,21 @@ export const apiReducer = (state = {}, action) => {
 export const mostRecentUpdatedAtReducer = (state = {}, action) => {
     switch (action.type) {
     case actionTypes.SERVER_SNAPSHOT_RECEIVED:
-        return utils.mostRecentUpdatedAt(action.serverSnapshot["user/updated-at"],
-                                         _.values(action.serverSnapshot._embedded.vehicles),
-                                         _.values(action.serverSnapshot._embedded.fuelstations),
-                                         _.values(action.serverSnapshot._embedded.fplogs),
-                                         _.values(action.serverSnapshot._embedded.envlogs))
+        const serverSnapshot = action.serverSnapshot
+        if (serverSnapshot != null) {
+            const mostRecentUpdatedAt = utils.mostRecentUpdatedAt(serverSnapshot["user/updated-at"],
+                                                                  _.values(serverSnapshot._embedded.vehicles),
+                                                                  _.values(serverSnapshot._embedded.fuelstations),
+                                                                  _.values(serverSnapshot._embedded.fplogs),
+                                                                  _.values(serverSnapshot._embedded.envlogs))
+            if (mostRecentUpdatedAt != null) {
+                return mostRecentUpdatedAt
+            }
+        }
     case actionTypes.SERVER_CHANGELOG_RECEIVED:
-        return action.serverChangelog["changelog/updated-at"]
+        if (action.serverChangelog != null) {
+            return action.serverChangelog["changelog/updated-at"]
+        }
     }
     return state
 }

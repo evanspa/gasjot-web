@@ -296,7 +296,10 @@ export function mostRecentUpdatedAtEntity(entities, updatedAtKey) {
     const mostRecentlyUpdatedEntity = _.maxBy(entities, entity => {
         return entity.payload[updatedAtKey]
     })
-    return mostRecentlyUpdatedEntity.payload[updatedAtKey]
+    if (mostRecentlyUpdatedEntity != null) {
+        return mostRecentlyUpdatedEntity.payload[updatedAtKey]
+    }
+    return null
 }
 
 export function mostRecentUpdatedAt(userUpdatedAt, vehicles, fuelstations, fplogs, envlogs) {
