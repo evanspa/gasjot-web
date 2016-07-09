@@ -4,7 +4,7 @@ import * as storage from 'redux-storage'
 import createEngine from 'redux-storage-engine-localstorage';
 import thunk from 'redux-thunk'
 import rootReducer from "../reducers/index"
-import {initialServerSnapshotState, initialApiState} from "../reducers/Reducers"
+import { initialServerSnapshotState, initialApiState } from "../reducers/reducers"
 
 export const initialState = {
     authToken: null,
