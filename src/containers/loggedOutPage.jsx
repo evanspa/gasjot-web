@@ -4,7 +4,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx"
 import GasJotNavbar from "../components/NavBar.jsx"
 
 export default class LoggedOutPage extends React.Component {
-    render() {
+     render() {
         return (
             <div>
                 <GasJotHelmet title="Logged Out" />
