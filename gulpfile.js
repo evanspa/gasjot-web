@@ -33,9 +33,7 @@ var config = {
             "./src/less/**/*.less"
         ],
         css: [
-            //"node_modules/bootstrap/dist/css/bootstrap.min.css",
             "node_modules/bootstrap/dist/css/bootstrap.css",
-            //"node_modules/bootstrap/dist/css/bootstrap-theme.min.css",
             "node_modules/bootstrap/dist/css/bootstrap-theme.css",
             "node_modules/react-widgets/dist/css/*",
             "node_modules/react-redux-toastr/lib/css/react-redux-toastr.min.css",
@@ -62,7 +60,6 @@ gulp.task("ejs", function() {
 function createBundler() {
     return browserify({
         entries:      [ config.paths.clientRenderJs ],
-        //transform:    [ [babelify, {presets: ["es2015", "react", "stage-2"]}], [envify, {}] ],
         transform:    [ [babelify, {presets: ["es2015", "react", "stage-2"]}] ],
         cache:        {},
         packageCache: {}

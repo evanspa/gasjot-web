@@ -156,6 +156,9 @@ function processChangelog(state, changelog) {
     for (let i = 0; i < changedEntities.length; i++) {
         const mediaType = changedEntities[i]["media-type"]
         const entityPayload = changedEntities[i]["payload"]
+        if (mediaType.includes(mtparts.USER_MT_PART)) {
+            _.assign(newState, entityPayload)
+        }
         processChangelogEntity(newState,
                                mediaType,
                                entityPayload,

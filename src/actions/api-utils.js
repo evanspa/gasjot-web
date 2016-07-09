@@ -1,3 +1,4 @@
+import React from "react"
 import fetch from 'isomorphic-fetch'
 import { toastr } from 'react-redux-toastr'
 import { actions as toastrActions } from 'react-redux-toastr'
@@ -230,7 +231,6 @@ export function makeAttemptDownloadEntityFn(
                     }
                 })
                 .catch(error => {
-                    console.log("error: " + JSON.stringify(error))
                     dispatch(apiRequestDone())
                     dispatch(toastrActions.clean())
                     if (!suppressToasts) {

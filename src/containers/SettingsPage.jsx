@@ -8,6 +8,7 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import { logout, attemptDownloadChangelog } from "../actions/actionCreators"
 import * as urls from "../urls"
 import { toastr } from 'react-redux-toastr'
+import ReauthenticateModal from "./ReauthenticateModal.jsx"
 
 class SettingsPage extends React.Component {
     render() {
@@ -15,6 +16,7 @@ class SettingsPage extends React.Component {
             api,
             logout,
             logoutUri,
+            becameUnauthenticated,
             downloadChangelog
         } = this.props
         const {
@@ -26,6 +28,10 @@ class SettingsPage extends React.Component {
             <div>
                 <GasJotHelmet title="Settings" />
                 <GasJotNavbar />
+                <ReauthenticateModal
+                    showModal={becameUnauthenticated}
+                    message="To download your edits, we need you to re-authenticate."
+                    operationOnLightLoginSuccess={downloadChangelog} />
                 <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
                     <h3 style={{paddingBottom: 5}}>Gas Jot Settings</h3>
                     <form>
@@ -52,7 +58,8 @@ const mapStateToProps = (state, ownProps) => {
     }
     return {
         api: state.api,
-        logoutUri: logoutUri
+        logoutUri: logoutUri,
+        becameUnauthenticated: state.becameUnauthenticated
     }
 }
 

@@ -12,11 +12,11 @@ import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 import * as mtparts from "../mediaTypeParts"
 
-const LIGHT_LOGIN_URI          = "http://www.jotyourself.com/gasjot/d/light-login"
-const LOGIN_URI                = "http://www.jotyourself.com/gasjot/d/login"
-const SIGNUP_URI               = "http://www.jotyourself.com/gasjot/d/users"
-const SEND_PWD_RESET_EMAIL_URI = "http://www.jotyourself.com/gasjot/d/send-password-reset-email"
-const PASSWORD_RESET_URI       = "http://www.jotyourself.com/gasjot/d/password-reset"
+const LIGHT_LOGIN_URI          = "https://www.jotyourself.com/gasjot/d/light-login"
+const LOGIN_URI                = "https://www.jotyourself.com/gasjot/d/login"
+const SIGNUP_URI               = "https://www.jotyourself.com/gasjot/d/users"
+const SEND_PWD_RESET_EMAIL_URI = "https://www.jotyourself.com/gasjot/d/send-password-reset-email"
+const PASSWORD_RESET_URI       = "https://www.jotyourself.com/gasjot/d/password-reset"
 
 function resendVerificationEmailUri(userUri) {
     return userUri + "/send-verification-email"
@@ -631,34 +631,82 @@ export const attemptSaveUserAccount = apiUtils.makeAttemptSaveEntityFn(
     receiveServerUser,
     serverUserNotFound)
 
+function countChangesForChangelogEntity(changeCounts,
+                                        changelogEntityMediaType,
+                                        changelogEntityPayload,
+                                        mtpart,
+                                        currentServerSnapshot,
+                                        entitiesKey,
+                                        entityIdKey,
+                                        entityDeletedAtKey,
+                                        entityUpdatedAtKey) {
+    if (changelogEntityMediaType.includes(mtpart)) {
+        const matchingEntity = currentServerSnapshot._embedded[entitiesKey][changelogEntityPayload[entityIdKey]]
+        if (matchingEntity != null) {
+            if (changelogEntityPayload[entityDeletedAtKey] != null) {
+                _.update(changeCounts, "deleted", currentCount => currentCount + 1)
+            } else if (changelogEntityPayload[entityUpdatedAtKey] != matchingEntity.payload[entityUpdatedAtKey]) {
+                _.update(changeCounts, "updated", currentCount => currentCount + 1)
+            } else {
+                // the changelog entity downloaded was due to edits made to it in the user's browser
+            }
+        } else {
+            if (changelogEntityPayload[entityDeletedAtKey] != null) {
+                // the entity was created and deleted before it was ever downloaded to the user's browser
+            } else {
+                _.update(changeCounts, "added", currentCount => currentCount + 1)
+            }
+        }
+    }
+}
+
 function changeCountsFromChangelog(currentServerSnapshot, changelog) {
     let changeCounts = {deleted: 0, updated: 0, added: 0}
     const changedEntities = changelog._embedded
     for (let i = 0; i < changedEntities.length; i++) {
         const changelogEntityMediaType = changedEntities[i]["media-type"]
         const changelogEntityPayload = changedEntities[i]["payload"]
-
-
-        if (changelogEntityMediaType.includes(mtparts.VEHICLE_MT_PART)) {
-            const matchingEntity = currentServerSnapshot._embedded["vehicles"][changelogEntityPayload["fpvehicle/id"]]
-            if (matchingEntity != null) {
-                if (changelogEntityPayload["fpvehicle/deleted-at"] != null) {
-                    _.update(changeCounts, "deleted", currentCount => currentCount + 1)
-                } else if (changelogEntityPayload["fpvehicle/updated-at"] != matchingEntity.payload["fpvehicle/updated-at"]) {
-                    _.update(changeCounts, "updated", currentCount => currentCount + 1)
-                } else {
-                    // the changelog entity downloaded was due to edits made to it in the user's browser
-                }
-            } else {
-                if (changelogEntityPayload["fpvehicle/deleted-at"] != null) {
-                    // the entity was created and deleted before it was ever downloaded to the user's browser
-                } else {
-                    _.update(changeCounts, "added", currentCount => currentCount + 1)
-                }
+        if (changelogEntityMediaType.includes(mtparts.USER_MT_PART)) {
+            if (changelogEntityPayload["user/updated-at"] != currentServerSnapshot["user/updated-at"]) {
+                _.update(changeCounts, "updated", currentCount => currentCount + 1)
             }
         }
-
-
+        countChangesForChangelogEntity(changeCounts,
+                                       changelogEntityMediaType,
+                                       changelogEntityPayload,
+                                       mtparts.VEHICLE_MT_PART,
+                                       currentServerSnapshot,
+                                       "vehicles",
+                                       "fpvehicle/id",
+                                       "fpvehicle/deleted-at",
+                                       "fpvehicle/updated-at")
+        countChangesForChangelogEntity(changeCounts,
+                                       changelogEntityMediaType,
+                                       changelogEntityPayload,
+                                       mtparts.FUELSTATION_MT_PART,
+                                       currentServerSnapshot,
+                                       "fuelstations",
+                                       "fpfuelstation/id",
+                                       "fpfuelstation/deleted-at",
+                                       "fpfuelstation/updated-at")
+        countChangesForChangelogEntity(changeCounts,
+                                       changelogEntityMediaType,
+                                       changelogEntityPayload,
+                                       mtparts.FPLOG_MT_PART,
+                                       currentServerSnapshot,
+                                       "fplogs",
+                                       "fplog/id",
+                                       "fplog/deleted-at",
+                                       "fplog/updated-at")
+        countChangesForChangelogEntity(changeCounts,
+                                       changelogEntityMediaType,
+                                       changelogEntityPayload,
+                                       mtparts.ENVLOG_MT_PART,
+                                       currentServerSnapshot,
+                                       "envlogs",
+                                       "envlog/id",
+                                       "envlog/deleted-at",
+                                       "envlog/updated-at")
     }
     return changeCounts
 }
@@ -670,13 +718,13 @@ export const attemptDownloadChangelog = apiUtils.makeAttemptDownloadEntityFn(
     getChangelogUri,
     receiveServerChangelog,
     null, // 404 handler
-    "You're good.  There have been no updates to your account on other devices since you last checked or logged in.",
+    "You're good.  There have been no updates to any of your data records on other devices since you last checked or logged in.",
     changeCountsFromChangelog,
     (changeCounts) => {
         return changeCounts.deleted > 0 || changeCounts.added > 0 || changeCounts.updated > 0
     },
     (changeCounts) => {
-        return "Your data records have been updated.  Deleted: " + changeCounts.deleted + ", Added: " + changeCounts.added + ", Updated: " + changeCounts.updated
+        return "Your data records have been updated.  Number of records deleted: " + changeCounts.deleted + ", added: " + changeCounts.added + " and updated: " + changeCounts.updated
     })
 
 export const attemptDownloadVehicle = apiUtils.makeAttemptDownloadEntityFn(
