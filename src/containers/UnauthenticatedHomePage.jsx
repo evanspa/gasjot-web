@@ -8,12 +8,12 @@ import * as urls from "../urls"
 export default (props) =>
     <div>
         <GasJotHelmet title="Home" />
-        <div className="container"><GasJotNavbar /></div>
-        <Col md={6} mdOffset={3}>
+        <GasJotNavbar />
+        <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
             <Jumbotron>
-                <h1>Welcome to Gas Jot</h1>
+                <h3>Welcome to Gas Jot</h3>
                 <p className="lead">A fun way to track your gas usage.</p>
-                <p><Link className="btn btn-lg btn-success" to={urls.SIGNUP_URI} role="button">Sign up today</Link></p>
+                <p style={{marginTop: 20}}><Link className="btn btn-lg btn-success" to={urls.SIGNUP_URI} role="button">Sign up today</Link></p>
             </Jumbotron>
             <Row className="marketing">
                 <Col md={12}>

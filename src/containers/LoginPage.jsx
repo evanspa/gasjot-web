@@ -32,20 +32,16 @@ class LogInPage extends React.Component {
             <div>
                 <GasJotHelmet title="Log In" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
-                    <Panel>
-                        <Col xs={8} xsOffset={2}>
-                            <h1 className="text-center">Log in to your Gas Jot account</h1>
-                            <LoginForm
-                                onSubmit={ makeLoginHandler(location, handleSubmit) }
-                                requestInProgress={requestInProgress}
-                                clearErrors={clearErrors}
-                                responseStatus={responseStatus} />
-                            <hr />
-                            <p style={{paddingBottom: 10}}>Don't have an account?  <Link to={urls.SIGNUP_URI}>Sign up.</Link></p>
-                            <Link to={urls.FORGOT_PASSWORD_URI}>Forgot Password?</Link>
-                        </Col>
-                    </Panel>
+                <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
+                     <h4 className="text-center">Gas Jot Login</h4>
+                     <LoginForm
+                         onSubmit={ makeLoginHandler(location, handleSubmit) }
+                         requestInProgress={requestInProgress}
+                         clearErrors={clearErrors}
+                         responseStatus={responseStatus} />
+                     <hr />
+                     <p style={{paddingBottom: 10}}>Don't have an account?  <Link to={urls.SIGNUP_URI}>Sign up.</Link></p>
+                     <Link to={urls.FORGOT_PASSWORD_URI}>Forgot Password?</Link>
                 </Col>
             </div>
         );

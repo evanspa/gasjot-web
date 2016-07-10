@@ -23,19 +23,15 @@ class SignUpPage extends React.Component {
             <div>
                 <GasJotHelmet title="Sign Up" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
-                    <Panel>
-                        <Col md={8} mdOffset={2}>
-                            <h1 className="text-center" style={{marginBottom: 20}}>Sign up for a Gas Jot account.</h1>
-                            <SignUpForm
-                                onSubmit={() => handleSubmit()}
-                                requestInProgress={requestInProgress}
-                                clearErrors={clearErrors}
-                                fpErrorMask={fpErrorMask} />
-                            <hr />
-                            <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
-                        </Col>
-                    </Panel>
+                <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
+                    <h4 className="text-center" style={{marginBottom: 20}}>Gas Jot Sign Up</h4>
+                    <SignUpForm
+                        onSubmit={() => handleSubmit()}
+                        requestInProgress={requestInProgress}
+                        clearErrors={clearErrors}
+                        fpErrorMask={fpErrorMask} />
+                    <hr />
+                    <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
                 </Col>
             </div>
         );

@@ -3,6 +3,11 @@ body {
     padding-bottom: 20px;
 }
 
+.row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 .navbar {
     margin-bottom: 20px;
 }

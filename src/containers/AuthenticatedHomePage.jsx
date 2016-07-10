@@ -39,7 +39,7 @@ class AuthenticatedHomePage extends React.Component {
             <div>
                 <GasJotHelmet title="Home" />
                 <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
+                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
                     {(() => {
                          if (vehicleCount == 0) {
                              return (
@@ -73,7 +73,7 @@ class AuthenticatedHomePage extends React.Component {
                                              handleAddGasLog={handleAddGasLog}
                                              handleAddOdometerLog={handleAddOdometerLog} />
                                      </div>
-                                     <h3>Price of Gas</h3>
+                                     <h4>Price of Gas</h4>
                                      <p style={{marginBottom: 10}}>The following are a set of charts plotting the price of gas for the set of octanes that you've purchased over your set of vehicles.</p>
                                      {
                                          (() => {

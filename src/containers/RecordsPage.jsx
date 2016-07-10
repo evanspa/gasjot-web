@@ -28,7 +28,7 @@ class RecordsPage extends React.Component {
             <div>
                 <GasJotHelmet title="Home" />
                 <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
+                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
                     <div>
                         <AddRecordButton
                             handleAddVehicle={handleAddVehicle}
