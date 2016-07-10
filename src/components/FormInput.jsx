@@ -6,6 +6,7 @@ import { DropdownList } from "react-widgets"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 import * as utils from "../utils"
+import _ from "lodash"
 
 export class GasJotFormGroup extends React.Component {
     render() {
@@ -28,7 +29,7 @@ export class GasJotFormGroup extends React.Component {
                                          editFormat={utils.DATE_EDIT_FORMAT}
                                          parse={str => moment(str, utils.DATE_EDIT_FORMAT).toDate()}
                                          format={utils.DATE_DISPLAY_FORMAT}
-                                         value={moment(field.value, utils.DATE_DISPLAY_FORMAT).toDate()}
+                                         value={!_.isEmpty(field.value) ? moment(field.value, utils.DATE_DISPLAY_FORMAT).toDate() : null}
                                          onChange={(name, value) => field.onChange(value)}
                                          name={field.name}
                                          disabled={this.props.disabled}

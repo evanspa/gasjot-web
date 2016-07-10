@@ -72,6 +72,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(push(urls.odometerLogDetailUrl(odometerLogId)))
         },
         handleSubmit: (vehicles, odometerLogId) => {
+            console.log("odometer log edit handleSubmit invoked")
             toastr.clean()
             dispatch(attemptSaveOdometerLogFnMaker(vehicles)(odometerLogId));
         },
