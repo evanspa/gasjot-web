@@ -10,6 +10,7 @@ import _ from "lodash"
 import * as forms from "../forms"
 import * as urls from "../urls"
 import AddRecordButton from "../components/AddRecordButton.jsx"
+import * as gvs from "../grid-vals"
 
 class RecordsPage extends React.Component {
     render() {
@@ -28,7 +29,10 @@ class RecordsPage extends React.Component {
             <div>
                 <GasJotHelmet title="Home" />
                 <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <div>
                         <AddRecordButton
                             handleAddVehicle={handleAddVehicle}

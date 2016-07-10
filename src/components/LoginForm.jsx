@@ -42,7 +42,7 @@ class LogInForm extends React.Component {
                         label="Password"
                         type="password"
                         field={password} />
-                    <Button type="submit" bsStyle="primary" bsSize="large" disabled={requestInProgress} block>Log in</Button>
+                    <Button type="submit" bsStyle="primary" disabled={requestInProgress}>Log in</Button>
                 </form>
             </div>
         );

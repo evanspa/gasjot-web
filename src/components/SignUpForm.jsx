@@ -57,7 +57,7 @@ class SignUpForm extends React.Component {
                         label="Password"
                         type="password"
                         field={password} />
-                    <Button type="submit" bsStyle="primary" bsSize="large" disabled={requestInProgress} block>Sign up</Button>
+                    <Button type="submit" bsStyle="primary" disabled={requestInProgress}>Sign up</Button>
                 </form>
             </div>
         );

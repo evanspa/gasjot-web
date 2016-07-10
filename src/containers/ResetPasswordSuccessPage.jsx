@@ -5,6 +5,7 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx"
 import GasJotNavbar from "../components/NavBar.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
+import * as gvs from "../grid-vals"
 
 export default class ResetPasswordSuccessPage extends React.Component {
     render() {
@@ -12,8 +13,11 @@ export default class ResetPasswordSuccessPage extends React.Component {
             <div>
                 <GasJotHelmet title="Password Reset Successful" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
-                    <Panel header={<h3>Password Reset Successful</h3>} bsStyle="success">
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
+                    <Panel header={<h4>Password Reset Successful</h4>} bsStyle="success">
                         <div>Your password has been reset.</div>
                         <div style={{paddingTop: 15}}>
                             <Link to={urls.LOGIN_URI}>Click here to log in.</Link>

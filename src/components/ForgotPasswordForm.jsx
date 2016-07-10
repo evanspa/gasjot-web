@@ -48,7 +48,7 @@ class ForgotPasswordForm extends React.Component {
                         label="E-mail"
                         field={email}
                         autoFocus={true} />
-                    <Button type="submit" bsStyle="primary" disabled={requestInProgress} block>Submit</Button>
+                    <Button type="submit" bsStyle="primary" disabled={requestInProgress}>Submit</Button>
                 </form>
             </div>
         );

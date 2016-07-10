@@ -4,12 +4,16 @@ import GasJotHelmet from "../components/GasJotHelmet.jsx";
 import { Jumbotron, Col, Row } from "react-bootstrap";
 import GasJotNavbar from "../components/NavBar.jsx"
 import * as urls from "../urls"
+import * as gvs from "../grid-vals"
 
 export default (props) =>
     <div>
         <GasJotHelmet title="Home" />
         <GasJotNavbar />
-        <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
+        <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+             md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+             sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+             xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
             <Jumbotron>
                 <h3>Welcome to Gas Jot</h3>
                 <p className="lead">A fun way to track your gas usage.</p>

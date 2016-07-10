@@ -9,6 +9,7 @@ import { logout, attemptDownloadChangelog } from "../actions/actionCreators"
 import * as urls from "../urls"
 import { toastr } from 'react-redux-toastr'
 import ReauthenticateModal from "./ReauthenticateModal.jsx"
+import * as gvs from "../grid-vals"
 
 class SettingsPage extends React.Component {
     render() {
@@ -32,7 +33,10 @@ class SettingsPage extends React.Component {
                     showModal={becameUnauthenticated}
                     message="To download your edits, we need you to re-authenticate."
                     operationOnLightLoginSuccess={downloadChangelog} />
-                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <Panel>
                         <h4 style={{paddingBottom: 5}}>Gas Jot Settings</h4>
                         <form>

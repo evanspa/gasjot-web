@@ -8,6 +8,7 @@ import SignUpForm from "../components/SignUpForm.jsx";
 import GasJotNavbar from "../components/NavBar.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
+import * as gvs from "../grid-vals"
 
 class SignUpPage extends React.Component {
     render() {
@@ -23,7 +24,10 @@ class SignUpPage extends React.Component {
             <div>
                 <GasJotHelmet title="Sign Up" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <Panel>
                         <h4 className="text-center" style={{marginBottom: 20}}>Gas Jot Sign Up</h4>
                         <SignUpForm

@@ -8,6 +8,7 @@ import * as errFlags from "../errorFlags"
 import ErrorMessages from "../components/ErrorMessages.jsx"
 import * as urls from "../urls"
 import * as utils from "../utils"
+import * as gvs from "../grid-vals"
 
 export default class PasswordResetPrepareErrorPage extends React.Component {
     render() {
@@ -16,8 +17,11 @@ export default class PasswordResetPrepareErrorPage extends React.Component {
             <div>
                 <GasJotHelmet title="Password Reset Error" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
-                    <Panel header={<h3>Password Reset Error</h3>} bsStyle="danger">
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
+                    <Panel header={<h4>Password Reset Error</h4>} bsStyle="danger">
                         <div>There was a problem attempting to reset your password.</div>
                         {(() => {
                              if (fpErrorMask != null) {

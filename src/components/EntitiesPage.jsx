@@ -8,6 +8,7 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import EntityList from "../components/EntityList.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
+import * as gvs from "../grid-vals"
 
 export default class EntitiesPage extends React.Component {
     render() {
@@ -27,7 +28,10 @@ export default class EntitiesPage extends React.Component {
             <div>
                 <GasJotHelmet title={"Your " + capitalizedEntityType + "s"} />
                 <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <h4 style={{paddingBottom: 5}}>{"Your " + capitalizedEntityType + "s"}</h4>
                     <EntityList
                         entityType={entityType}

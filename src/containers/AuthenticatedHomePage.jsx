@@ -20,6 +20,7 @@ import * as forms from "../forms"
 import numeral from "numeral"
 import PriceByOctaneChart from "../components/PriceByOctaneChart.jsx"
 import AddRecordButton from "../components/AddRecordButton.jsx"
+import * as gvs from "../grid-vals"
 
 class AuthenticatedHomePage extends React.Component {
     render() {
@@ -35,15 +36,17 @@ class AuthenticatedHomePage extends React.Component {
             handleAddOdometerLog
         } = this.props
         return (
-
             <div>
                 <GasJotHelmet title="Home" />
                 <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     {(() => {
                          if (vehicleCount == 0) {
                              return (
-                                 <Panel header={<h3>No Vehicles Yet</h3>} bsStyle="success">
+                                 <Panel header={<h4>No Vehicles Yet</h4>} bsStyle="success">
                                      <div>It looks like you don't have any vehicles defined yet.</div>
                                      <div style={{paddingTop: 15}}>Let's begin by adding your first vehicle.</div>
                                      <p style={{marginTop: 15}}>
@@ -53,7 +56,7 @@ class AuthenticatedHomePage extends React.Component {
                              )
                          } else if (gasLogCount == 0 && odometerLogCount == 0) {
                              return (
-                                 <Panel header={<h3>No Logs Yet</h3>} bsStyle="success">
+                                 <Panel header={<h4>No Logs Yet</h4>} bsStyle="success">
                                      <div>You have {vehicleCount > 1 ? "some vehicles" : "a vehicle"} defined, but you don't yet have any logs created.</div>
                                      <div style={{paddingTop: 15}}>Get your data going by start logging your gas purchases, or just logging some of your odometer readings.</div>
                                      <p style={{marginTop: 15}}>

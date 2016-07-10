@@ -8,6 +8,7 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import { attemptDownloadUserAccount } from "../actions/actionCreators"
 import _ from "lodash"
 import * as urls from "../urls"
+import * as gvs from "../grid-vals"
 
 class AccountVerifiedPage extends React.Component {
 
@@ -30,8 +31,11 @@ class AccountVerifiedPage extends React.Component {
             <div>
                 <GasJotHelmet title="Account Verified" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
-                    <Panel header={<h3>Account Verified Successfully</h3>} bsStyle="success">
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
+                    <Panel header={<h4>Account Verified Successfully</h4>} bsStyle="success">
                         <div>Your account has been verified.</div>
                         <div style={{paddingTop: 15}}>
                         {

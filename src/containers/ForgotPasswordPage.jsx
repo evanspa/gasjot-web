@@ -8,6 +8,7 @@ import ForgotPasswordForm from "../components/ForgotPasswordForm.jsx"
 import { attemptSendPasswordResetEmail,
          clearErrors } from "../actions/actionCreators"
 import { toastr } from 'react-redux-toastr'
+import * as gvs from "../grid-vals"
 
 class ForgotPasswordPage extends React.Component {
 
@@ -22,16 +23,17 @@ class ForgotPasswordPage extends React.Component {
             <div>
                 <GasJotHelmet title="Password Reset" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <Panel>
-                        <Col xs={8} xsOffset={2}>
-                            <span>Enter your email address below, and we'll send you a link to use to reset your password.</span>
-                            <ForgotPasswordForm
-                                onSubmit={handleSubmit}
-                                requestInProgress={requestInProgress}
-                                clearErrors={clearErrors}
-                                fpErrorMask={fpErrorMask} />
-                        </Col>
+                        <span>Enter your email address below, and we'll send you a link to use to reset your password.</span>
+                        <ForgotPasswordForm
+                            onSubmit={handleSubmit}
+                            requestInProgress={requestInProgress}
+                            clearErrors={clearErrors}
+                            fpErrorMask={fpErrorMask} />
                     </Panel>
                 </Col>
             </div>

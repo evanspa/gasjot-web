@@ -4,6 +4,7 @@ import { Link } from "react-router"
 import _ from "lodash"
 import GasJotHelmet from "../components/GasJotHelmet.jsx"
 import GasJotNavbar from "../components/NavBar.jsx"
+import * as gvs from "../grid-vals"
 
 export default class EntityDetailPage extends React.Component {
     render() {
@@ -29,7 +30,10 @@ export default class EntityDetailPage extends React.Component {
                 <GasJotHelmet title={pageTitle} />
                 <GasJotNavbar />
                 {reauthenticateModal}
-                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <h4 style={{paddingBottom: 5}}>{heading}</h4>
                     {entityForm}
                 </Col>

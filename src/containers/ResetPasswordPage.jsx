@@ -9,6 +9,7 @@ import GasJotNavbar from "../components/NavBar.jsx"
 import { makeLoginHandler } from "../utils"
 import _ from "lodash"
 import * as urls from "../urls"
+import * as gvs from "../grid-vals"
 
 class ResetPasswordPage extends React.Component {
     render() {
@@ -24,19 +25,20 @@ class ResetPasswordPage extends React.Component {
             <div>
                 <GasJotHelmet title="Password Reset" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
+                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <Panel>
-                        <Col xs={8} xsOffset={2}>
-                            <h2 className="text-center">Password Reset</h2>
-                            <ResetPasswordForm
-                                onSubmit={() => handleSubmit(email, resetToken) }
-                                requestInProgress={requestInProgress}
-                                clearErrors={clearErrors}
-                                fpErrorMask={fpErrorMask}
-                                responseStatus={responseStatus} />
-                            <hr />
-                            <p>Not working? <Link to={urls.FORGOT_PASSWORD_URI}>Click here to get a new password-reset link.</Link></p>
-                        </Col>
+                        <h4 className="text-center">Password Reset</h4>
+                        <ResetPasswordForm
+                            onSubmit={() => handleSubmit(email, resetToken) }
+                            requestInProgress={requestInProgress}
+                            clearErrors={clearErrors}
+                            fpErrorMask={fpErrorMask}
+                            responseStatus={responseStatus} />
+                        <hr />
+                        <p>Not working? <Link to={urls.FORGOT_PASSWORD_URI}>Click here to get a new password-reset link.</Link></p>
                     </Panel>
                 </Col>
             </div>
