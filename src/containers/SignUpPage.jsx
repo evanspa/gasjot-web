@@ -24,14 +24,16 @@ class SignUpPage extends React.Component {
                 <GasJotHelmet title="Sign Up" />
                 <GasJotNavbar />
                 <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
-                    <h4 className="text-center" style={{marginBottom: 20}}>Gas Jot Sign Up</h4>
-                    <SignUpForm
-                        onSubmit={() => handleSubmit()}
-                        requestInProgress={requestInProgress}
-                        clearErrors={clearErrors}
-                        fpErrorMask={fpErrorMask} />
-                    <hr />
-                    <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
+                    <Panel>
+                        <h4 className="text-center" style={{marginBottom: 20}}>Gas Jot Sign Up</h4>
+                        <SignUpForm
+                            onSubmit={() => handleSubmit()}
+                            requestInProgress={requestInProgress}
+                            clearErrors={clearErrors}
+                            fpErrorMask={fpErrorMask} />
+                        <hr />
+                        <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
+                    </Panel>
                 </Col>
             </div>
         );

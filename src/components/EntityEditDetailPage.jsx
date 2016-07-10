@@ -29,8 +29,8 @@ export default class EntityDetailPage extends React.Component {
                 <GasJotHelmet title={pageTitle} />
                 <GasJotNavbar />
                 {reauthenticateModal}
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <h3 style={{paddingBottom: 5}}>{heading}</h3>
+                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                    <h4 style={{paddingBottom: 5}}>{heading}</h4>
                     {entityForm}
                 </Col>
             </div>

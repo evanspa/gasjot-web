@@ -27,8 +27,8 @@ export default class EntitiesPage extends React.Component {
             <div>
                 <GasJotHelmet title={"Your " + capitalizedEntityType + "s"} />
                 <GasJotNavbar />
-                <Col md={8} mdOffset={2} xs={10} xsOffset={1}>
-                    <h3 style={{paddingBottom: 5}}>{"Your " + capitalizedEntityType + "s"}</h3>
+                <Col md={8} mdOffset={2} xs={12} xsOffset={0}>
+                    <h4 style={{paddingBottom: 5}}>{"Your " + capitalizedEntityType + "s"}</h4>
                     <EntityList
                         entityType={entityType}
                         entities={entities}

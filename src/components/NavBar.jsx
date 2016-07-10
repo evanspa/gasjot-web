@@ -50,7 +50,9 @@ class GasJotNavbar extends React.Component {
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    {nav}
+                    <div>
+                        {nav}
+                    </div>
                 </Navbar.Collapse>
             </Navbar>
         );

@@ -36,7 +36,7 @@ class RecordsPage extends React.Component {
                             handleAddGasLog={handleAddGasLog}
                             handleAddOdometerLog={handleAddOdometerLog} />
                     </div>
-                    <h3 style={{marginTop: 20}}>Your Records</h3>
+                    <h4 style={{marginTop: 20}}>Your Records</h4>
                     <p>From here you can drill into all of your Gas Jot data records.</p>
                     <Records
                         onItemSelect={onItemSelect}

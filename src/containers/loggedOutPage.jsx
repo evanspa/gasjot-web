@@ -9,7 +9,7 @@ export default class LoggedOutPage extends React.Component {
             <div>
                 <GasJotHelmet title="Logged Out" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
+                <Col md={6} mdOffset={3} xs={12} xsOffset={0}>
                     <Panel header={<h3>Logged Out</h3>} bsStyle="success">
                         You have been logged out successfully.
                     </Panel>
