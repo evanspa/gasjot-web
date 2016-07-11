@@ -391,18 +391,18 @@ export function attemptLogin(nextSuccessPathname) {
         };
         return fetch(LOGIN_URI, apiUtils.postInitForFetch(headers, requestPayload))
             .then(response => {
-                toastr.clean()
                 dispatch(apiUtils.apiRequestDone())
                 dispatch(receiveAuthenticationToken(response.headers.get(apiUtils.FP_AUTH_TOKEN_HEADER)))
                 dispatch(receiveUserUri(response.headers.get("Location")))
                 dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
                 if (response.status == 401) {
+                    toastr.clean()
                     toastr.error("Login failed.", apiUtils.toastConfigError())
                 } else {
                     return response.json().then(json => {
                         dispatch(receiveServerSnapshot(json))
                         dispatch(push(nextSuccessPathname))
-                        dispatch(toastrActions.clean())
+                        toastr.clean()
                         toastr.success("Welcome Back", "You are now logged in.", apiUtils.toastConfigSuccess())
                     })
                 }
@@ -434,7 +434,7 @@ export function attemptLightLogin(operationOnSuccess) {
                 dispatch(receiveAuthenticationToken(response.headers.get(apiUtils.FP_AUTH_TOKEN_HEADER)))
                 dispatch(apiUtils.receiveResponseStatus(response.status, response.headers.get(apiUtils.FP_ERR_MASK_HEADER)))
                 if (response.status == 204) {
-                    dispatch(toastrActions.clean())
+                    toastr.clean()
                     dispatch(becameReauthenticated())
                     if (operationOnSuccess != null) {
                         operationOnSuccess() // this will presumably come with its own toasts, so we won't bother with the 'You've been re-auth'd' toast

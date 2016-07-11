@@ -15,6 +15,8 @@ var concat = require("gulp-concat"); //Concatenates files
 var lint = require("gulp-eslint"); //Lint JS files, including JSX
 var exec = require("child_process").exec;
 var livereload = require('gulp-livereload');
+var uglify = require('gulp-uglify');
+var pump = require('pump');
 
 var config = {
     port: 80,
@@ -66,19 +68,39 @@ function createBundler() {
     })
 }
 
-gulp.task("bundle:js", function() {
+gulp.task("bundleClientJsAndReload", function() {
     createBundler()
         .bundle()
         .on("error", console.error.bind(console))
         .pipe(source("bundle.js"))
         .pipe(gulp.dest(config.paths.clientRenderDist + "/scripts"))
         .pipe(livereload());
+});
 
+gulp.task("bundleClientJs", function() {
+    createBundler()
+        .bundle()
+        .on("error", console.error.bind(console))
+        .pipe(source("bundle.js"))
+        .pipe(gulp.dest(config.paths.clientRenderDist + "/scripts"));
+});
+
+gulp.task("bundleAndCompressClientJs", function() {
+    createBundler()
+        .bundle()
+        .on("error", console.error.bind(console))
+        .pipe(source("bundle.js"))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(gulp.dest(config.paths.clientRenderDist + "/scripts"));
+});
+
+gulp.task("bundleServerJs", function() {
     // there doesn't seem to be a way to invoke the browserify task with the
     // 'node' option, so, need to revert to invoking browserify on the command-line
     exec("mkdir -p dist/server");
     exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ babelify --presets [ es2015 react stage-2 ] ]");
-});
+})
 
 gulp.task("bundle:css", function() {
     gulp.src(config.paths.css)
@@ -122,4 +144,8 @@ gulp.task("watch", function() {
     gulp.watch(config.paths.js, ["bundle:js", "lint"]);
 });
 
-gulp.task("default", ["ejs", "bundle:js", "fonts", "bundle:css", "less", "images", "lint", "watch"]);
+gulp.task("dev", ["ejs", "bundleClientJsAndReload", "fonts", "bundle:css", "less", "images", "lint", "watch"]);
+
+gulp.task("build", ["ejs", "bundleClientJs", "bundleServerJs", "fonts", "bundle:css", "less", "images", "lint"]);
+
+gulp.task("buildAndCompress", ["ejs", "bundleAndCompressClientJs", "bundleServerJs", "fonts", "bundle:css", "less", "images", "lint"]);
