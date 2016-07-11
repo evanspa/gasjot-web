@@ -13,9 +13,11 @@ to communicate with [Gas Jot's REST API](https://github.com/evanspa/pe-gasjot-ap
 
 The Gas Jot system is a client/server one.  This repo, *gasjot-web*, represents a client-side application of
 the Gas Jot system.  There is also an iOS client application:
-[GasJot-ios](https://github.com/evanspa/GasJot-ios).  *FYI, the Gas Jot iOS
-application is much more featureful than the web app.  The iOS offers more
-charts, offline mode, data export, location-based conveniences, etc.*
+[GasJot-ios](https://github.com/evanspa/GasJot-ios).
+
+*FYI, the Gas Jot iOS application is much more featureful than the web app.  The
+iOS app offers more charts, offline mode, data export, location-based
+conveniences, etc.*
 
 The server-side application of Gas Jot provides a REST API endpoint (*written in
 Clojure*) for the client applications to consume:
