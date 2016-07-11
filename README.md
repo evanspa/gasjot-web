@@ -25,7 +25,7 @@ Clojure*) for the client applications to consume:
 
 ## Implementation Stack
 
-The following technologies are used to build the Gas Jot web application:
+The following technologies are used to develop the Gas Jot web application:
 
 + [React](https://facebook.github.io/react/)
 + [React Router](https://github.com/reactjs/react-router)
@@ -42,9 +42,11 @@ The following technologies are used to build the Gas Jot web application:
 + [Moment](http://momentjs.com/)
 + [Lodash](https://lodash.com/)
 + [Numeral](http://numeraljs.com/)
++ [Express](http://expressjs.com/)
 
 And for development tooling:
 
 + [Browserify](http://browserify.org/)
 + [Babel](https://babeljs.io/)
 + [Gulp](http://gulpjs.com/)
++ [UglifyJS](https://github.com/mishoo/UglifyJS)
