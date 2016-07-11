@@ -140,7 +140,7 @@ gulp.task("watch", function() {
     gulp.watch(config.paths.images, ["images"]);
     gulp.watch(config.paths.ejs, ["ejs"]);
     gulp.watch(config.paths.css, ["bundle:css"]);
-    gulp.watch(config.paths.js, ["bundle:js", "lint"]);
+    gulp.watch(config.paths.js, ["bundleClientJs"]);
 });
 
 gulp.task("dev", ["ejs", "bundleClientJsAndReload", "fonts", "bundle:css", "less", "images", "lint", "watch"]);
