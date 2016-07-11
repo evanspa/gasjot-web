@@ -1,5 +1,3 @@
-//import "intl"
-//import "intl/locale-data/jsonp/en.js"
 import express from "express";
 import React from "react";
 import { browserHistory } from 'react-router'
@@ -15,8 +13,7 @@ import { initialState } from "./store/configureStore"
 import createRoutes from "./routes.jsx";
 import {IntlProvider} from 'react-intl';
 import ReduxToastr from 'react-redux-toastr'
-
-console.log("inside server.js!")
+import _ from "lodash"
 
 const app = express();
 
