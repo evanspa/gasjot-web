@@ -14,11 +14,9 @@ class AccountVerifiedPage extends React.Component {
 
     constructor(props, context) {
         super(props, context)
-        this.state = { componentDidMount: false }
     }
 
     componentDidMount() {
-        this.setState = { componentDidMount: true }
         const { authToken, downloadUser } = this.props
         if (!_.isEmpty(authToken)) {
             downloadUser()
@@ -43,11 +41,7 @@ class AccountVerifiedPage extends React.Component {
                                 if (!_.isEmpty(authToken)) {
                                     return (<Link to={urls.ROOT_URI}>Your Gas Jot Home.</Link>)
                                 } else {
-                                    if (this.state.componentDidMount) {
-                                        return (<Link to={urls.LOGIN_URI}>Log in to your Gas Jot account.</Link>)
-                                    } else {
-                                        return (<span>One moment...</span>) // initial render on server
-                                    }
+                                    return (<Link to={urls.LOGIN_URI}>Log in to your Gas Jot account.</Link>)
                                 }
                             })()
                         }
