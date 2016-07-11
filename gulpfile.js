@@ -16,7 +16,6 @@ var lint = require("gulp-eslint"); //Lint JS files, including JSX
 var exec = require("child_process").exec;
 var livereload = require('gulp-livereload');
 var uglify = require('gulp-uglify');
-var pump = require('pump');
 
 var config = {
     port: 80,
