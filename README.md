@@ -5,21 +5,23 @@ your vehicle.  It's a fun application to use to track your gas purchase and
 utilization history.
 
 It is implemented as an isomorphic Javascript application using React and
-Redux.  The [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used to communicate with GasJot's REST API.
-
-**Table of Contents**
-
-- [About the Gas Jot System](#about-the-gas-jot-system)
-  - [Implementation Stack](#implementation-stack)
-  - [Server-side Application](#server-side-application)
+Redux.  The
+[Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is used
+to communicate with [Gas Jot's REST API](https://github.com/evanspa/pe-gasjot-app).
 
 ## About the Gas Jot System
 
 The Gas Jot system is a client/server one.  This repo, *gasjot-web*, represents a client-side application of
 the Gas Jot system.  There is also an iOS client application:
-[GasJot-ios](https://github.com/evanspa/GasJot-ios).
+[GasJot-ios](https://github.com/evanspa/GasJot-ios).  *FYI, the Gas Jot iOS
+application is much more featureful than the web app.  The iOS offers more
+charts, offline mode, data export, location-based conveniences, etc.*
 
-### Implementation Stack
+The server-side application of Gas Jot provides a REST API endpoint (*written in
+Clojure*) for the client applications to consume:
+[pe-gasjot-app](https://github.com/evanspa/pe-gasjot-app).
+
+## Implementation Stack
 
 The following technologies are used to build the Gas Jot web application:
 
@@ -44,9 +46,3 @@ And for development tooling:
 + [Browserify](http://browserify.org/)
 + [Babel](https://babeljs.io/)
 + [Gulp](http://gulpjs.com/)
-
-### Server-side Application
-
-The server-side application of Gas Jot provides a REST API endpoint (*written in
-Clojure*) for the client applications to consume:
-[pe-gasjot-app](https://github.com/evanspa/pe-gasjot-app).
