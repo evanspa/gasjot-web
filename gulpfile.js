@@ -85,6 +85,7 @@ gulp.task("bundleClientJs", function() {
 });
 
 gulp.task("bundleAndCompressClientJs", function() {
+    process.env.NODE_ENV = 'production';
     createBundler()
         .bundle()
         .on("error", console.error.bind(console))
@@ -98,7 +99,7 @@ gulp.task("bundleServerJs", function() {
     // there doesn't seem to be a way to invoke the browserify task with the
     // 'node' option, so, need to revert to invoking browserify on the command-line
     exec("mkdir -p dist/server");
-    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ babelify --presets [ es2015 react stage-2 ] ]");
+    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ envify --NODE_ENV production babelify --presets [ es2015 react stage-2 ] ]");
 })
 
 gulp.task("bundle:css", function() {
@@ -141,6 +142,10 @@ gulp.task("watch", function() {
     gulp.watch(config.paths.ejs, ["ejs"]);
     gulp.watch(config.paths.css, ["bundle:css"]);
     gulp.watch(config.paths.js, ["bundleClientJsAndReload"]);
+});
+
+gulp.task('apply-prod-environment', function() {
+    process.env.NODE_ENV = 'production';
 });
 
 gulp.task("dev", ["ejs", "bundleClientJsAndReload", "fonts", "bundle:css", "less", "images", "lint", "watch"]);

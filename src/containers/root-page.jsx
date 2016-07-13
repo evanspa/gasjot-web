@@ -23,7 +23,7 @@ class RootPage extends Component {
     }
 }
 
-Root.propTypes = {
+RootPage.propTypes = {
     store: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired
 }
