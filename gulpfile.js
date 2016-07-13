@@ -99,7 +99,7 @@ gulp.task("bundleServerJs", function() {
     // there doesn't seem to be a way to invoke the browserify task with the
     // 'node' option, so, need to revert to invoking browserify on the command-line
     exec("mkdir -p dist/server");
-    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ envify --NODE_ENV production babelify --presets [ es2015 react stage-2 ] ]");
+    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ envify --NODE_ENV production ] -t [ babelify --presets [ es2015 react stage-2 ] ]");
 })
 
 gulp.task("bundle:css", function() {
