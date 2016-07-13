@@ -3,8 +3,8 @@ import "intl/locale-data/jsonp/en.js"
 import React, { Component, PropTypes } from "react"
 import { connect, Provider } from "react-redux"
 import { Router } from "react-router"
-import {IntlProvider} from 'react-intl';
-import createRoutes from '../routes.jsx'
+import {IntlProvider} from 'react-intl'
+import createRoutes from "../routes.jsx"
 import ReduxToastr from 'react-redux-toastr'
 
 class RootPage extends Component {

@@ -11,7 +11,7 @@ import { ButtonToolbar,
 import { connect } from 'react-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import GasJotNavbar from "../components/navbar.jsx"
-import Records from "../components/Records.jsx"
+import Records from "../components/records.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
 import * as utils from "../utils"

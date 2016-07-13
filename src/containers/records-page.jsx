@@ -4,7 +4,7 @@ import { Col, ListGroup, ListGroupItem } from "react-bootstrap";
 import { connect } from 'react-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import GasJotNavbar from "../components/navbar.jsx"
-import Records from "../components/Records.jsx"
+import Records from "../components/records.jsx"
 import { destroy } from "redux-form"
 import _ from "lodash"
 import * as forms from "../forms"
