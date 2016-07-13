@@ -1,7 +1,7 @@
 import _ from "lodash"
 import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
-import * as errFlags from "./errorFlags"
+import * as errFlags from "./error-flags"
 
 export function toXY(fpEmbeddedObj,
                      srcXKeyName,

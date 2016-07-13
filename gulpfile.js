@@ -19,7 +19,7 @@ var uglify = require('gulp-uglify');
 
 var config = {
     port: 80,
-    devBaseUrl: "http://www.jotyourself.com",
+    devBaseUrl: "http://www.gasjot.com",
     paths: {
         ejs: "./src/*.ejs",
         js:   [
@@ -140,7 +140,7 @@ gulp.task("watch", function() {
     gulp.watch(config.paths.images, ["images"]);
     gulp.watch(config.paths.ejs, ["ejs"]);
     gulp.watch(config.paths.css, ["bundle:css"]);
-    gulp.watch(config.paths.js, ["bundleClientJs"]);
+    gulp.watch(config.paths.js, ["bundleClientJsAndReload"]);
 });
 
 gulp.task("dev", ["ejs", "bundleClientJsAndReload", "fonts", "bundle:css", "less", "images", "lint", "watch"]);

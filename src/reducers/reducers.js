@@ -1,9 +1,9 @@
-import * as actionTypes from "../actions/actionTypes"
+import * as actionTypes from "../actions/action-types"
 import { reducer as formReducer } from "redux-form"
 import * as forms from "../forms"
 import * as utils from "../utils"
 import _ from "lodash"
-import * as mtparts from "../mediaTypeParts"
+import * as mtparts from "../media-type-parts"
 
 export const initialServerSnapshotState = {
     _links: {},
@@ -148,11 +148,13 @@ export const serverSnapshotReducer = (state = {}, action) => {
     return state;
 }
 
-function processChangelogEntity(newState, mediaType, entityPayload, mtPart, deletedAtKey, entitiesKey, entityIdKey) {
+function processChangelogEntity(newState, location, mediaType, entityPayload, mtPart, deletedAtKey, entitiesKey, entityIdKey) {
     if (mediaType.includes(mtPart)) {
         if (entityPayload[deletedAtKey] != null) {
             _.unset(newState, ["_embedded", entitiesKey, _.toString(entityPayload[entityIdKey])])
         } else {
+            _.set(newState, ["_embedded", entitiesKey, _.toString(entityPayload[entityIdKey]), "location"], location)
+            _.set(newState, ["_embedded", entitiesKey, _.toString(entityPayload[entityIdKey]), "media-type"], mediaType)
             _.set(newState, ["_embedded", entitiesKey, _.toString(entityPayload[entityIdKey]), "payload"], entityPayload)
         }
     }
@@ -162,12 +164,14 @@ function processChangelog(state, changelog) {
     let newState = _.cloneDeep(state)
     const changedEntities = changelog._embedded
     for (let i = 0; i < changedEntities.length; i++) {
+        const location = changedEntities[i]["location"]
         const mediaType = changedEntities[i]["media-type"]
         const entityPayload = changedEntities[i]["payload"]
         if (mediaType.includes(mtparts.USER_MT_PART)) {
             _.assign(newState, entityPayload)
         }
         processChangelogEntity(newState,
+                               location,
                                mediaType,
                                entityPayload,
                                mtparts.VEHICLE_MT_PART,
@@ -175,6 +179,7 @@ function processChangelog(state, changelog) {
                                "vehicles",
                                "fpvehicle/id")
         processChangelogEntity(newState,
+                               location,
                                mediaType,
                                entityPayload,
                                mtparts.FUELSTATION_MT_PART,
@@ -182,6 +187,7 @@ function processChangelog(state, changelog) {
                                "fuelstations",
                                "fpfuelstation/id")
         processChangelogEntity(newState,
+                               location,
                                mediaType,
                                entityPayload,
                                mtparts.ENVLOG_MT_PART,
@@ -189,6 +195,7 @@ function processChangelog(state, changelog) {
                                "envlogs",
                                "envlog/id")
         processChangelogEntity(newState,
+                               location,
                                mediaType,
                                entityPayload,
                                mtparts.FPLOG_MT_PART,

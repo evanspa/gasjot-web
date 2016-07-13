@@ -8,7 +8,7 @@ import {
     gasjotFormReducer,
     mostRecentUpdatedAtReducer
 } from "./reducers"
-import * as actionTypes from "../actions/actionTypes"
+import * as actionTypes from "../actions/action-types"
 import { reducer as formReducer } from "redux-form"
 import _ from "lodash"
 

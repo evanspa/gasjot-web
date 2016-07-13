@@ -9,7 +9,7 @@ import { match, RouterContext } from "react-router";
 import rootReducer from "./reducers/index"
 import thunk from 'redux-thunk'
 import Helmet from "react-helmet";
-import { initialState } from "./store/configureStore"
+import { initialState } from "./store/configure-store"
 import createRoutes from "./routes.jsx";
 import {IntlProvider} from 'react-intl';
 import ReduxToastr from 'react-redux-toastr'

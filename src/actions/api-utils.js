@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr'
 import { actions as toastrActions } from 'react-redux-toastr'
 import { push, goBack } from 'react-router-redux'
 import { destroy } from "redux-form"
-import * as actionTypes from "./actionTypes"
+import * as actionTypes from "./action-types"
 import _ from "lodash"
 
 export const FP_AUTH_TOKEN_HEADER = "fp-auth-token"

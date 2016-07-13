@@ -2,9 +2,9 @@ import React from "react"
 import { render } from "react-dom"
 import { browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
-import configureStore from "./store/configureStore"
-import Root from './containers/Root'
-import * as acs from "./actions/actionCreators"
+import configureStore from "./store/configure-store"
+import Root from './containers/root'
+import * as acs from "./actions/action-creators"
 
 //const [store, load] = configureStore(hashHistory)
 const [store, load] = configureStore(browserHistory)

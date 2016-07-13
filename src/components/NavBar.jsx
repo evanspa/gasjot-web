@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Link } from "react-router"
 import { LinkContainer } from "react-router-bootstrap"
 import { Navbar, Nav, NavItem } from "react-bootstrap"
-import { logout } from "../actions/actionCreators"
+import { logout } from "../actions/action-creators"
 import _ from "lodash"
 import * as urls from "../urls"
 
