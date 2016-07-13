@@ -7,7 +7,7 @@ import {IntlProvider} from 'react-intl';
 import createRoutes from '../routes.jsx'
 import ReduxToastr from 'react-redux-toastr'
 
-class Root extends Component {
+class RootPage extends Component {
     render() {
         const { store, history } = this.props
         return (
@@ -36,4 +36,4 @@ const mapDispatchToProps = (dispatch) => {
     return {}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Root)
+export default connect(mapStateToProps, mapDispatchToProps)(RootPage)

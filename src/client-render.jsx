@@ -3,7 +3,7 @@ import { render } from "react-dom"
 import { browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import configureStore from "./store/configure-store"
-import Root from "./containers/root"
+import RootPage from "./containers/root-page.jsx"
 import * as acs from "./actions/action-creators"
 
 //const [store, load] = configureStore(hashHistory)
@@ -18,7 +18,7 @@ load(store)
         //const history = syncHistoryWithStore(hashHistory, store)
         const history = syncHistoryWithStore(browserHistory, store)
         render(
-            <Root store={store} history={history} />,
+            <RootPage store={store} history={history} />,
             document.getElementById("app")
         )
     })
