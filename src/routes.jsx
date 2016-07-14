@@ -26,6 +26,7 @@ import GasLogAddPage from "./containers/gas-log-add-page.jsx"
 import LoggedOutPage from "./containers/logged-out-page.jsx"
 import NotFoundPage from "./containers/not-found-page.jsx"
 import LoginPage from "./containers/login-page.jsx"
+import SupportPage from "./containers/support-page.jsx"
 import ForgotPasswordPage from "./containers/forgot-password-page.jsx"
 import PasswordResetEmailSentPage from "./containers/password-reset-email-sent-page.jsx"
 import ResetPasswordPage from "./containers/reset-password-page.jsx"
@@ -82,6 +83,7 @@ export default function createRoutes(store, isServer) {
             <Route path={urls.gasLogEditTemplateUrl()}          component={GasLogEditPage}        onEnter={requiresAuthentication} />
             <Route path={urls.ADD_GAS_LOG_URI}                  component={GasLogAddPage}         onEnter={requiresAuthentication} />
             <Route path={urls.WELCOME_URI}                      component={UnauthHomePage} />
+            <Route path={urls.SUPPORT_URI}                      component={SupportPage} />
             <Route path={urls.SIGNUP_URI}                       component={SignUpPage} />
             <Route path={urls.ACCOUNT_CREATED_URI}              component={AccountCreatedPage}    onEnter={requiresAuthentication} />
             <Route path={urls.ACCOUNT_VERIFICATION_SUCCESS_URI} component={AccountVerifiedPage} /> />

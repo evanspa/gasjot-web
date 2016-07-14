@@ -32,6 +32,7 @@ class GasJotNavbar extends React.Component {
                 <NavItem eventKey={2} role="presentation">FAQ</NavItem>
                 <LinkContainer to={{ pathname: urls.SIGNUP_URI }}><NavItem eventKey={3} role="presentation">Sign up</NavItem></LinkContainer>
                 <LinkContainer to={{ pathname: urls.LOGIN_URI }}><NavItem eventKey={4}role="presentation">Log in</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.SUPPORT_URI }}><NavItem eventKey={5}role="presentation">Support</NavItem></LinkContainer>
             </Nav>)
         } else {
             nav = (<Nav pullRight>
@@ -39,6 +40,7 @@ class GasJotNavbar extends React.Component {
                 <LinkContainer to={{ pathname: urls.RECORDS_URI }} onlyActiveOnIndex><NavItem eventKey={2} role="presentation">Records</NavItem></LinkContainer>
                 <LinkContainer to={{ pathname: urls.ACCOUNT_URI }}><NavItem eventKey={3} role="presentation">Account</NavItem></LinkContainer>
                 <LinkContainer to={{ pathname: urls.SETTINGS_URI }}><NavItem eventKey={4} role="presentation">Settings</NavItem></LinkContainer>
+                <LinkContainer to={{ pathname: urls.SUPPORT_URI }}><NavItem eventKey={5}role="presentation">Support</NavItem></LinkContainer>
             </Nav>)
         }
         return (

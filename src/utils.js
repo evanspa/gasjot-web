@@ -44,6 +44,8 @@ String.prototype.toTitleCase = function() {
     return str;
 }
 
+export const SUPPORT_EMAIL = "support@gasjot.com"
+
 export const CURRENCY_FORMAT = "$0,0.00"
 
 export const CHARTJS_POINT_BG_COLOR = "#71a0ec"

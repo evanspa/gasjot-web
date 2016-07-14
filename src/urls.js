@@ -15,6 +15,7 @@ export const ADD_GAS_LOG_URI                            = "/addGasLog"
 export const ACCOUNT_URI                                = "/account"
 export const EDIT_ACCOUNT_URI                           = ACCOUNT_URI + "/edit"
 
+export const SUPPORT_URI                                = "/support"
 export const RECORDS_URI                                = "/records"
 export const SETTINGS_URI                               = "/settings"
 export const LOGIN_URI                                  = "/login"
