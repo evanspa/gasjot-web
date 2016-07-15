@@ -29,7 +29,6 @@ app.get("*", (req, res) => {
         initialState(req.cookies[FP_AUTH_TOKEN_HEADER])
     )
     const routes = createRoutes(store, true)
-
     match({ routes, location: req.url }, (err, redirectLocation, props) => {
         if (err) {
             // something went badly wrong, so 500 with a message
