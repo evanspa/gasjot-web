@@ -19,6 +19,7 @@ const initForFetch = (headers, payload, method) => {
     let init = {}
     init.method = method
     init.headers = headers
+    init.credentials = "same-origin"
     if (payload != null) {
         init.body = JSON.stringify(payload)
     }
