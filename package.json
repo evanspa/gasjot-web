@@ -1,10 +1,11 @@
 {
-  "name": "riker-web",
+  "name": "gasjot-web",
   "version": "1.0.0",
   "dependencies": {
     "babel-polyfill": "^6.9.1",
     "bootstrap": "3.3.6",
     "chart.js": "^2.1.6",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.4.2",
     "express": "^4.13.4",
     "html5shiv": "3.7.3",

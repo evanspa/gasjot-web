@@ -6,11 +6,14 @@ import thunk from 'redux-thunk'
 import rootReducer from "../reducers/index"
 import { initialServerSnapshotState, initialApiState } from "../reducers/reducers"
 
-export const initialState = {
-    authToken: null,
-    userUri: null,
-    api: initialApiState,
-    serverSnapshot: initialServerSnapshotState
+export const initialState = (fpAuthToken) => {
+    console.log("inside initialState, fpAuthToken: [" + fpAuthToken + "]")
+    return {
+        authToken: fpAuthToken,
+        userUri: null,
+        api: initialApiState,
+        serverSnapshot: initialServerSnapshotState
+    }
 }
 
 export default function configureStore(history) {
@@ -21,7 +24,7 @@ export default function configureStore(history) {
         typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ? window.devToolsExtension() : f => f
     )(createStore)(
         rootReducer,
-        initialState
+        initialState(null)
     )
     const load = storage.createLoader(engine)
     return [store, load]

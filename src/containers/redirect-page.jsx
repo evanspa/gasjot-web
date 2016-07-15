@@ -1,10 +1,11 @@
 import React, { createClass } from "react"
 import { push } from 'react-router-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
-import { Col, Panel, Label } from "react-bootstrap";
+import { Col, Panel, Label, Image } from "react-bootstrap";
 import { connect } from 'react-redux'
 import GasJotNavbar from "../components/navbar.jsx"
 import {toastr} from 'react-redux-toastr'
+import * as gvs from "../grid-vals"
 import _ from "lodash"
 
 class RedirectPage extends React.Component {
@@ -20,14 +21,13 @@ class RedirectPage extends React.Component {
     render() {
         return (
             <div>
-                <GasJotHelmet title="Log In" />
+                <GasJotHelmet title="Loading" />
                 <GasJotNavbar />
-                <Col md={6} mdOffset={3}>
-                    <Panel>
-                        <Col md={8} mdOffset={2}>
-                            <h1 className="text-center" style={{marginBottom: 20}}>Reloading.  One moment please...</h1>
-                        </Col>
-                    </Panel>
+                <Col lg={gvs.LG_CONDENSED} lgOffset={gvs.LG_OFFSET_CONDENSED}
+                     md={gvs.MD} mdOffset={gvs.MD_OFFSET}
+                     sm={gvs.SM} smOffset={gvs.SM_OFFSET}
+                     xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
+                    <img className="center-block" src="/images/loading.gif" />
                 </Col>
             </div>
         );

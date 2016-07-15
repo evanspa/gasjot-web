@@ -32,6 +32,7 @@ import PasswordResetEmailSentPage from "./containers/password-reset-email-sent-p
 import ResetPasswordPage from "./containers/reset-password-page.jsx"
 import ResetPasswordSuccessPage from "./containers/reset-password-success-page.jsx"
 import RedirectPage from "./containers/redirect-page.jsx"
+import LoadingPage from "./containers/loading-page.jsx"
 import SignUpPage from "./containers/sign-up-page.jsx"
 import SettingsPage from "./containers/settings-page.jsx"
 import RecordsPage from "./containers/records-page.jsx"
@@ -59,9 +60,21 @@ export default function createRoutes(store, isServer) {
         return true;
     }
 
+    function interstitialAuthCheck(nextState, replace) {
+        const state = store.getState()
+        console.log("inside interstitialAuthCheck, state.authToken: [" + state.authToken + "]")
+        if (isServer && !_.isEmpty(state.authToken)) {
+            //replace({ pathname: urls.LOADING_URI })
+            replace({
+                pathname: urls.REDIRECT_URI + "?nextPathname=" + nextState.location.pathname,
+                state: { nextPathname: nextState.location.pathname }
+            })
+        }
+    }
+
     return (
         <Route path={urls.ROOT_URI} component={App}>
-            <IndexRoute component={HomePage} />
+            <IndexRoute                                         component={HomePage}              onEnter={interstitialAuthCheck} />
             <Route path={urls.SETTINGS_URI}                     component={SettingsPage}          onEnter={requiresAuthentication} />
             <Route path={urls.RECORDS_URI}                      component={RecordsPage}           onEnter={requiresAuthentication} />
             <Route path={urls.ACCOUNT_URI}                      component={UserAccountPage}       onEnter={requiresAuthentication} />
@@ -96,6 +109,7 @@ export default function createRoutes(store, isServer) {
             <Route path={urls.PASSWORD_RESET_PREPARE_ERROR_URI} component={PasswordResetPrepareErrorPage} />
             <Route path={urls.PASSWORD_RESET_PREPARE_ERROR_WITH_MASK_URI} component={PasswordResetPrepareErrorPage} />
             <Route path={urls.REDIRECT_URI}                     component={RedirectPage} />
+            <Route path={urls.LOADING_URI}                      component={LoadingPage} />
             <Route path="*"                                     component={NotFoundPage} />
         </Route>
     )
