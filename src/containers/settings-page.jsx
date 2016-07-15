@@ -33,7 +33,7 @@ class SettingsPage extends React.Component {
                     showModal={becameUnauthenticated}
                     message="To download your edits, we need you to re-authenticate."
                     operationOnLightLoginSuccess={downloadChangelog} />
-                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                <Col lg={gvs.LG_CONDENSED} lgOffset={gvs.LG_OFFSET_CONDENSED}
                      md={gvs.MD} mdOffset={gvs.MD_OFFSET}
                      sm={gvs.SM} smOffset={gvs.SM_OFFSET}
                      xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>

@@ -12,11 +12,11 @@ import moment from "moment"
 import momentLocalizer from "react-widgets/lib/localizers/moment"
 import * as mtparts from "../media-type-parts"
 
-const LIGHT_LOGIN_URI          = "https://www.gasjot.com/gasjot/d/light-login"
-const LOGIN_URI                = "https://www.gasjot.com/gasjot/d/login"
-const SIGNUP_URI               = "https://www.gasjot.com/gasjot/d/users"
-const SEND_PWD_RESET_EMAIL_URI = "https://www.gasjot.com/gasjot/d/send-password-reset-email"
-const PASSWORD_RESET_URI       = "https://www.gasjot.com/gasjot/d/password-reset"
+const LIGHT_LOGIN_URI          = "http://www.gasjot.com/gasjot/d/light-login"
+const LOGIN_URI                = "http://www.gasjot.com/gasjot/d/login"
+const SIGNUP_URI               = "http://www.gasjot.com/gasjot/d/users"
+const SEND_PWD_RESET_EMAIL_URI = "http://www.gasjot.com/gasjot/d/send-password-reset-email"
+const PASSWORD_RESET_URI       = "http://www.gasjot.com/gasjot/d/password-reset"
 
 function resendVerificationEmailUri(userUri) {
     return userUri + "/send-verification-email"

@@ -24,7 +24,7 @@ class SignUpPage extends React.Component {
             <div>
                 <GasJotHelmet title="Sign Up" />
                 <GasJotNavbar />
-                <Col lg={gvs.LG} lgOffset={gvs.LG_OFFSET}
+                <Col lg={gvs.LG_CONDENSED} lgOffset={gvs.LG_OFFSET_CONDENSED}
                      md={gvs.MD} mdOffset={gvs.MD_OFFSET}
                      sm={gvs.SM} smOffset={gvs.SM_OFFSET}
                      xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
