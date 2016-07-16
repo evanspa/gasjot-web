@@ -54,8 +54,7 @@ class ResetPasswordForm extends React.Component {
                     <GasJotTextFormGroup
                         label="New password"
                         type="password"
-                        field={password}
-                        autoFocus={true} />
+                        field={password} />
                     <GasJotFormGroup
                         label="Confirm password"
                         type="password"

@@ -3,7 +3,9 @@ import { Label, Button, Row, Col } from "react-bootstrap";
 import { reduxForm } from "redux-form"
 import * as strs from "../strings"
 import SmallModal from "./small-modal.jsx"
-import { GasJotTextFormGroup, GasJotCheckboxFormGroup } from "./form-input.jsx"
+import { GasJotTextFormGroup,
+         GasJotCheckboxFormGroup,
+         GasJotNumberFormGroup } from "./form-input.jsx"
 import { cannotBeEmptyValidator, mustBePositiveNumberValidator } from "../utils"
 import _ from "lodash"
 import { VEHICLE_FORM } from "../forms"
@@ -139,11 +141,11 @@ class VehicleForm extends React.Component {
                     label="VIN"
                     field={vin}
                     disabled={!editMode} />
-                <GasJotTextFormGroup
+                <GasJotNumberFormGroup
                     label="Fuel capacity"
                     field={fuelCapacity}
                     disabled={!editMode} />
-                <GasJotTextFormGroup
+                <GasJotNumberFormGroup
                     label="Default octane"
                     field={defaultOctane}
                     disabled={!editMode} />

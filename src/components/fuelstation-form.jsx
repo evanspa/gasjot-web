@@ -5,7 +5,8 @@ import * as strs from "../strings"
 import SmallModal from "./small-modal.jsx"
 import { GasJotTextFormGroup,
          GasJotCheckboxFormGroup,
-         GasJotDropdownFormGroup } from "./form-input.jsx"
+         GasJotDropdownFormGroup,
+         GasJotNumberFormGroup } from "./form-input.jsx"
 import { cannotBeEmptyValidator, cannotBeUnselectedValidator, mustBeNumberValidator } from "../utils"
 import { FSTYPES_ARRAY } from "../fstypes"
 import _ from "lodash"
@@ -150,11 +151,11 @@ class FuelstationForm extends React.Component {
                         label="Zip"
                         field={zip}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Latitude"
                         field={latitude}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Longitude"
                         field={longitude}
                         disabled={!editMode} />

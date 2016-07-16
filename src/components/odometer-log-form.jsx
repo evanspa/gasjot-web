@@ -6,7 +6,8 @@ import SmallModal from "./small-modal.jsx"
 import { GasJotTextFormGroup,
          GasJotDateFormGroup,
          GasJotCheckboxFormGroup,
-         GasJotDropdownFormGroup } from "./form-input.jsx"
+         GasJotDropdownFormGroup,
+         GasJotNumberFormGroup } from "./form-input.jsx"
 import { cannotBeEmptyValidator,
          mustBePositiveNumberValidator,
          cannotBeUnselectedValidator,
@@ -146,23 +147,23 @@ class OdometerLogForm extends React.Component {
                         label="Log date"
                         field={logDate}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Odometer"
                         field={odometer}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Average MPG readout"
                         field={avgMpgReadout}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Average MPH readout"
                         field={avgMphReadout}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Range readout"
                         field={rangeReadout}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Outside temperature readout"
                         field={outsideTempReadout}
                         disabled={!editMode} />

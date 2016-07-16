@@ -282,7 +282,7 @@ export function attemptSignUp() {
         headers.append(apiUtils.FP_DESIRED_EMBEDDED_FORMAT_HEADER, apiUtils.FP_ID_KEYED_EMBEDDED_FORMAT)
         const requestPayload = {
             "user/name": state.form.signup.name.value,
-            "user/email": state.form.signup.email.value,
+            "user/email": _.trim(state.form.signup.email.value),
             "user/password": state.form.signup.password.value
         };
         return fetch(SIGNUP_URI, apiUtils.postInitForFetch(headers, requestPayload))
@@ -386,7 +386,7 @@ export function attemptLogin(nextSuccessPathname) {
         apiUtils.appendCommonHeaders(headers, userMediaType)
         headers.append(apiUtils.FP_DESIRED_EMBEDDED_FORMAT_HEADER, apiUtils.FP_ID_KEYED_EMBEDDED_FORMAT)
         const requestPayload = {
-            "user/username-or-email": state.form.login.usernameOrEmail.value,
+            "user/username-or-email": _.trim(state.form.login.usernameOrEmail.value),
             "user/password": state.form.login.password.value
         };
         return fetch(LOGIN_URI, apiUtils.postInitForFetch(headers, requestPayload))
@@ -425,7 +425,7 @@ export function attemptLightLogin(operationOnSuccess) {
         apiUtils.appendCommonHeaders(headers, userMediaType)
         headers.append(apiUtils.FP_DESIRED_EMBEDDED_FORMAT_HEADER, apiUtils.FP_ID_KEYED_EMBEDDED_FORMAT)
         const requestPayload = {
-            "user/username-or-email": state.form.login.usernameOrEmail.value,
+            "user/username-or-email": _.trim(state.form.login.usernameOrEmail.value),
             "user/password": state.form.login.password.value
         };
         return fetch(LIGHT_LOGIN_URI, apiUtils.postInitForFetch(headers, requestPayload))
@@ -462,7 +462,7 @@ export function attemptSendPasswordResetEmail() {
         apiUtils.appendContentType(headers, userContentType)
         apiUtils.appendCommonHeaders(headers, userMediaType)
         const requestPayload = {
-            "user/email": state.form.forgotpassword.email.value
+            "user/email": _.trim(state.form.forgotpassword.email.value)
         };
         return fetch(SEND_PWD_RESET_EMAIL_URI, apiUtils.postInitForFetch(headers, requestPayload))
             .then(response => {
@@ -487,7 +487,6 @@ export function attemptSendPasswordResetEmail() {
 }
 
 const vehicleRequestPayload = form => {
-    //console.log("in vehicleRequestPayload, form: " + JSON.stringify(form))
     let payload = {}
     utils.formToModelIfNotNull(form, "name",                  payload, "fpvehicle/name");
     utils.formToModelIfNotNull(form, "plate",                 payload, "fpvehicle/plate");

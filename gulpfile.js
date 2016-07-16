@@ -61,13 +61,15 @@ gulp.task("ejs", function() {
 function createBundler() {
     return browserify({
         entries:      [ config.paths.clientRenderJs ],
-        transform:    [ [babelify, {presets: ["es2015", "react", "stage-2"]}] ],
+        transform:    [ [babelify, {presets: ["es2015", "react", "stage-2"]}],
+                        [envify] ],
         cache:        {},
         packageCache: {}
     })
 }
 
 gulp.task("bundleClientJsAndReload", function() {
+    process.env.NODE_ENV = 'development';
     createBundler()
         .bundle()
         .on("error", console.error.bind(console))
@@ -77,6 +79,7 @@ gulp.task("bundleClientJsAndReload", function() {
 });
 
 gulp.task("bundleClientJs", function() {
+    process.env.NODE_ENV = 'development';
     createBundler()
         .bundle()
         .on("error", console.error.bind(console))
@@ -142,10 +145,6 @@ gulp.task("watch", function() {
     gulp.watch(config.paths.ejs, ["ejs"]);
     gulp.watch(config.paths.css, ["bundle:css"]);
     gulp.watch(config.paths.js, ["bundleClientJsAndReload"]);
-});
-
-gulp.task('apply-prod-environment', function() {
-    process.env.NODE_ENV = 'production';
 });
 
 gulp.task("dev", ["ejs", "bundleClientJsAndReload", "fonts", "bundle:css", "less", "images", "lint", "watch"]);

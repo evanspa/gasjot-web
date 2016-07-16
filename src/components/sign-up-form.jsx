@@ -48,8 +48,7 @@ class SignUpForm extends React.Component {
                     <Row><Col xs={12}><hr style={{ marginTop: 10, marginBottom: 10}}/></Col></Row>
                     <GasJotTextFormGroup
                         label="Name"
-                        field={name}
-                        autoFocus={true} />
+                        field={name} />
                     <GasJotTextFormGroup
                         label="E-mail"
                         field={email} />

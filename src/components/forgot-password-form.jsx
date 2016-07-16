@@ -46,8 +46,7 @@ class ForgotPasswordForm extends React.Component {
                     <Row><Col xs={12}><hr style={{ marginTop: 10, marginBottom: 10}}/></Col></Row>
                     <GasJotTextFormGroup
                         label="E-mail"
-                        field={email}
-                        autoFocus={true} />
+                        field={email} />
                     <Button type="submit" bsStyle="primary" disabled={requestInProgress}>Submit</Button>
                 </form>
             </div>

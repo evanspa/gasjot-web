@@ -58,6 +58,12 @@ export class GasJotTextFormGroup extends React.Component {
     }
 }
 
+export class GasJotNumberFormGroup extends React.Component {
+    render() {
+        return <GasJotFormGroup type="number" {...this.props} />
+    }
+}
+
 export class GasJotDateFormGroup extends React.Component {
     render() {
         return <GasJotFormGroup type="date" {...this.props} />

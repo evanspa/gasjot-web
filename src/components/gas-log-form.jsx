@@ -6,7 +6,8 @@ import SmallModal from "./small-modal.jsx"
 import { GasJotTextFormGroup,
          GasJotDateFormGroup,
          GasJotCheckboxFormGroup,
-         GasJotDropdownFormGroup } from "./form-input.jsx"
+         GasJotDropdownFormGroup,
+         GasJotNumberFormGroup } from "./form-input.jsx"
 import { cannotBeEmptyValidator,
          mustBePositiveNumberValidator,
          cannotBeUnselectedValidator,
@@ -162,15 +163,15 @@ class GasLogForm extends React.Component {
                         label="Purchase date"
                         field={purchaseDate}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Octane"
                         field={octane}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Odometer"
                         field={odometer}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Price per gallon"
                         field={pricePerGallon}
                         disabled={!editMode} />
@@ -178,11 +179,11 @@ class GasLogForm extends React.Component {
                         label="Got car wash?"
                         field={gotCarWash}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Car wash per-gallon discount"
                         field={carWashPerGallonDiscount}
                         disabled={!editMode} />
-                    <GasJotTextFormGroup
+                    <GasJotNumberFormGroup
                         label="Num gallons"
                         field={numGallons}
                         disabled={!editMode} />
