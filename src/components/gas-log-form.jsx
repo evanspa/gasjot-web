@@ -7,6 +7,7 @@ import { GasJotTextFormGroup,
          GasJotDateFormGroup,
          GasJotCheckboxFormGroup,
          GasJotDropdownFormGroup,
+         GasJotIntegerFormGroup,
          GasJotNumberFormGroup } from "./form-input.jsx"
 import { cannotBeEmptyValidator,
          mustBePositiveNumberValidator,
@@ -163,11 +164,11 @@ class GasLogForm extends React.Component {
                         label="Purchase date"
                         field={purchaseDate}
                         disabled={!editMode} />
-                    <GasJotNumberFormGroup
+                    <GasJotIntegerFormGroup
                         label="Octane"
                         field={octane}
                         disabled={!editMode} />
-                    <GasJotNumberFormGroup
+                    <GasJotIntegerFormGroup
                         label="Odometer"
                         field={odometer}
                         disabled={!editMode} />

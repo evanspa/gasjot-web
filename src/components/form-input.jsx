@@ -17,14 +17,12 @@ export class GasJotFormGroup extends React.Component {
         if (areErrors) {
             formGroupOpts['validationState'] = "error"
         }
-        const isDate = (type == "date")
-        const isNumeric = (type == "number")
         return (
             <div>
                 <FormGroup {...formGroupOpts}>
                     <ControlLabel type={this.props.type}>{this.props.label}</ControlLabel>
                     {(() => {
-                         if (isDate) {
+                         if (type == "date") {
                              return (<DateTimePicker
                                          time={false}
                                          editFormat={utils.DATE_EDIT_FORMAT}
@@ -35,16 +33,23 @@ export class GasJotFormGroup extends React.Component {
                                          name={field.name}
                                          disabled={this.props.disabled}
                                          autoFocus={this.props.autoFocus} />)
-                         } else if (isNumeric) {
+                         } else if (type == "integer") {
+                             return (<FormControl
+                                         type="number"
+                                         value={field.value}
+                                         onChange={field.onChange}
+                                         name={field.name}
+                                         disabled={this.props.disabled}
+                                         autoFocus={this.props.autoFocus}
+                                         pattern="\d*" />)
+                         } else if (type == "number") {
                              return (<FormControl
                                          type={type}
                                          value={field.value}
                                          onChange={field.onChange}
                                          name={field.name}
                                          disabled={this.props.disabled}
-                                         autoFocus={this.props.autoFocus}
-                                         pattern="[0-9]*"
-                                         inputmode="numeric" />)
+                                         autoFocus={this.props.autoFocus} />)
                          } else {
                              return (<FormControl
                                          type={type}
@@ -72,6 +77,12 @@ export class GasJotTextFormGroup extends React.Component {
 export class GasJotNumberFormGroup extends React.Component {
     render() {
         return <GasJotFormGroup type="number" {...this.props} />
+    }
+}
+
+export class GasJotIntegerFormGroup extends React.Component {
+    render() {
+        return <GasJotFormGroup type="integer" {...this.props} />
     }
 }
 
