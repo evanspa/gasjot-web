@@ -7,4 +7,4 @@ echo "Proceeding to create and push git tag..."
 git tag -f -a $TAG_LABEL -m 'version $version'
 git push -f --tags --quiet
 
-./copy-dist-to-server-and-restart.sh ${VERSION}
+./copy-js-to-server-and-restart.sh ${VERSION}

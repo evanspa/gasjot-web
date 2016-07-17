@@ -24,7 +24,7 @@ echo "Proceeding to upload local JS files..."
 scp ${CLIENTJS_ARCHIVE} ${USER}@${HOST}:${REMOTE_DEST_VERSIONS_DIR}/${VERSION}
 scp ${SERVERJS_ARCHIVE} ${USER}@${HOST}:${REMOTE_DEST_VERSIONS_DIR}/${VERSION}
 
-echo "Proceeding to overwrite remote JS files..."
+echo "Proceeding to un-tar and overwrite remote JS files..."
 ssh ${HOST} "cd ${REMOTE_DEST_VERSIONS_DIR}/${VERSION} && tar xf ${CLIENTJS_ARCHIVE} && tar xf ${SERVERJS_ARCHIVE} && rm ${CLIENTJS_ARCHIVE} && rm ${SERVERJS_ARCHIVE}"
 
 echo "Proceeding to restart node service..."

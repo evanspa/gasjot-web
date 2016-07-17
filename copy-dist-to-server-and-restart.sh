@@ -26,7 +26,7 @@ scp -r ${NODE_MODULES_ARCHIVE} ${USER}@${HOST}:${DEST_DIR}
 echo "Proceeding to stop existing node server..."
 ssh ${HOST} "pm2 stop server && pm2 delete server && mkdir -p ${DEST_DIR}"
 
-echo "Proceeding to create links to new [$VERSION] dist files..."
+echo "Proceeding to un-tar and create links to new [$VERSION] dist files..."
 ssh ${HOST} "cd ${DEST_DIR} && tar xf ${DIST_ARCHIVE} > /dev/null 2>&1 && tar xf ${NODE_MODULES_ARCHIVE} > /dev/null 2>&1 && rm ${DIST_ARCHIVE} && rm ${NODE_MODULES_ARCHIVE}"
 ssh ${HOST} "cd ${REMOTE_DEST_BASE_DIR} && unlink dist && unlink node_modules && ln -s ${DEST_DIR}/dist && ln -s ${DEST_DIR}/node_modules"
 
