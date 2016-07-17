@@ -6,21 +6,13 @@ import LoginForm from "../components/login-form.jsx";
 import { connect } from 'react-redux'
 import { attemptLogin, clearErrors } from "../actions/action-creators"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import { makeLoginHandler } from "../utils"
 import _ from "lodash"
 import * as urls from "../urls"
 import * as gvs from "../grid-vals"
 
 class LogInPage extends React.Component {
-
-    /* componentWillReceiveProps(nextProps) {
-     *     const { responseStatus } = nextProps
-     *     if (!_.isNull(responseStatus) && responseStatus === 401) {
-     *         //this.setState({ password: "" })
-     *         //console.log("401 received")
-     *     }
-     * }*/
-
     render() {
         const {
             location,
@@ -49,6 +41,7 @@ class LogInPage extends React.Component {
                         <Link to={urls.FORGOT_PASSWORD_URI}>Forgot Password?</Link>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

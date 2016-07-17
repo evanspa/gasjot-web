@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
 import * as gvs from "../grid-vals"
@@ -27,6 +28,7 @@ class AccountCreatedPage extends React.Component {
                         </p>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

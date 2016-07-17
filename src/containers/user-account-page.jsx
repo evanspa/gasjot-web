@@ -3,8 +3,6 @@ import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router"
 import { connect } from 'react-redux'
 import { push, goBack } from 'react-router-redux'
-import GasJotHelmet from "../components/gasjot-helmet.jsx";
-import GasJotNavbar from "../components/navbar.jsx"
 import UserAccountForm from "../components/user-account-form.jsx"
 import { markUserForEdit,
          attemptDownloadUserAccount,

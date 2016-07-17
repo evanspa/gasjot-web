@@ -2,6 +2,7 @@ import React from "react"
 import { Col } from "react-bootstrap";
 import GasJotHelmet from "./gasjot-helmet.jsx";
 import GasJotNavbar from "./navbar.jsx"
+import GasJotFooter from "./gasjot-footer.jsx"
 import * as gvs from "../grid-vals"
 
 export default class EntityAddPage extends React.Component {
@@ -26,6 +27,7 @@ export default class EntityAddPage extends React.Component {
                     <h4 style={{paddingBottom: 5}}>{"Add " + titleCasedEntityType}</h4>
                     {entityForm}
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }

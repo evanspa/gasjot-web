@@ -6,6 +6,7 @@ import ResetPasswordForm from "../components/reset-password-form.jsx";
 import { connect } from 'react-redux'
 import { attemptResetPassword, clearErrors } from "../actions/action-creators"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import { makeLoginHandler } from "../utils"
 import _ from "lodash"
 import * as urls from "../urls"
@@ -41,6 +42,7 @@ class ResetPasswordPage extends React.Component {
                         <p>Not working? <Link to={urls.FORGOT_PASSWORD_URI}>Click here to get a new password-reset link.</Link></p>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

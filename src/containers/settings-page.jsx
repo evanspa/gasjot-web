@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import { logout, attemptDownloadChangelog } from "../actions/action-creators"
 import * as urls from "../urls"
 import { toastr } from 'react-redux-toastr'
@@ -51,6 +52,7 @@ class SettingsPage extends React.Component {
                         </form>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }

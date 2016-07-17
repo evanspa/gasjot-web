@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import _ from "lodash"
 import * as utils from "../utils"
 import * as urls from "../urls"
@@ -23,6 +24,7 @@ class SupportPage extends React.Component {
                         <div>Have a question or need some help?  Drop us a line at: <a href={"mailto:" + utils.SUPPORT_EMAIL}>{utils.SUPPORT_EMAIL}</a></div>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

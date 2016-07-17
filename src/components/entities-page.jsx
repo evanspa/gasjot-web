@@ -5,6 +5,7 @@ import { Link } from "react-router"
 import { connect } from 'react-redux'
 import GasJotHelmet from "./gasjot-helmet.jsx";
 import GasJotNavbar from "./navbar.jsx"
+import GasJotFooter from "./gasjot-footer.jsx"
 import EntityList from "./entity-list.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
@@ -44,6 +45,7 @@ export default class EntitiesPage extends React.Component {
                         entityLinkToFn={entityLinkToFn}
                     />
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }

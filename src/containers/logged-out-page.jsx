@@ -2,6 +2,7 @@ import React, { createClass } from "react"
 import { Col, Panel } from "react-bootstrap"
 import GasJotHelmet from "../components/gasjot-helmet.jsx"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import * as gvs from "../grid-vals"
 
 export default class LoggedOutPage extends React.Component {
@@ -18,6 +19,7 @@ export default class LoggedOutPage extends React.Component {
                         You have been logged out successfully.
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

@@ -2,6 +2,7 @@ import React, { createClass } from "react"
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import { Col } from "react-bootstrap";
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import * as gvs from "../grid-vals"
 
 export default class NotFoundPage extends React.Component {
@@ -16,6 +17,7 @@ export default class NotFoundPage extends React.Component {
                      xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <h4>Page not found.</h4>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

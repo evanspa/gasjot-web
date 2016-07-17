@@ -11,6 +11,7 @@ import { ButtonToolbar,
 import { connect } from 'react-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import Records from "../components/records.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
@@ -99,6 +100,7 @@ class AuthenticatedHomePage extends React.Component {
                      )()
                     }
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }

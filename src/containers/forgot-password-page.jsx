@@ -4,6 +4,7 @@ import { Row, Col, Panel } from "react-bootstrap"
 import { Link } from "react-router"
 import GasJotHelmet from "../components/gasjot-helmet.jsx"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import ForgotPasswordForm from "../components/forgot-password-form.jsx"
 import { attemptSendPasswordResetEmail,
          clearErrors } from "../actions/action-creators"
@@ -36,6 +37,7 @@ class ForgotPasswordPage extends React.Component {
                             fpErrorMask={fpErrorMask} />
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }

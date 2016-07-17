@@ -16,6 +16,7 @@ var lint = require("gulp-eslint"); //Lint JS files, including JSX
 var exec = require("child_process").exec;
 var livereload = require('gulp-livereload');
 var uglify = require('gulp-uglify');
+var argv = require('yargs').argv;
 
 var config = {
     port: 80,
@@ -61,8 +62,8 @@ gulp.task("ejs", function() {
 function createBundler() {
     return browserify({
         entries:      [ config.paths.clientRenderJs ],
-        transform:    [ [babelify, {presets: ["es2015", "react", "stage-2"]}],
-                        [envify] ],
+        transform:    [ [ babelify, {presets: ["es2015", "react", "stage-2" ]}],
+                        [ envify, { GASJOT_VERSION: argv.version } ] ],
         cache:        {},
         packageCache: {}
     })
@@ -102,7 +103,9 @@ gulp.task("bundleServerJs", function() {
     // there doesn't seem to be a way to invoke the browserify task with the
     // 'node' option, so, need to revert to invoking browserify on the command-line
     exec("mkdir -p dist/server");
-    exec("browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ envify --NODE_ENV production ] -t [ babelify --presets [ es2015 react stage-2 ] ]");
+    const broserifyCmd = "browserify --node " + config.paths.serverJs + " -o " + config.paths.serverRenderDist + "/server.js -t [ babelify --presets [ es2015 react stage-2 ] ] -t [ envify --NODE_ENV production --GASJOT_VERSION " + argv.version + "]"
+    //console.log(broserifyCmd)
+    exec(broserifyCmd);
 })
 
 gulp.task("bundle:css", function() {

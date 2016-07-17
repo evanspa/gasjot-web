@@ -3,6 +3,7 @@ import { Col, Panel, Button } from "react-bootstrap"
 import { Link } from "react-router"
 import GasJotHelmet from "../components/gasjot-helmet.jsx"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import _ from "lodash"
 import * as errFlags from "../error-flags"
 import ErrorMessages from "../components/error-messages.jsx"
@@ -39,6 +40,7 @@ export default class PasswordResetPrepareErrorPage extends React.Component {
                         </div>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

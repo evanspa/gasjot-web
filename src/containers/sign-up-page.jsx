@@ -6,6 +6,7 @@ import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import { Col, Panel, Button } from "react-bootstrap";
 import SignUpForm from "../components/sign-up-form.jsx";
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
 import * as gvs from "../grid-vals"
@@ -39,6 +40,7 @@ class SignUpPage extends React.Component {
                         <p>Already have an account?  <Link to={urls.LOGIN_URI}>Log in.</Link></p>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

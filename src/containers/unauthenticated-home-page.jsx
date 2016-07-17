@@ -3,6 +3,7 @@ import { Link } from "react-router"
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import { Image, Jumbotron, Col, Row } from "react-bootstrap";
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import * as urls from "../urls"
 import * as gvs from "../grid-vals"
 
@@ -36,5 +37,6 @@ export default (props) =>
                 </Col>
             </Row>
         </Col>
+        <GasJotFooter />
     </div>
 ;

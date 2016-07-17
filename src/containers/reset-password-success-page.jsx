@@ -3,6 +3,7 @@ import { Col, Panel, Button } from "react-bootstrap"
 import { Link } from "react-router"
 import GasJotHelmet from "../components/gasjot-helmet.jsx"
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import _ from "lodash"
 import * as urls from "../urls"
 import * as gvs from "../grid-vals"
@@ -24,6 +25,7 @@ export default class ResetPasswordSuccessPage extends React.Component {
                         </div>
                     </Panel>
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

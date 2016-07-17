@@ -4,6 +4,7 @@ import { Link } from "react-router"
 import _ from "lodash"
 import GasJotHelmet from "./gasjot-helmet.jsx"
 import GasJotNavbar from "./navbar.jsx"
+import GasJotFooter from "./gasjot-footer.jsx"
 import * as gvs from "../grid-vals"
 
 export default class EntityDetailPage extends React.Component {
@@ -37,6 +38,7 @@ export default class EntityDetailPage extends React.Component {
                     <h4 style={{paddingBottom: 5}}>{heading}</h4>
                     {entityForm}
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }

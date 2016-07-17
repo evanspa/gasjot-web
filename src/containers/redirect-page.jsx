@@ -4,6 +4,7 @@ import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import { Col, Panel, Label, Image } from "react-bootstrap";
 import { connect } from 'react-redux'
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import {toastr} from 'react-redux-toastr'
 import * as gvs from "../grid-vals"
 import _ from "lodash"
@@ -29,6 +30,7 @@ class RedirectPage extends React.Component {
                      xs={gvs.XS} xsOffset={gvs.XS_OFFSET}>
                     <img className="center-block" src="/images/loading.gif" />
                 </Col>
+                <GasJotFooter />
             </div>
         );
     }

@@ -4,6 +4,7 @@ import { Col, ListGroup, ListGroupItem } from "react-bootstrap";
 import { connect } from 'react-redux'
 import GasJotHelmet from "../components/gasjot-helmet.jsx";
 import GasJotNavbar from "../components/navbar.jsx"
+import GasJotFooter from "../components/gasjot-footer.jsx"
 import Records from "../components/records.jsx"
 import { destroy } from "redux-form"
 import _ from "lodash"
@@ -49,6 +50,7 @@ class RecordsPage extends React.Component {
                         odometerLogCount={odometerLogCount}
                         gasLogCount={gasLogCount} />
                 </Col>
+                <GasJotFooter />
             </div>
         )
     }
